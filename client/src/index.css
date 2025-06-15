@@ -150,7 +150,7 @@
   }
 
   .candidate-card.selected {
-    @apply border-primary bg-primary/5;
+    @apply border-primary bg-primary bg-opacity-5;
   }
 
   .results-chart {
@@ -162,11 +162,11 @@
   }
 
   .security-status-good {
-    @apply p-4 bg-secondary/10 rounded-lg;
+    @apply p-4 bg-secondary bg-opacity-10 rounded-lg;
   }
 
   .quick-action-button {
-    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 transition-colors;
+    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary hover:bg-opacity-5 transition-colors;
   }
 
   .mobile-menu-overlay {
@@ -178,15 +178,15 @@
   }
 
   .primary-button {
-    @apply bg-primary hover:bg-primary-dark text-primary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply bg-primary hover:bg-primary hover:opacity-80 text-primary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
   }
 
   .secondary-button {
-    @apply bg-secondary hover:bg-secondary/90 text-secondary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply bg-secondary hover:bg-secondary hover:opacity-90 text-secondary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
   }
 
   .accent-button {
-    @apply bg-accent hover:bg-accent/90 text-accent-foreground font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply bg-accent hover:bg-accent hover:opacity-90 text-accent-foreground font-medium px-4 py-2 rounded-lg transition-colors;
   }
 }
 

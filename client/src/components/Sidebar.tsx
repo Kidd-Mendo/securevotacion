@@ -8,9 +8,10 @@ import {
   Users, 
   BarChart3, 
   Shield, 
-  LifeBuoy, 
+  LifeBuoy,
+  User,
+  Settings,
   LogOut,
-  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

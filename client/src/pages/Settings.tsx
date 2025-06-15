@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,8 +26,8 @@ type Theme = "light" | "dark" | "system";
 
 export default function Settings() {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
-  const [theme, setTheme] = useState<Theme>("system");
   const [notifications, setNotifications] = useState({
     email: true,
     browser: true,
@@ -36,12 +37,6 @@ export default function Settings() {
   const [language, setLanguage] = useState("es");
 
   useEffect(() => {
-    // Load saved theme
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-
     // Load saved settings
     const savedSettings = localStorage.getItem("settings");
     if (savedSettings) {
@@ -51,26 +46,12 @@ export default function Settings() {
     }
   }, []);
 
-  const applyTheme = (newTheme: Theme) => {
-    const root = document.documentElement;
-
-    if (newTheme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light";
-      root.classList.toggle("dark", systemTheme === "dark");
-    } else {
-      root.classList.toggle("dark", newTheme === "dark");
-    }
-  };
-
-  const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
+  const handleThemeChange = (newTheme: "light" | "dark") => {
     setTheme(newTheme);
 
     toast({
       title: "Tema actualizado",
-      description: `Se ha cambiado al tema ${newTheme === "light" ? "claro" : newTheme === "dark" ? "oscuro" : "del sistema"}.`,
+      description: `Se ha cambiado al tema ${newTheme === "light" ? "claro" : "oscuro"}.`,
     });
   };
 
@@ -109,9 +90,8 @@ export default function Settings() {
   };
 
   const resetSettings = () => {
-    localStorage.removeItem("theme");
     localStorage.removeItem("settings");
-    setTheme("system");
+    setTheme("light");
     setNotifications({
       email: true,
       browser: true,
@@ -119,7 +99,6 @@ export default function Settings() {
       results: true,
     });
     setLanguage("es");
-    applyTheme("system");
 
     toast({
       title: "Configuración restablecida",
@@ -152,7 +131,7 @@ export default function Settings() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Tema</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   variant={theme === "light" ? "default" : "outline"}
                   size="sm"
@@ -170,15 +149,6 @@ export default function Settings() {
                 >
                   <Moon className="h-4 w-4" />
                   Oscuro
-                </Button>
-                <Button
-                  variant={theme === "system" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleThemeChange("system")}
-                  className="flex items-center gap-2"
-                >
-                  <Monitor className="h-4 w-4" />
-                  Sistema
                 </Button>
               </div>
             </div>

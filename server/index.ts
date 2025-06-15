@@ -37,6 +37,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize default admin on startup
+  const { storage } = await import("./storage");
+  await storage.createDefaultAdmin();
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

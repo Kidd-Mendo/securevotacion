@@ -4,18 +4,22 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
-import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Elections from "@/pages/Elections";
 import Users from "@/pages/Users";
 import Results from "@/pages/Results";
 import Audit from "@/pages/Audit";
 import Support from "@/pages/Support";
-import Settings from "@/pages/Settings";
 import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
+import Landing from "@/pages/Landing";
+import AdminLogin from "@/pages/AdminLogin";
 import Admin from "@/pages/Admin";
-import Layout from "@/components/Layout";
 import NotFound from "@/pages/not-found";
+import Layout from "@/components/Layout";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -43,6 +47,8 @@ function Router() {
         <Route path="/support" component={Support} />
         <Route path="/profile" component={Profile} />
         <Route path="/settings" component={Settings} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/login" component={AdminLogin} />
         <Route path="*" component={Dashboard} />
       </Switch>
     </Layout>

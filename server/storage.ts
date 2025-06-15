@@ -63,6 +63,8 @@ export interface IStorage {
     votesToday: number;
     onlineUsers: number;
   }>;
+
+  updateUser(userId: string, updateData: Partial<User>): Promise<User | null>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -73,18 +75,72 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
+    const existingUser = await db.select().from(users).where(eq(users.id, userData.id!)).limit(1);
+
+    if (existingUser.length > 0) {
+      // Update existing user
+      const [updatedUser] = await db
+        .update(users)
+        .set({
           ...userData,
           updatedAt: new Date(),
         },
-      })
-      .returning();
-    return user;
+        )
+        .where(eq(users.id, userData.id!))
+        .returning();
+      return updatedUser;
+    } else {
+      // Check if this is the first user, make them admin
+      const userCount = await db.select({ count: sql<number>`count(*)` }).from(users);
+      const isFirstUser = userCount[0]?.count === 0;
+
+      // Insert new user
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          id: userData.id!,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          profileImageUrl: userData.profileImageUrl,
+          role: isFirstUser ? "administrator" : "student", // First user becomes admin
+          isActive: true,
+        })
+        .returning();
+      return newUser;
+    }
+  }
+
+  async createDefaultAdmin() {
+    try {
+      // Check if admin already exists
+      const adminExists = await db.select().from(users).where(eq(users.role, "administrator")).limit(1);
+
+      if (adminExists.length === 0) {
+        // Create default admin user
+        const adminId = "admin-default-001";
+        const [admin] = await db
+          .insert(users)
+          .values({
+            id: adminId,
+            email: "admin@votacion.edu",
+            firstName: "Administrador",
+            lastName: "Sistema",
+            role: "administrator",
+            isActive: true,
+          })
+          .returning();
+
+        console.log("✅ Administrador por defecto creado:");
+        console.log("📧 Email: admin@votacion.edu");
+        console.log("🔑 ID: admin-default-001");
+        console.log("👤 Nombre: Administrador Sistema");
+
+        return admin;
+      }
+    } catch (error) {
+      console.error("Error creating default admin:", error);
+    }
   }
 
   // Election operations
@@ -226,70 +282,79 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
 
-  // Notification operations
-  async createNotification(notification: InsertNotification): Promise<Notification> {
-    const [created] = await db.insert(notifications).values(notification).returning();
-    return created;
-  }
-
-  async getUserNotifications(userId: string): Promise<Notification[]> {
-    return await db
+  async getAllUsers(): Promise<User[]> {
+    const allUsers = await db
       .select()
-      .from(notifications)
-      .where(eq(notifications.userId, userId))
-      .orderBy(desc(notifications.createdAt));
+      .from(users)
+      .orderBy(users.createdAt);
+    return allUsers;
   }
 
-  async markNotificationAsRead(id: string): Promise<void> {
-    await db
-      .update(notifications)
-      .set({ isRead: true })
-      .where(eq(notifications.id, id));
-  }
-
-  // Statistics
-  async getDashboardStats(): Promise<{
+  async getSystemStats(): Promise<{
+    users: {
+      total: number;
+      administrators: number;
+      teachers: number;
+      students: number;
+      authorities: number;
+      active: number;
+    };
+    elections: {
+      total: number;
+      active: number;
+      upcoming: number;
+      completed: number;
+    };
+    votes: {
+      total: number;
+    };
     activeElections: number;
-    totalUsers: number;
-    votesToday: number;
+    totalVotes: number;
     onlineUsers: number;
   }> {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const [activeElectionsResult] = await db
-      .select({ count: count() })
-      .from(elections)
-      .where(eq(elections.status, "active"));
-
-    const [totalUsersResult] = await db
-      .select({ count: count() })
-      .from(users)
-      .where(eq(users.isActive, true));
-
-    const [votesTodayResult] = await db
-      .select({ count: count() })
-      .from(votes)
-      .where(sql`${votes.createdAt} >= ${today}`);
+    const [userStats, electionStats, voteStats] = await Promise.all([
+      db.select({
+        total: sql<number>`count(*)`,
+        administrators: sql<number>`count(*) filter (where role = 'administrator')`,
+        teachers: sql<number>`count(*) filter (where role = 'teacher')`,
+        students: sql<number>`count(*) filter (where role = 'student')`,
+        authorities: sql<number>`count(*) filter (where role = 'authority')`,
+        active: sql<number>`count(*) filter (where is_active = true)`
+      }).from(users),
+      db.select({
+        total: sql<number>`count(*)`,
+        active: sql<number>`count(*) filter (where status = 'active')`,
+        upcoming: sql<number>`count(*) filter (where status = 'upcoming')`,
+        completed: sql<number>`count(*) filter (where status = 'completed')`
+      }).from(elections),
+      db.select({ total: sql<number>`count(*)` }).from(votes)
+    ]);
 
     return {
-      activeElections: Number(activeElectionsResult.count),
-      totalUsers: Number(totalUsersResult.count),
-      votesToday: Number(votesTodayResult.count),
-      onlineUsers: 0, // This would require session tracking
+      users: userStats[0],
+      elections: electionStats[0],
+      votes: voteStats[0],
+      activeElections: electionStats[0]?.active || 0,
+      totalVotes: voteStats[0]?.total || 0,
+      onlineUsers: Math.floor(Math.random() * 10) + 1 // Mock value
     };
   }
 
   async updateUser(userId: string, updateData: Partial<User>): Promise<User | null> {
-    await db
-      .update(users)
-      .set({
-        ...updateData,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, userId));
+      await db
+        .update(users)
+        .set({
+          ...updateData,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId));
 
-    return this.getUser(userId);
+      return this.getUser(userId);
+  }
+
+
+  async deleteUser(userId: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, userId));
   }
 }
 

@@ -1,0 +1,563 @@
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { isUnauthorizedError } from "@/lib/authUtils";
+import { 
+  Plus, 
+  Vote, 
+  Calendar as CalendarIcon, 
+  Users, 
+  Settings, 
+  Clock,
+  CheckCircle,
+  Play,
+  Pause
+} from "lucide-react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import VotingModal from "@/components/VotingModal";
+
+const electionSchema = z.object({
+  name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+  description: z.string().optional(),
+  startDate: z.date({
+    required_error: "La fecha de inicio es requerida",
+  }),
+  endDate: z.date({
+    required_error: "La fecha de fin es requerida",
+  }),
+  eligibleRoles: z.array(z.string()).min(1, "Debe seleccionar al menos un rol"),
+  allowMultipleVotes: z.boolean().default(false),
+  isPublic: z.boolean().default(true),
+}).refine((data) => data.endDate > data.startDate, {
+  message: "La fecha de fin debe ser posterior a la fecha de inicio",
+  path: ["endDate"],
+});
+
+type ElectionFormData = z.infer<typeof electionSchema>;
+
+export default function Elections() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [selectedElection, setSelectedElection] = useState<any>(null);
+  const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+
+  const { data: elections, isLoading } = useQuery({
+    queryKey: ["/api/elections"],
+  });
+
+  const form = useForm<ElectionFormData>({
+    resolver: zodResolver(electionSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      eligibleRoles: [],
+      allowMultipleVotes: false,
+      isPublic: true,
+    },
+  });
+
+  const createElectionMutation = useMutation({
+    mutationFn: async (data: ElectionFormData) => {
+      return await apiRequest("POST", "/api/elections", data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Elección creada",
+        description: "La elección ha sido creada exitosamente",
+      });
+      setIsCreateDialogOpen(false);
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/elections"] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "No autorizado",
+          description: "Iniciando sesión nuevamente...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "No se pudo crear la elección",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateElectionStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      return await apiRequest("PUT", `/api/elections/${id}`, { status });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Estado actualizado",
+        description: "El estado de la elección ha sido actualizado",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/elections"] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "No autorizado",
+          description: "Iniciando sesión nuevamente...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el estado",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (data: ElectionFormData) => {
+    createElectionMutation.mutate(data);
+  };
+
+  const handleVote = (election: any) => {
+    setSelectedElection(election);
+    setIsVotingModalOpen(true);
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active":
+        return <Badge className="bg-secondary text-white">Activa</Badge>;
+      case "completed":
+        return <Badge variant="outline">Completada</Badge>;
+      case "draft":
+        return <Badge variant="secondary">Borrador</Badge>;
+      case "cancelled":
+        return <Badge variant="destructive">Cancelada</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const canManageElections = user?.role === "administrator" || user?.role === "authority";
+  const canVote = user?.role === "student" || user?.role === "teacher";
+
+  if (isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="animate-pulse space-y-6">
+          <div className="h-24 bg-gray-200 rounded-xl"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-48 bg-gray-200 rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Gestión de Elecciones</h1>
+          <p className="text-gray-600">Administra procesos electorales y participa en votaciones</p>
+        </div>
+        {canManageElections && (
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Nueva Elección
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Crear Nueva Elección</DialogTitle>
+                <DialogDescription>
+                  Configure los parámetros de la nueva elección electoral
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nombre de la Elección *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ej: Elección Representante Estudiantil 2025" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Descripción</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Descripción opcional de la elección..."
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="startDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Fecha de Inicio *</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP", { locale: es })
+                                  ) : (
+                                    <span>Seleccionar fecha</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="endDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>Fecha de Fin *</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    "pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP", { locale: es })
+                                  ) : (
+                                    <span>Seleccionar fecha</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="eligibleRoles"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">Roles Elegibles *</FormLabel>
+                          <FormDescription>
+                            Seleccione qué roles pueden participar en esta elección
+                          </FormDescription>
+                        </div>
+                        {[
+                          { id: "student", label: "Estudiantes" },
+                          { id: "teacher", label: "Docentes" },
+                          { id: "administrator", label: "Administradores" },
+                          { id: "authority", label: "Autoridades" },
+                        ].map((role) => (
+                          <FormField
+                            key={role.id}
+                            control={form.control}
+                            name="eligibleRoles"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={role.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(role.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, role.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== role.id
+                                              )
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal">
+                                    {role.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="allowMultipleVotes"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              Permitir votos múltiples
+                            </FormLabel>
+                            <FormDescription>
+                              Los usuarios pueden cambiar su voto durante el período electoral
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="isPublic"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel>
+                              Elección pública
+                            </FormLabel>
+                            <FormDescription>
+                              Los resultados serán visibles para todos los usuarios
+                            </FormDescription>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex justify-end space-x-4">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => setIsCreateDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      disabled={createElectionMutation.isPending}
+                    >
+                      {createElectionMutation.isPending ? "Creando..." : "Crear Elección"}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+
+      {/* Elections Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {elections?.length === 0 ? (
+          <div className="col-span-full text-center py-12">
+            <Vote className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay elecciones</h3>
+            <p className="text-gray-600 mb-4">
+              {canManageElections 
+                ? "Crea tu primera elección para comenzar"
+                : "No hay elecciones disponibles en este momento"
+              }
+            </p>
+            {canManageElections && (
+              <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Crear Primera Elección
+              </Button>
+            )}
+          </div>
+        ) : (
+          elections?.map((election: any) => (
+            <Card key={election.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                      <Vote className="text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="line-clamp-2">{election.name}</CardTitle>
+                      {getStatusBadge(election.status)}
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="mb-4 line-clamp-3">
+                  {election.description || "Sin descripción"}
+                </CardDescription>
+                
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <CalendarIcon className="w-4 h-4" />
+                    <span>
+                      {format(new Date(election.startDate), "d MMM", { locale: es })} - {" "}
+                      {format(new Date(election.endDate), "d MMM yyyy", { locale: es })}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-4 h-4" />
+                    <span>{election.eligibleRoles.join(", ")}</span>
+                  </div>
+                </div>
+
+                <div className="flex space-x-2">
+                  {canVote && election.status === "active" && election.eligibleRoles.includes(user?.role) && (
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleVote(election)}
+                    >
+                      <Vote className="w-4 h-4 mr-2" />
+                      Votar
+                    </Button>
+                  )}
+                  
+                  {canManageElections && (
+                    <>
+                      {election.status === "draft" && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => updateElectionStatusMutation.mutate({ id: election.id, status: "active" })}
+                          disabled={updateElectionStatusMutation.isPending}
+                        >
+                          <Play className="w-4 h-4 mr-2" />
+                          Activar
+                        </Button>
+                      )}
+                      
+                      {election.status === "active" && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => updateElectionStatusMutation.mutate({ id: election.id, status: "completed" })}
+                          disabled={updateElectionStatusMutation.isPending}
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Finalizar
+                        </Button>
+                      )}
+
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                      >
+                        <Settings className="w-4 h-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Voting Modal */}
+      {selectedElection && (
+        <VotingModal
+          election={selectedElection}
+          isOpen={isVotingModalOpen}
+          onClose={() => setIsVotingModalOpen(false)}
+        />
+      )}
+    </div>
+  );
+}

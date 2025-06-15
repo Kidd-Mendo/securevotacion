@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,13 +11,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { User, Settings, Shield, Mail, Calendar, Edit3 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { User, Settings, Shield, Mail, Calendar, Edit3, Check, X } from "lucide-react";
 
 export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -37,6 +47,7 @@ export default function Profile() {
         description: "Tus datos han sido actualizados correctamente.",
       });
       setIsEditing(false);
+      setShowConfirmDialog(false);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: () => {
@@ -45,12 +56,26 @@ export default function Profile() {
         description: "No se pudo actualizar el perfil.",
         variant: "destructive",
       });
+      setShowConfirmDialog(false);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmUpdate = () => {
     updateProfileMutation.mutate(formData);
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+    });
+    setIsEditing(false);
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -71,6 +96,14 @@ export default function Profile() {
       case "educational_authority": return "Autoridad Educativa";
       default: return role;
     }
+  };
+
+  const hasChanges = () => {
+    return (
+      formData.firstName !== (user?.firstName || "") ||
+      formData.lastName !== (user?.lastName || "") ||
+      formData.email !== (user?.email || "")
+    );
   };
 
   if (!user) return null;
@@ -151,10 +184,21 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit" disabled={updateProfileMutation.isPending}>
-                    {updateProfileMutation.isPending ? "Guardando..." : "Guardar cambios"}
+                  <Button 
+                    type="submit" 
+                    disabled={!hasChanges() || updateProfileMutation.isPending}
+                    className="flex items-center gap-2"
+                  >
+                    <Check className="h-4 w-4" />
+                    Guardar cambios
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleCancelEdit}
+                    className="flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
                     Cancelar
                   </Button>
                 </div>
@@ -226,6 +270,66 @@ export default function Profile() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar cambios</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas actualizar tu información de perfil con los siguientes cambios?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="space-y-3 text-sm">
+              {formData.firstName !== (user?.firstName || "") && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Nombre:</span>
+                  <span className="font-medium">{formData.firstName || "Sin especificar"}</span>
+                </div>
+              )}
+              {formData.lastName !== (user?.lastName || "") && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Apellido:</span>
+                  <span className="font-medium">{formData.lastName || "Sin especificar"}</span>
+                </div>
+              )}
+              {formData.email !== (user?.email || "") && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Email:</span>
+                  <span className="font-medium">{formData.email}</span>
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowConfirmDialog(false)}
+              disabled={updateProfileMutation.isPending}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleConfirmUpdate}
+              disabled={updateProfileMutation.isPending}
+              className="flex items-center gap-2"
+            >
+              {updateProfileMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Confirmar cambios
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

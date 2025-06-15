@@ -102,7 +102,7 @@
   }
 
   .security-badge {
-    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary;
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary bg-opacity-10 text-secondary-foreground;
   }
 
   .stat-card {
@@ -114,7 +114,7 @@
   }
 
   .sidebar-nav-item.active {
-    @apply bg-primary text-white hover:bg-primary-dark;
+    @apply bg-primary text-white hover:bg-primary hover:opacity-80;
   }
 
   .election-card {
@@ -142,7 +142,7 @@
   }
 
   .vote-confirmation {
-    @apply p-4 bg-secondary/10 rounded-lg border border-secondary/20;
+    @apply p-4 bg-secondary bg-opacity-10 rounded-lg border border-secondary border-opacity-20;
   }
 
   .candidate-card {

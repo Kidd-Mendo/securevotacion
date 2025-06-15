@@ -62,11 +62,43 @@ export default function Profile() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowConfirmDialog(true);
+    if (hasChanges()) {
+      setShowConfirmDialog(true);
+    }
   };
 
   const handleConfirmUpdate = () => {
     updateProfileMutation.mutate(formData);
+  };
+
+  const getChangedFields = () => {
+    const changes: Array<{ field: string; oldValue: string; newValue: string }> = [];
+    
+    if (formData.firstName !== (user?.firstName || "")) {
+      changes.push({
+        field: "Nombre",
+        oldValue: user?.firstName || "Sin especificar",
+        newValue: formData.firstName || "Sin especificar"
+      });
+    }
+    
+    if (formData.lastName !== (user?.lastName || "")) {
+      changes.push({
+        field: "Apellido", 
+        oldValue: user?.lastName || "Sin especificar",
+        newValue: formData.lastName || "Sin especificar"
+      });
+    }
+    
+    if (formData.email !== (user?.email || "")) {
+      changes.push({
+        field: "Correo electrónico",
+        oldValue: user?.email || "",
+        newValue: formData.email
+      });
+    }
+    
+    return changes;
   };
 
   const handleCancelEdit = () => {
@@ -275,34 +307,43 @@ export default function Profile() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirmar cambios</DialogTitle>
+            <DialogTitle>Confirmar cambios de perfil</DialogTitle>
             <DialogDescription>
-              ¿Estás seguro de que deseas actualizar tu información de perfil con los siguientes cambios?
+              Revisa los cambios que realizarás en tu perfil antes de guardarlos.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <div className="space-y-3 text-sm">
-              {formData.firstName !== (user?.firstName || "") && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Nombre:</span>
-                  <span className="font-medium">{formData.firstName || "Sin especificar"}</span>
-                </div>
-              )}
-              {formData.lastName !== (user?.lastName || "") && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Apellido:</span>
-                  <span className="font-medium">{formData.lastName || "Sin especificar"}</span>
-                </div>
-              )}
-              {formData.email !== (user?.email || "") && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Email:</span>
-                  <span className="font-medium">{formData.email}</span>
-                </div>
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-900">Cambios a realizar:</h4>
+              <div className="space-y-3">
+                {getChangedFields().map((change, index) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm font-medium text-gray-700 mb-1">
+                      {change.field}
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Actual:</span>
+                        <span className="text-gray-600 bg-red-50 px-2 py-1 rounded">
+                          {change.oldValue}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Nuevo:</span>
+                        <span className="text-gray-600 bg-green-50 px-2 py-1 rounded">
+                          {change.newValue}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {getChangedFields().length === 0 && (
+                <p className="text-sm text-gray-500 italic">No hay cambios para guardar.</p>
               )}
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button 
               variant="outline" 
               onClick={() => setShowConfirmDialog(false)}
@@ -312,18 +353,18 @@ export default function Profile() {
             </Button>
             <Button 
               onClick={handleConfirmUpdate}
-              disabled={updateProfileMutation.isPending}
+              disabled={updateProfileMutation.isPending || getChangedFields().length === 0}
               className="flex items-center gap-2"
             >
               {updateProfileMutation.isPending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Guardando...
+                  Guardando cambios...
                 </>
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  Confirmar cambios
+                  Guardar cambios ({getChangedFields().length})
                 </>
               )}
             </Button>

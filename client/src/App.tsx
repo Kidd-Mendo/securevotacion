@@ -20,25 +20,32 @@ import NotFound from "@/pages/not-found";
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Route path="*" component={Landing} />;
+  }
+
   return (
-    <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <Layout>
-          <Route path="/" component={Dashboard} />
-          <Route path="/elections" component={Elections} />
-          <Route path="/users" component={Users} />
-          <Route path="/results" component={Results} />
-          <Route path="/audit" component={Audit} />
-          <Route path="/support" component={Support} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/settings" component={Settings} />
-          <Route component={NotFound} />
-        </Layout>
-      )}
-      <Route component={NotFound} />
-    </Switch>
+    <Layout>
+      <Switch>
+        <Route path="/" component={Dashboard} />
+        <Route path="/elections" component={Elections} />
+        <Route path="/users" component={Users} />
+        <Route path="/results" component={Results} />
+        <Route path="/audit" component={Audit} />
+        <Route path="/support" component={Support} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/settings" component={Settings} />
+        <Route path="*" component={Dashboard} />
+      </Switch>
+    </Layout>
   );
 }
 

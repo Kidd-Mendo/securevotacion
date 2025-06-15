@@ -2,9 +2,21 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Moon, Sun, Bell, Globe, Shield, Monitor } from "lucide-react";
@@ -43,7 +55,10 @@ export default function Settings() {
     const root = document.documentElement;
 
     if (newTheme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
       root.classList.toggle("dark", systemTheme === "dark");
     } else {
       root.classList.toggle("dark", newTheme === "dark");
@@ -59,7 +74,10 @@ export default function Settings() {
     });
   };
 
-  const handleNotificationChange = (key: keyof typeof notifications, value: boolean) => {
+  const handleNotificationChange = (
+    key: keyof typeof notifications,
+    value: boolean,
+  ) => {
     const updatedNotifications = { ...notifications, [key]: value };
     setNotifications(updatedNotifications);
 
@@ -105,7 +123,8 @@ export default function Settings() {
 
     toast({
       title: "Configuración restablecida",
-      description: "Todas las configuraciones han sido restablecidas a los valores por defecto",
+      description:
+        "Todas las configuraciones han sido restablecidas a los valores por defecto",
     });
   };
 
@@ -113,7 +132,9 @@ export default function Settings() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Configuración</h1>
-        <p className="text-gray-600">Personaliza tu experiencia en la plataforma de votación</p>
+        <p className="text-gray-600">
+          Personaliza tu experiencia en la plataforma de votación
+        </p>
       </div>
 
       <div className="grid gap-6">
@@ -179,44 +200,60 @@ export default function Settings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Notificaciones por correo</Label>
-                <p className="text-sm text-gray-500">Recibir notificaciones importantes por email</p>
+                <p className="text-sm text-gray-500">
+                  Recibir notificaciones importantes por email
+                </p>
               </div>
               <Switch
                 checked={notifications.email}
-                onCheckedChange={(checked) => handleNotificationChange("email", checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange("email", checked)
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Notificaciones del navegador</Label>
-                <p className="text-sm text-gray-500">Mostrar notificaciones en el navegador</p>
+                <p className="text-sm text-gray-500">
+                  Mostrar notificaciones en el navegador
+                </p>
               </div>
               <Switch
                 checked={notifications.browser}
-                onCheckedChange={(checked) => handleNotificationChange("browser", checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange("browser", checked)
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Nuevas elecciones</Label>
-                <p className="text-sm text-gray-500">Avisar cuando se creen nuevas elecciones</p>
+                <p className="text-sm text-gray-500">
+                  Avisar cuando se creen nuevas elecciones
+                </p>
               </div>
               <Switch
                 checked={notifications.elections}
-                onCheckedChange={(checked) => handleNotificationChange("elections", checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange("elections", checked)
+                }
               />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Resultados de votación</Label>
-                <p className="text-sm text-gray-500">Notificar cuando estén disponibles los resultados</p>
+                <p className="text-sm text-gray-500">
+                  Notificar cuando estén disponibles los resultados
+                </p>
               </div>
               <Switch
                 checked={notifications.results}
-                onCheckedChange={(checked) => handleNotificationChange("results", checked)}
+                onCheckedChange={(checked) =>
+                  handleNotificationChange("results", checked)
+                }
               />
             </div>
           </CardContent>
@@ -264,17 +301,23 @@ export default function Settings() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm text-gray-500">Autenticación</Label>
-              <p className="text-sm">Tu cuenta está protegida con autenticación segura de Replit</p>
+              <p className="text-sm">
+                Tu cuenta está protegida con autenticación segura de Replit
+              </p>
             </div>
             <Separator />
             <div className="space-y-2">
               <Label className="text-sm text-gray-500">Datos de votación</Label>
-              <p className="text-sm">Todos los votos son encriptados y anónimos</p>
+              <p className="text-sm">
+                Todos los votos son encriptados y anónimos
+              </p>
             </div>
             <Separator />
             <div className="space-y-2">
               <Label className="text-sm text-gray-500">Historial</Label>
-              <p className="text-sm">Tu actividad se registra para auditoría y transparencia</p>
+              <p className="text-sm">
+                Tu actividad se registra para auditoría y transparencia
+              </p>
             </div>
           </CardContent>
         </Card>

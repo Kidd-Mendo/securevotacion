@@ -11,6 +11,9 @@ import Users from "@/pages/Users";
 import Results from "@/pages/Results";
 import Audit from "@/pages/Audit";
 import Support from "@/pages/Support";
+import Profile from "@/pages/Profile";
+import Settings from "@/pages/Settings";
+import Admin from "@/pages/Admin";
 import Layout from "@/components/Layout";
 import NotFound from "@/pages/not-found";
 

@@ -113,7 +113,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteElection(id: string): Promise<boolean> {
     const result = await db.delete(elections).where(eq(elections.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async getActiveElections(): Promise<Election[]> {
@@ -156,7 +156,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCandidate(id: string): Promise<boolean> {
     const result = await db.delete(candidates).where(eq(candidates.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Vote operations

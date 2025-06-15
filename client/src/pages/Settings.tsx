@@ -41,7 +41,7 @@ export default function Settings() {
 
   const applyTheme = (newTheme: Theme) => {
     const root = document.documentElement;
-    
+
     if (newTheme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       root.classList.toggle("dark", systemTheme === "dark");
@@ -50,27 +50,25 @@ export default function Settings() {
     }
   };
 
-  const handleThemeChange = (newTheme: Theme) => {
+  const handleThemeChange = (newTheme: "light" | "dark" | "system") => {
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    applyTheme(newTheme);
-    
+
     toast({
       title: "Tema actualizado",
-      description: `Se ha cambiado al tema ${newTheme === "light" ? "claro" : newTheme === "dark" ? "oscuro" : "del sistema"}`,
+      description: `Se ha cambiado al tema ${newTheme === "light" ? "claro" : newTheme === "dark" ? "oscuro" : "del sistema"}.`,
     });
   };
 
   const handleNotificationChange = (key: keyof typeof notifications, value: boolean) => {
     const updatedNotifications = { ...notifications, [key]: value };
     setNotifications(updatedNotifications);
-    
+
     const settings = {
       notifications: updatedNotifications,
       language,
     };
     localStorage.setItem("settings", JSON.stringify(settings));
-    
+
     toast({
       title: "Configuración guardada",
       description: "Las preferencias de notificaciones han sido actualizadas",
@@ -79,13 +77,13 @@ export default function Settings() {
 
   const handleLanguageChange = (newLanguage: string) => {
     setLanguage(newLanguage);
-    
+
     const settings = {
       notifications,
       language: newLanguage,
     };
     localStorage.setItem("settings", JSON.stringify(settings));
-    
+
     toast({
       title: "Idioma actualizado",
       description: "El idioma de la aplicación ha sido cambiado",
@@ -104,7 +102,7 @@ export default function Settings() {
     });
     setLanguage("es");
     applyTheme("system");
-    
+
     toast({
       title: "Configuración restablecida",
       description: "Todas las configuraciones han sido restablecidas a los valores por defecto",

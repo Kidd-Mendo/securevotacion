@@ -16,6 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/components/ThemeProvider";
 import { 
   Menu, 
   Bell, 
@@ -26,7 +27,9 @@ import {
   LogOut,
   CheckCircle,
   AlertCircle,
-  Info
+  Info,
+  Sun,
+  Moon
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -37,6 +40,7 @@ interface HeaderProps {
 
 export default function Header({ onToggleMobileMenu }: HeaderProps) {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const { data: notifications } = useQuery({
@@ -109,6 +113,21 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="p-2"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
           {/* Notifications */}
           <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <PopoverTrigger asChild>

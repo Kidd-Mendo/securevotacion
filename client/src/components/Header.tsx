@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -10,23 +10,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/hooks/useAuth";
-import { 
-  Menu, 
-  Bell, 
-  ChevronDown, 
-  Shield, 
-  Settings, 
-  User, 
+import { useTheme } from "@/components/ThemeProvider";
+import {
+  Menu,
+  Bell,
+  ChevronDown,
+  Shield,
+  Settings,
+  User,
   LogOut,
   CheckCircle,
   AlertCircle,
-  Info
+  Info,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -37,6 +40,7 @@ interface HeaderProps {
 
 export default function Header({ onToggleMobileMenu }: HeaderProps) {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const { data: notifications } = useQuery({
@@ -70,7 +74,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
   // Mock breadcrumbs - in real app this would be dynamic based on route
   const breadcrumbs = [
     { label: "Inicio", href: "/" },
-    { label: "Panel Principal", href: "/" }
+    { label: "Panel Principal", href: "/" },
   ];
 
   return (
@@ -86,19 +90,22 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
           >
             <Menu className="h-6 w-6" />
           </Button>
-          
+
           {/* Breadcrumbs */}
           <nav className="hidden md:flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2 text-sm">
               {breadcrumbs.map((crumb, index) => (
                 <li key={crumb.href} className="flex items-center">
-                  {index > 0 && (
-                    <span className="breadcrumb-separator">→</span>
-                  )}
+                  {index > 0 && <span className="breadcrumb-separator">→</span>}
                   {index === breadcrumbs.length - 1 ? (
-                    <span className="text-gray-900 font-medium">{crumb.label}</span>
+                    <span className="text-gray-900 font-medium">
+                      {crumb.label}
+                    </span>
                   ) : (
-                    <a href={crumb.href} className="text-gray-500 hover:text-gray-700">
+                    <a
+                      href={crumb.href}
+                      className="text-gray-500 hover:text-gray-700"
+                    >
                       {crumb.label}
                     </a>
                   )}
@@ -109,6 +116,21 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+            className="p-2"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
           {/* Notifications */}
           <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <PopoverTrigger asChild>
@@ -131,7 +153,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                     </Badge>
                   )}
                 </div>
-                
+
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {!notifications || notifications.length === 0 ? (
                     <div className="text-center py-6 text-gray-500">
@@ -143,7 +165,9 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                       <div
                         key={notification.id}
                         className={`p-3 rounded-lg border transition-colors hover:bg-gray-50 ${
-                          !notification.isRead ? "bg-blue-50 border-blue-200" : ""
+                          !notification.isRead
+                            ? "bg-blue-50 border-blue-200"
+                            : ""
                         }`}
                       >
                         <div className="flex items-start space-x-3">
@@ -156,7 +180,11 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                               {notification.message}
                             </p>
                             <p className="text-xs text-gray-500 mt-2">
-                              {format(new Date(notification.createdAt), "d MMM, HH:mm", { locale: es })}
+                              {format(
+                                new Date(notification.createdAt),
+                                "d MMM, HH:mm",
+                                { locale: es },
+                              )}
                             </p>
                           </div>
                           {!notification.isRead && (
@@ -167,7 +195,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                     ))
                   )}
                 </div>
-                
+
                 {notifications && notifications.length > 5 && (
                   <div className="pt-2 border-t">
                     <Button variant="ghost" size="sm" className="w-full">
@@ -188,7 +216,10 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center space-x-2 p-2">
+              <Button
+                variant="ghost"
+                className="flex items-center space-x-2 p-2"
+              >
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                   <span className="text-white text-sm font-medium">
                     {getInitials(user?.firstName, user?.lastName)}
@@ -201,10 +232,9 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {user?.firstName && user?.lastName 
+                    {user?.firstName && user?.lastName
                       ? `${user.firstName} ${user.lastName}`
-                      : "Usuario"
-                    }
+                      : "Usuario"}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user?.email}

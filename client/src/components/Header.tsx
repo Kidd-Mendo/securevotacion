@@ -122,6 +122,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
             size="sm"
             onClick={() => setTheme(theme === "light" ? "dark" : "light")}
             className="p-2"
+            title={theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
           >
             {theme === "dark" ? (
               <Sun className="h-5 w-5" />

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -73,7 +72,7 @@ export default function Profile() {
 
   const getChangedFields = () => {
     const changes: Array<{ field: string; oldValue: string; newValue: string }> = [];
-    
+
     if (formData.firstName !== (user?.firstName || "")) {
       changes.push({
         field: "Nombre",
@@ -81,7 +80,7 @@ export default function Profile() {
         newValue: formData.firstName || "Sin especificar"
       });
     }
-    
+
     if (formData.lastName !== (user?.lastName || "")) {
       changes.push({
         field: "Apellido", 
@@ -89,7 +88,7 @@ export default function Profile() {
         newValue: formData.lastName || "Sin especificar"
       });
     }
-    
+
     if (formData.email !== (user?.email || "")) {
       changes.push({
         field: "Correo electrónico",
@@ -97,7 +96,7 @@ export default function Profile() {
         newValue: formData.email
       });
     }
-    
+
     return changes;
   };
 

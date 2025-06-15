@@ -304,6 +304,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile update endpoint
+  app.patch('/api/profile/update', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName, email } = req.body;
+
+      // Validation
+      if (!firstName && !lastName && !email) {
+        return res.status(400).json({ message: "At least one field is required" });
+      }
+
+      if (email && !/\S+@\S+\.\S+/.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      // Update user profile
+      const updateData: any = {};
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (email !== undefined) updateData.email = email;
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+
+      // Create audit log
+      await storage.createAuditLog({
+        userId,
+        action: "UPDATE_PROFILE",
+        resource: "user",
+        resourceId: userId,
+        details: updateData,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({
+        message: "Profile updated successfully",
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   // Audit logs endpoint
   app.get('/api/audit-logs', isAuthenticated, async (req: any, res) => {
     try {

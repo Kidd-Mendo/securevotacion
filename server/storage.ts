@@ -26,7 +26,7 @@ export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
-  
+
   // Election operations
   getElections(): Promise<Election[]>;
   getElectionById(id: string): Promise<Election | undefined>;
@@ -34,28 +34,28 @@ export interface IStorage {
   updateElection(id: string, updates: Partial<InsertElection>): Promise<Election | undefined>;
   deleteElection(id: string): Promise<boolean>;
   getActiveElections(): Promise<Election[]>;
-  
+
   // Candidate operations
   getCandidatesByElection(electionId: string): Promise<Candidate[]>;
   createCandidate(candidate: InsertCandidate): Promise<Candidate>;
   updateCandidate(id: string, updates: Partial<InsertCandidate>): Promise<Candidate | undefined>;
   deleteCandidate(id: string): Promise<boolean>;
-  
+
   // Vote operations
   createVote(vote: Omit<InsertVote, "voterHash" | "transactionId">, voterId: string): Promise<Vote>;
   getVotesByElection(electionId: string): Promise<Vote[]>;
   hasUserVoted(electionId: string, voterId: string): Promise<boolean>;
   getElectionResults(electionId: string): Promise<Array<{ candidateId: string; candidateName: string; voteCount: number }>>;
-  
+
   // Audit operations
   createAuditLog(log: InsertAuditLog): Promise<AuditLog>;
   getAuditLogs(limit?: number): Promise<AuditLog[]>;
-  
+
   // Notification operations
   createNotification(notification: InsertNotification): Promise<Notification>;
   getUserNotifications(userId: string): Promise<Notification[]>;
   markNotificationAsRead(id: string): Promise<void>;
-  
+
   // Statistics
   getDashboardStats(): Promise<{
     activeElections: number;
@@ -163,7 +163,7 @@ export class DatabaseStorage implements IStorage {
   async createVote(vote: Omit<InsertVote, "voterHash" | "transactionId">, voterId: string): Promise<Vote> {
     const voterHash = crypto.createHash('sha256').update(voterId + vote.electionId).digest('hex');
     const transactionId = `VT-${new Date().getFullYear()}-${Date.now()}`;
-    
+
     const [created] = await db
       .insert(votes)
       .values({
@@ -278,6 +278,18 @@ export class DatabaseStorage implements IStorage {
       votesToday: Number(votesTodayResult.count),
       onlineUsers: 0, // This would require session tracking
     };
+  }
+
+  async updateUser(userId: string, updateData: Partial<User>): Promise<User | null> {
+    await db
+      .update(users)
+      .set({
+        ...updateData,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
+
+    return this.getUser(userId);
   }
 }
 

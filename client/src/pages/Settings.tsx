@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,13 +19,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Moon, Sun, Bell, Globe, Shield, Monitor } from "lucide-react";
-
-type Theme = "light" | "dark" | "system";
+import { Bell, Globe, Shield } from "lucide-react";
 
 export default function Settings() {
   const { user } = useAuth();
-  const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [notifications, setNotifications] = useState({
     email: true,
@@ -45,15 +41,6 @@ export default function Settings() {
       setLanguage(settings.language || "es");
     }
   }, []);
-
-  const handleThemeChange = (newTheme: "light" | "dark") => {
-    setTheme(newTheme);
-
-    toast({
-      title: "Tema actualizado",
-      description: `Se ha cambiado al tema ${newTheme === "light" ? "claro" : "oscuro"}.`,
-    });
-  };
 
   const handleNotificationChange = (
     key: keyof typeof notifications,
@@ -91,7 +78,6 @@ export default function Settings() {
 
   const resetSettings = () => {
     localStorage.removeItem("settings");
-    setTheme("light");
     setNotifications({
       email: true,
       browser: true,
@@ -117,44 +103,6 @@ export default function Settings() {
       </div>
 
       <div className="grid gap-6">
-        {/* Tema */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Monitor className="h-5 w-5" />
-              Apariencia
-            </CardTitle>
-            <CardDescription>
-              Personaliza la apariencia de la aplicación
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Tema</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant={theme === "light" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleThemeChange("light")}
-                  className="flex items-center gap-2"
-                >
-                  <Sun className="h-4 w-4" />
-                  Claro
-                </Button>
-                <Button
-                  variant={theme === "dark" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleThemeChange("dark")}
-                  className="flex items-center gap-2"
-                >
-                  <Moon className="h-4 w-4" />
-                  Oscuro
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Notificaciones */}
         <Card>
           <CardHeader>

@@ -304,6 +304,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile update endpoint
+  app.patch('/api/profile/update', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { firstName, lastName, email } = req.body;
+
+      // Validation
+      if (!firstName && !lastName && !email) {
+        return res.status(400).json({ message: "At least one field is required" });
+      }
+
+      if (email && !/\S+@\S+\.\S+/.test(email)) {
+        return res.status(400).json({ message: "Invalid email format" });
+      }
+
+      // Update user profile
+      const updateData: any = {};
+      if (firstName !== undefined) updateData.firstName = firstName;
+      if (lastName !== undefined) updateData.lastName = lastName;
+      if (email !== undefined) updateData.email = email;
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+
+      // Create audit log
+      await storage.createAuditLog({
+        userId,
+        action: "UPDATE_PROFILE",
+        resource: "user",
+        resourceId: userId,
+        details: updateData,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({
+        message: "Profile updated successfully",
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
   // Audit logs endpoint
   app.get('/api/audit-logs', isAuthenticated, async (req: any, res) => {
     try {
@@ -316,6 +360,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const limit = req.query.limit ? parseInt(req.query.limit) : 100;
       const logs = await storage.getAuditLogs(limit);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching audit logs:", error);
+      res.status(500).json({ message: "Failed to fetch audit logs" });
+    }
+  });
+
+  // Admin routes
+  app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const allUsers = await storage.getAllUsers();
+      res.json(allUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.get('/api/admin/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const stats = await storage.getSystemStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching system stats:", error);
+      res.status(500).json({ message: "Failed to fetch system stats" });
+    }
+  });
+
+  app.patch('/api/admin/users/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (!currentUser || currentUser.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const { userId } = req.params;
+      const updateData = req.body;
+
+      const updatedUser = await storage.updateUser(userId, updateData);
+      
+      // Create audit log
+      await storage.createAuditLog({
+        userId: currentUserId,
+        action: "UPDATE_USER",
+        resource: "user",
+        resourceId: userId,
+        details: updateData,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete('/api/admin/users/:userId', isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (!currentUser || currentUser.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const { userId } = req.params;
+      
+      // Prevent admin from deleting themselves
+      if (userId === currentUserId) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+
+      await storage.deleteUser(userId);
+      
+      // Create audit log
+      await storage.createAuditLog({
+        userId: currentUserId,
+        action: "DELETE_USER",
+        resource: "user",
+        resourceId: userId,
+        details: { deletedUserId: userId },
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
+  app.post('/api/admin/users/:userId/make-admin', isAuthenticated, async (req: any, res) => {
+    try {
+      const currentUserId = req.user.claims.sub;
+      const currentUser = await storage.getUser(currentUserId);
+      
+      if (!currentUser || currentUser.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const { userId } = req.params;
+      
+      const updatedUser = await storage.updateUser(userId, { role: "administrator" });
+      
+      // Create audit log
+      await storage.createAuditLog({
+        userId: currentUserId,
+        action: "GRANT_ADMIN",
+        resource: "user",
+        resourceId: userId,
+        details: { newRole: "administrator" },
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error granting admin privileges:", error);
+      res.status(500).json({ message: "Failed to grant admin privileges" });
+    }
+  });
+
+  app.get('/api/admin/audit', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      if (!user || user.role !== "administrator") {
+        return res.status(403).json({ message: "Administrator access required" });
+      }
+
+      const logs = await storage.getAuditLogs(50);
       res.json(logs);
     } catch (error) {
       console.error("Error fetching audit logs:", error);

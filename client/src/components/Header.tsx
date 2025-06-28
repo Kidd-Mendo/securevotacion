@@ -194,6 +194,14 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
             <span className="text-sm font-medium">Conexión Segura</span>
           </div>
 
+          {/* Admin Badge */}
+          {user?.role === "administrator" && (
+            <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
+              <Crown className="w-4 h-4" />
+              <span className="text-sm font-medium">Admin</span>
+            </div>
+          )}
+
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

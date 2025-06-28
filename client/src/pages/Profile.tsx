@@ -10,13 +10,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { User, Settings, Shield, Mail, Calendar, Edit3 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { User, Settings, Shield, Mail, Calendar, Edit3, Check, X } from "lucide-react";
 
 export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -37,6 +46,7 @@ export default function Profile() {
         description: "Tus datos han sido actualizados correctamente.",
       });
       setIsEditing(false);
+      setShowConfirmDialog(false);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: () => {
@@ -45,12 +55,58 @@ export default function Profile() {
         description: "No se pudo actualizar el perfil.",
         variant: "destructive",
       });
+      setShowConfirmDialog(false);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (hasChanges()) {
+      setShowConfirmDialog(true);
+    }
+  };
+
+  const handleConfirmUpdate = () => {
     updateProfileMutation.mutate(formData);
+  };
+
+  const getChangedFields = () => {
+    const changes: Array<{ field: string; oldValue: string; newValue: string }> = [];
+
+    if (formData.firstName !== (user?.firstName || "")) {
+      changes.push({
+        field: "Nombre",
+        oldValue: user?.firstName || "Sin especificar",
+        newValue: formData.firstName || "Sin especificar"
+      });
+    }
+
+    if (formData.lastName !== (user?.lastName || "")) {
+      changes.push({
+        field: "Apellido", 
+        oldValue: user?.lastName || "Sin especificar",
+        newValue: formData.lastName || "Sin especificar"
+      });
+    }
+
+    if (formData.email !== (user?.email || "")) {
+      changes.push({
+        field: "Correo electrónico",
+        oldValue: user?.email || "",
+        newValue: formData.email
+      });
+    }
+
+    return changes;
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+    });
+    setIsEditing(false);
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -71,6 +127,14 @@ export default function Profile() {
       case "educational_authority": return "Autoridad Educativa";
       default: return role;
     }
+  };
+
+  const hasChanges = () => {
+    return (
+      formData.firstName !== (user?.firstName || "") ||
+      formData.lastName !== (user?.lastName || "") ||
+      formData.email !== (user?.email || "")
+    );
   };
 
   if (!user) return null;
@@ -151,10 +215,21 @@ export default function Profile() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit" disabled={updateProfileMutation.isPending}>
-                    {updateProfileMutation.isPending ? "Guardando..." : "Guardar cambios"}
+                  <Button 
+                    type="submit" 
+                    disabled={!hasChanges() || updateProfileMutation.isPending}
+                    className="flex items-center gap-2"
+                  >
+                    <Check className="h-4 w-4" />
+                    Guardar cambios
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleCancelEdit}
+                    className="flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
                     Cancelar
                   </Button>
                 </div>
@@ -226,6 +301,75 @@ export default function Profile() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar cambios de perfil</DialogTitle>
+            <DialogDescription>
+              Revisa los cambios que realizarás en tu perfil antes de guardarlos.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-900">Cambios a realizar:</h4>
+              <div className="space-y-3">
+                {getChangedFields().map((change, index) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    <div className="text-sm font-medium text-gray-700 mb-1">
+                      {change.field}
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Actual:</span>
+                        <span className="text-gray-600 bg-red-50 px-2 py-1 rounded">
+                          {change.oldValue}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Nuevo:</span>
+                        <span className="text-gray-600 bg-green-50 px-2 py-1 rounded">
+                          {change.newValue}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {getChangedFields().length === 0 && (
+                <p className="text-sm text-gray-500 italic">No hay cambios para guardar.</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowConfirmDialog(false)}
+              disabled={updateProfileMutation.isPending}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleConfirmUpdate}
+              disabled={updateProfileMutation.isPending || getChangedFields().length === 0}
+              className="flex items-center gap-2"
+            >
+              {updateProfileMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Guardando cambios...
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Guardar cambios ({getChangedFields().length})
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { Link, useLocation } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -12,8 +11,10 @@ import {
   User,
   Settings,
   LogOut,
+  Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 interface SidebarProps {
   isMobileMenuOpen: boolean;

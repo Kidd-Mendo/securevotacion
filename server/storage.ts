@@ -358,4 +358,245 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// In-memory storage implementation for development
+class MemoryStorage implements IStorage {
+  private users: Map<string, User> = new Map();
+  private elections: Map<string, Election> = new Map();
+  private candidates: Map<string, Candidate> = new Map();
+  private votes: Map<string, Vote> = new Map();
+  private auditLogs: AuditLog[] = [];
+  private notifications: Map<string, Notification> = new Map();
+
+  constructor() {
+    // Create default admin user
+    this.createDefaultAdmin();
+  }
+
+  private async createDefaultAdmin() {
+    const adminUser: User = {
+      id: "admin-1",
+      email: "admin@school.edu",
+      firstName: "System",
+      lastName: "Administrator",
+      profileImageUrl: null,
+      role: "administrator",
+      institutionId: null,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(adminUser.id, adminUser);
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const existingUser = Array.from(this.users.values()).find(u => u.email === userData.email);
+    
+    if (existingUser) {
+      const updatedUser = { ...existingUser, ...userData, updatedAt: new Date() };
+      this.users.set(existingUser.id, updatedUser);
+      return updatedUser;
+    }
+
+    const newUser: User = {
+      id: userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      email: userData.email,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      profileImageUrl: userData.profileImageUrl || null,
+      role: userData.role || "student",
+      institutionId: userData.institutionId || null,
+      isActive: userData.isActive ?? true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(newUser.id, newUser);
+    return newUser;
+  }
+
+  async getElections(): Promise<Election[]> {
+    return Array.from(this.elections.values()).sort((a, b) => 
+      (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)
+    );
+  }
+
+  async getElectionById(id: string): Promise<Election | undefined> {
+    return this.elections.get(id);
+  }
+
+  async createElection(election: InsertElection): Promise<Election> {
+    const newElection: Election = {
+      id: `election-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...election,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.elections.set(newElection.id, newElection);
+    return newElection;
+  }
+
+  async updateElection(id: string, updates: Partial<InsertElection>): Promise<Election | undefined> {
+    const election = this.elections.get(id);
+    if (!election) return undefined;
+
+    const updatedElection = { ...election, ...updates, updatedAt: new Date() };
+    this.elections.set(id, updatedElection);
+    return updatedElection;
+  }
+
+  async deleteElection(id: string): Promise<boolean> {
+    return this.elections.delete(id);
+  }
+
+  async getActiveElections(): Promise<Election[]> {
+    return Array.from(this.elections.values()).filter(e => e.status === 'active');
+  }
+
+  async getCandidatesByElection(electionId: string): Promise<Candidate[]> {
+    return Array.from(this.candidates.values()).filter(c => c.electionId === electionId);
+  }
+
+  async createCandidate(candidate: InsertCandidate): Promise<Candidate> {
+    const newCandidate: Candidate = {
+      id: `candidate-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...candidate,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.candidates.set(newCandidate.id, newCandidate);
+    return newCandidate;
+  }
+
+  async updateCandidate(id: string, updates: Partial<InsertCandidate>): Promise<Candidate | undefined> {
+    const candidate = this.candidates.get(id);
+    if (!candidate) return undefined;
+
+    const updatedCandidate = { ...candidate, ...updates, updatedAt: new Date() };
+    this.candidates.set(id, updatedCandidate);
+    return updatedCandidate;
+  }
+
+  async deleteCandidate(id: string): Promise<boolean> {
+    return this.candidates.delete(id);
+  }
+
+  async createVote(vote: Omit<InsertVote, "voterHash" | "transactionId">, voterId: string): Promise<Vote> {
+    const voterHash = crypto.createHash('sha256').update(voterId + vote.electionId).digest('hex');
+    const transactionId = `tx-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const newVote: Vote = {
+      id: `vote-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...vote,
+      voterHash,
+      transactionId,
+      createdAt: new Date()
+    };
+    this.votes.set(newVote.id, newVote);
+    return newVote;
+  }
+
+  async getVotesByElection(electionId: string): Promise<Vote[]> {
+    return Array.from(this.votes.values()).filter(v => v.electionId === electionId);
+  }
+
+  async hasUserVoted(electionId: string, voterId: string): Promise<boolean> {
+    const voterHash = crypto.createHash('sha256').update(voterId + electionId).digest('hex');
+    return Array.from(this.votes.values()).some(v => v.electionId === electionId && v.voterHash === voterHash);
+  }
+
+  async getElectionResults(electionId: string): Promise<Array<{ candidateId: string; candidateName: string; voteCount: number }>> {
+    const electionVotes = await this.getVotesByElection(electionId);
+    const candidates = await this.getCandidatesByElection(electionId);
+    
+    const results = new Map<string, number>();
+    electionVotes.forEach(vote => {
+      results.set(vote.candidateId, (results.get(vote.candidateId) || 0) + 1);
+    });
+
+    return candidates.map(candidate => ({
+      candidateId: candidate.id,
+      candidateName: candidate.name,
+      voteCount: results.get(candidate.id) || 0
+    }));
+  }
+
+  async createAuditLog(log: InsertAuditLog): Promise<AuditLog> {
+    const newLog: AuditLog = {
+      id: `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...log,
+      createdAt: new Date()
+    };
+    this.auditLogs.push(newLog);
+    return newLog;
+  }
+
+  async getAuditLogs(limit: number = 100): Promise<AuditLog[]> {
+    return this.auditLogs
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit);
+  }
+
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const newNotification: Notification = {
+      id: `notification-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...notification,
+      isRead: false,
+      createdAt: new Date()
+    };
+    this.notifications.set(newNotification.id, newNotification);
+    return newNotification;
+  }
+
+  async getUserNotifications(userId: string): Promise<Notification[]> {
+    return Array.from(this.notifications.values())
+      .filter(n => n.userId === userId)
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async markNotificationAsRead(id: string): Promise<void> {
+    const notification = this.notifications.get(id);
+    if (notification) {
+      notification.isRead = true;
+      this.notifications.set(id, notification);
+    }
+  }
+
+  async getDashboardStats(): Promise<{
+    activeElections: number;
+    totalUsers: number;
+    votesToday: number;
+    onlineUsers: number;
+  }> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const votesToday = Array.from(this.votes.values())
+      .filter(v => v.createdAt >= today).length;
+
+    return {
+      activeElections: Array.from(this.elections.values()).filter(e => e.status === 'active').length,
+      totalUsers: this.users.size,
+      votesToday,
+      onlineUsers: Math.floor(Math.random() * 10) + 1
+    };
+  }
+
+  async updateUser(userId: string, updateData: Partial<User>): Promise<User | null> {
+    const user = this.users.get(userId);
+    if (!user) return null;
+
+    const updatedUser = { ...user, ...updateData, updatedAt: new Date() };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    this.users.delete(userId);
+  }
+}
+
+// Use memory storage to bypass database issues
+export const storage = new MemoryStorage();

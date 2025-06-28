@@ -21,6 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Bell, Globe, Shield } from "lucide-react";
 
+
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();

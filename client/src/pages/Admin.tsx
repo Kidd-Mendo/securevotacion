@@ -5,14 +5,60 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Users, Settings, Shield, Activity, Plus, Edit, Trash2, Search, Crown } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Users,
+  Settings,
+  Shield,
+  Activity,
+  Plus,
+  Edit,
+  Trash2,
+  Search,
+  Crown,
+} from "lucide-react";
 import type { User } from "@shared/schema";
 
 export default function Admin() {
@@ -35,7 +81,13 @@ export default function Admin() {
   });
 
   const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, data }: { userId: string; data: Partial<User> }) => {
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: Partial<User>;
+    }) => {
       await apiRequest(`/api/admin/users/${userId}`, {
         method: "PATCH",
         body: JSON.stringify(data),
@@ -45,7 +97,8 @@ export default function Admin() {
     onSuccess: () => {
       toast({
         title: "Usuario actualizado",
-        description: "Los datos del usuario han sido actualizados correctamente.",
+        description:
+          "Los datos del usuario han sido actualizados correctamente.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/users"] });
       setEditingUser(null);
@@ -104,30 +157,41 @@ export default function Admin() {
   });
 
   const filteredUsers = users.filter((user: User) => {
-    const matchesSearch = user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = selectedRole === "all" || user.role === selectedRole;
     return matchesSearch && matchesRole;
   });
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case "administrator": return "destructive";
-      case "teacher": return "default";
-      case "student": return "secondary";
-      case "educational_authority": return "outline";
-      default: return "secondary";
+      case "administrator":
+        return "destructive";
+      case "teacher":
+        return "default";
+      case "student":
+        return "secondary";
+      case "educational_authority":
+        return "outline";
+      default:
+        return "secondary";
     }
   };
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case "administrator": return "Administrador";
-      case "teacher": return "Profesor";
-      case "student": return "Estudiante";
-      case "educational_authority": return "Autoridad Educativa";
-      default: return role;
+      case "administrator":
+        return "Administrador";
+      case "teacher":
+        return "Profesor";
+      case "student":
+        return "Estudiante";
+      case "educational_authority":
+        return "Autoridad Educativa";
+      default:
+        return role;
     }
   };
 
@@ -151,7 +215,9 @@ export default function Admin() {
           <Crown className="h-8 w-8 text-yellow-500" />
           Panel de Administración
         </h1>
-        <p className="text-gray-600">Gestiona usuarios, configuraciones y monitorea el sistema</p>
+        <p className="text-gray-600">
+          Gestiona usuarios, configuraciones y monitorea el sistema
+        </p>
       </div>
 
       <Tabs defaultValue="users" className="space-y-4">
@@ -175,7 +241,9 @@ export default function Admin() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Usuarios
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -184,7 +252,9 @@ export default function Admin() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Administradores</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Administradores
+                </CardTitle>
                 <Crown className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -195,7 +265,9 @@ export default function Admin() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Profesores</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Profesores
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -206,7 +278,9 @@ export default function Admin() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Estudiantes</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Estudiantes
+                </CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -221,7 +295,9 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Gestión de Usuarios</CardTitle>
-              <CardDescription>Administra roles y permisos de usuarios</CardDescription>
+              <CardDescription>
+                Administra roles y permisos de usuarios
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-4">
@@ -246,10 +322,14 @@ export default function Admin() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos los roles</SelectItem>
-                      <SelectItem value="administrator">Administradores</SelectItem>
+                      <SelectItem value="administrator">
+                        Administradores
+                      </SelectItem>
                       <SelectItem value="teacher">Profesores</SelectItem>
                       <SelectItem value="student">Estudiantes</SelectItem>
-                      <SelectItem value="educational_authority">Autoridades</SelectItem>
+                      <SelectItem value="educational_authority">
+                        Autoridades
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -289,28 +369,44 @@ export default function Admin() {
                               <div className="font-medium">
                                 {user.firstName} {user.lastName}
                               </div>
-                              <div className="text-sm text-gray-500">ID: {user.id}</div>
+                              <div className="text-sm text-gray-500">
+                                ID: {user.id}
+                              </div>
                             </div>
                           </TableCell>
                           <TableCell>{user.email}</TableCell>
                           <TableCell>
-                            <Badge variant={getRoleBadgeColor(user.role || "student")}>
+                            <Badge
+                              variant={getRoleBadgeColor(
+                                user.role || "student",
+                              )}
+                            >
                               {getRoleDisplayName(user.role || "student")}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant={user.isActive ? "default" : "secondary"}>
+                            <Badge
+                              variant={user.isActive ? "default" : "secondary"}
+                            >
                               {user.isActive ? "Activo" : "Inactivo"}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {user.createdAt ? new Date(user.createdAt).toLocaleDateString("es-ES") : "N/A"}
+                            {user.createdAt
+                              ? new Date(user.createdAt).toLocaleDateString(
+                                  "es-ES",
+                                )
+                              : "N/A"}
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button variant="outline" size="sm" onClick={() => handleEditUser(user)}>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleEditUser(user)}
+                                  >
                                     <Edit className="h-4 w-4" />
                                   </Button>
                                 </DialogTrigger>
@@ -318,7 +414,8 @@ export default function Admin() {
                                   <DialogHeader>
                                     <DialogTitle>Editar Usuario</DialogTitle>
                                     <DialogDescription>
-                                      Modifica la información y permisos del usuario
+                                      Modifica la información y permisos del
+                                      usuario
                                     </DialogDescription>
                                   </DialogHeader>
                                   {editingUser && (
@@ -327,16 +424,26 @@ export default function Admin() {
                                         <Label>Rol</Label>
                                         <Select
                                           value={editingUser.role}
-                                          onValueChange={(role) => handleUpdateUser({ role })}
+                                          onValueChange={(role) =>
+                                            handleUpdateUser({ role })
+                                          }
                                         >
                                           <SelectTrigger>
                                             <SelectValue />
                                           </SelectTrigger>
                                           <SelectContent>
-                                            <SelectItem value="student">Estudiante</SelectItem>
-                                            <SelectItem value="teacher">Profesor</SelectItem>
-                                            <SelectItem value="administrator">Administrador</SelectItem>
-                                            <SelectItem value="educational_authority">Autoridad Educativa</SelectItem>
+                                            <SelectItem value="student">
+                                              Estudiante
+                                            </SelectItem>
+                                            <SelectItem value="teacher">
+                                              Profesor
+                                            </SelectItem>
+                                            <SelectItem value="administrator">
+                                              Administrador
+                                            </SelectItem>
+                                            <SelectItem value="educational_authority">
+                                              Autoridad Educativa
+                                            </SelectItem>
                                           </SelectContent>
                                         </Select>
                                       </div>
@@ -345,26 +452,34 @@ export default function Admin() {
                                           type="checkbox"
                                           id="isActive"
                                           checked={editingUser.isActive}
-                                          onChange={(e) => handleUpdateUser({ isActive: e.target.checked })}
+                                          onChange={(e) =>
+                                            handleUpdateUser({
+                                              isActive: e.target.checked,
+                                            })
+                                          }
                                         />
-                                        <Label htmlFor="isActive">Usuario activo</Label>
+                                        <Label htmlFor="isActive">
+                                          Usuario activo
+                                        </Label>
                                       </div>
                                     </div>
                                   )}
                                 </DialogContent>
                               </Dialog>
-                              
+
                               {user.role !== "administrator" && (
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => makeAdminMutation.mutate(user.id)}
+                                  onClick={() =>
+                                    makeAdminMutation.mutate(user.id)
+                                  }
                                   disabled={makeAdminMutation.isPending}
                                 >
                                   <Crown className="h-4 w-4" />
                                 </Button>
                               )}
-                              
+
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                   <Button variant="outline" size="sm">
@@ -373,15 +488,23 @@ export default function Admin() {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                   <AlertDialogHeader>
-                                    <AlertDialogTitle>¿Eliminar usuario?</AlertDialogTitle>
+                                    <AlertDialogTitle>
+                                      ¿Eliminar usuario?
+                                    </AlertDialogTitle>
                                     <AlertDialogDescription>
-                                      Esta acción no se puede deshacer. El usuario será eliminado permanentemente del sistema.
+                                      Esta acción no se puede deshacer. El
+                                      usuario será eliminado permanentemente del
+                                      sistema.
                                     </AlertDialogDescription>
                                   </AlertDialogHeader>
                                   <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                    <AlertDialogCancel>
+                                      Cancelar
+                                    </AlertDialogCancel>
                                     <AlertDialogAction
-                                      onClick={() => deleteUserMutation.mutate(user.id)}
+                                      onClick={() =>
+                                        deleteUserMutation.mutate(user.id)
+                                      }
                                       className="bg-red-600 hover:bg-red-700"
                                     >
                                       Eliminar
@@ -405,21 +528,35 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Estadísticas del Sistema</CardTitle>
-              <CardDescription>Métricas y configuración general</CardDescription>
+              <CardDescription>
+                Métricas y configuración general
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">Elecciones activas</Label>
-                  <p className="text-2xl font-bold">{systemStats?.activeElections || 0}</p>
+                  <Label className="text-sm text-gray-500">
+                    Elecciones activas
+                  </Label>
+                  <p className="text-2xl font-bold">
+                    {systemStats?.activeElections || 0}
+                  </p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">Votos registrados</Label>
-                  <p className="text-2xl font-bold">{systemStats?.totalVotes || 0}</p>
+                  <Label className="text-sm text-gray-500">
+                    Votos registrados
+                  </Label>
+                  <p className="text-2xl font-bold">
+                    {systemStats?.totalVotes || 0}
+                  </p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">Usuarios online</Label>
-                  <p className="text-2xl font-bold">{systemStats?.onlineUsers || 0}</p>
+                  <Label className="text-sm text-gray-500">
+                    Usuarios online
+                  </Label>
+                  <p className="text-2xl font-bold">
+                    {systemStats?.onlineUsers || 0}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -430,15 +567,22 @@ export default function Admin() {
           <Card>
             <CardHeader>
               <CardTitle>Registro de Auditoría</CardTitle>
-              <CardDescription>Historial de actividades del sistema</CardDescription>
+              <CardDescription>
+                Historial de actividades del sistema
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {auditLogs.length === 0 ? (
-                  <p className="text-center py-6 text-gray-500">No hay registros de auditoría</p>
+                  <p className="text-center py-6 text-gray-500">
+                    No hay registros de auditoría
+                  </p>
                 ) : (
                   auditLogs.slice(0, 10).map((log: any) => (
-                    <div key={log.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={log.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div>
                         <p className="font-medium">{log.action}</p>
                         <p className="text-sm text-gray-500">{log.details}</p>

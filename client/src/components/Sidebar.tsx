@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/lib/i18n";
 
 interface SidebarProps {
   isMobileMenuOpen: boolean;
@@ -27,6 +28,7 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
   const { user } = useAuth();
   const [location] = useLocation();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
@@ -38,10 +40,10 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
 
   const getRoleName = (role: string) => {
     const roleNames = {
-      student: "Estudiante",
-      teacher: "Docente", 
-      administrator: "Administrador",
-      authority: "Autoridad"
+      student: t.roles.student,
+      teacher: t.roles.teacher, 
+      administrator: t.roles.administrator,
+      authority: t.roles.authority
     };
     return roleNames[role as keyof typeof roleNames] || role;
   };
@@ -51,24 +53,24 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
     {
       href: "/",
       icon: LayoutDashboard,
-      label: "Panel Principal",
-      description: "Vista general del sistema",
+      label: t.nav.dashboard,
+      description: t.menuDescriptions.dashboard,
       isActive: location === "/",
       keyboardShortcut: "Alt+1",
     },
     {
       href: "/elections",
       icon: Vote,
-      label: "Elecciones",
-      description: "Gestionar procesos electorales",
+      label: t.nav.elections,
+      description: t.menuDescriptions.elections,
       isActive: location === "/elections",
       keyboardShortcut: "Alt+2",
     },
     {
       href: "/users",
       icon: Users,
-      label: "Usuarios",
-      description: "Administrar usuarios del sistema",
+      label: t.nav.users,
+      description: t.menuDescriptions.users,
       isActive: location === "/users",
       visible: user?.role === "administrator" || user?.role === "authority",
       keyboardShortcut: "Alt+3",
@@ -76,16 +78,16 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
     {
       href: "/results",
       icon: BarChart3,
-      label: "Resultados",
-      description: "Ver resultados electorales",
+      label: t.nav.results,
+      description: t.menuDescriptions.results,
       isActive: location === "/results",
       keyboardShortcut: "Alt+4",
     },
     {
       href: "/audit",
       icon: Shield,
-      label: "Auditoría",
-      description: "Registro de actividades",
+      label: t.nav.audit,
+      description: t.menuDescriptions.audit,
       isActive: location === "/audit",
       visible: user?.role === "administrator" || user?.role === "authority",
       keyboardShortcut: "Alt+5",
@@ -93,8 +95,8 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
     {
       href: "/support",
       icon: LifeBuoy,
-      label: "Soporte",
-      description: "Ayuda y contacto",
+      label: t.nav.support,
+      description: t.menuDescriptions.support,
       isActive: location === "/support",
       keyboardShortcut: "Alt+6",
     },
@@ -249,7 +251,7 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
               aria-label="Cerrar sesión del sistema"
             >
               <LogOut className="text-lg mr-3" aria-hidden="true" />
-              <span className="font-medium">Cerrar Sesión</span>
+              <span className="font-medium">{t.nav.logout}</span>
             </Button>
           </div>
         </div>
@@ -371,7 +373,7 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
               aria-label="Cerrar sesión del sistema"
             >
               <LogOut className="text-lg mr-3" aria-hidden="true" />
-              <span className="font-medium">Cerrar Sesión</span>
+              <span className="font-medium">{t.nav.logout}</span>
             </Button>
           </div>
         </div>

@@ -32,6 +32,8 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTranslation } from "@/lib/i18n";
 
 interface HeaderProps {
   onToggleMobileMenu: () => void;
@@ -217,6 +219,9 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               </div>
             </PopoverContent>
           </Popover>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
 
           {/* Security Status */}
           <div className="security-badge hidden sm:flex">

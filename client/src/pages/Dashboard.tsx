@@ -21,9 +21,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useTranslation } from "@/lib/i18n";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/dashboard/stats"],
@@ -74,10 +76,10 @@ export default function Dashboard() {
               id="welcome-title"
               className="text-2xl font-bold mb-2"
             >
-              Bienvenido al Sistema de Votación
+              {t.dashboard.welcome}
             </h1>
             <p className="text-blue-100 mb-4">
-              Gestiona elecciones de forma segura y transparente
+              {t.dashboard.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 text-sm">
               <div className="flex items-center space-x-2">
@@ -107,32 +109,32 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
-          title="Elecciones Activas"
+          title={t.dashboard.activeElections}
           value={stats?.activeElections || 0}
-          subtitle="procesos en curso"
+          subtitle={t.dashboard.processesInProgress}
           icon={Vote}
           color="primary"
           trend="up"
         />
         <StatsCard
-          title="Votos Emitidos Hoy"
+          title={t.dashboard.votesToday}
           value={stats?.votesToday || 0}
-          subtitle="participación activa"
+          subtitle={t.dashboard.activeParticipation}
           icon={CheckCircle}
           color="secondary"
           trend="up"
         />
         <StatsCard
-          title="Usuarios Conectados"
+          title={t.dashboard.onlineUsers}
           value={stats?.onlineUsers || 0}
-          subtitle="en tiempo real"
+          subtitle={t.dashboard.realTime}
           icon={Users}
           color="accent"
         />
         <StatsCard
-          title="Seguridad"
+          title={t.dashboard.security}
           value="100%"
-          subtitle="sistemas protegidos"
+          subtitle={t.dashboard.protectedSystems}
           icon={Shield}
           color="secondary"
         />
@@ -144,7 +146,7 @@ export default function Dashboard() {
         <div className="lg:col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Acciones Rápidas</CardTitle>
+              <CardTitle>{t.dashboard.quickActions}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {(user?.role === "administrator" || user?.role === "authority") && (
@@ -157,8 +159,8 @@ export default function Dashboard() {
                       <Plus className="text-white" />
                     </div>
                     <div className="text-left">
-                      <p className="font-medium">Nueva Elección</p>
-                      <p className="text-sm text-gray-600">Crear proceso electoral</p>
+                      <p className="font-medium">{t.dashboard.newElection}</p>
+                      <p className="text-sm text-gray-600">{t.dashboard.createElectoralProcess}</p>
                     </div>
                   </Button>
                 </Link>
@@ -171,8 +173,8 @@ export default function Dashboard() {
                       <UserPlus className="text-white" />
                     </div>
                     <div className="text-left">
-                      <p className="font-medium">Registrar Usuario</p>
-                      <p className="text-sm text-gray-600">Agregar nuevo participante</p>
+                      <p className="font-medium">{t.dashboard.registerUser}</p>
+                      <p className="text-sm text-gray-600">{t.dashboard.addNewParticipant}</p>
                     </div>
                   </Button>
                 </Link>
@@ -184,8 +186,8 @@ export default function Dashboard() {
                     <BarChart className="text-white" />
                   </div>
                   <div className="text-left">
-                    <p className="font-medium">Ver Resultados</p>
-                    <p className="text-sm text-gray-600">Analizar datos de votación</p>
+                    <p className="font-medium">{t.dashboard.viewResults}</p>
+                    <p className="text-sm text-gray-600">{t.dashboard.analyzeVotingData}</p>
                   </div>
                 </Button>
               </Link>
@@ -197,10 +199,10 @@ export default function Dashboard() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Elecciones Activas</CardTitle>
+              <CardTitle>{t.dashboard.activeElections}</CardTitle>
               <Link href="/elections">
                 <Button variant="ghost" size="sm">
-                  Ver todas →
+                  {t.dashboard.viewAll} →
                 </Button>
               </Link>
             </CardHeader>
@@ -208,7 +210,7 @@ export default function Dashboard() {
               {activeElections?.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Vote className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p>No hay elecciones activas</p>
+                  <p>{t.dashboard.noActiveElections}</p>
                 </div>
               ) : (
                 <div className="space-y-4">

@@ -177,6 +177,39 @@
     @apply bg-muted;
   }
 
+  /* Mejoras específicas para Dashboard en modo oscuro */
+  .dark .loading-pulse {
+    @apply bg-muted;
+  }
+
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4,
+  .dark h5,
+  .dark h6 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-900 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-800 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-foreground;
+  }
+
+  /* Iconos en modo oscuro con mejor contraste - sin dependencias circulares */
+
+  /* Mejor contraste para Cards y títulos */
+  .dark .card-title {
+    @apply text-foreground;
+  }
+
   /* MEJORA: Navegación mejorada con indicadores visuales claros */
   .keyboard-navigation {
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-opacity-75;

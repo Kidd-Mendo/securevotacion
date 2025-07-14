@@ -70,17 +70,17 @@ export default function ActivityTimeline() {
   const getActivityIcon = (type: string) => {
     switch (type) {
       case "vote":
-        return <CheckCircle className="w-5 h-5 text-white" />;
+        return <CheckCircle className="w-5 h-5 text-primary-foreground" />;
       case "user_action":
-        return <UserPlus className="w-5 h-5 text-white" />;
+        return <UserPlus className="w-5 h-5 text-primary-foreground" />;
       case "system":
-        return <Settings className="w-5 h-5 text-white" />;
+        return <Settings className="w-5 h-5 text-primary-foreground" />;
       case "election":
-        return <Vote className="w-5 h-5 text-white" />;
+        return <Vote className="w-5 h-5 text-primary-foreground" />;
       case "security":
-        return <Shield className="w-5 h-5 text-white" />;
+        return <Shield className="w-5 h-5 text-primary-foreground" />;
       default:
-        return <AlertCircle className="w-5 h-5 text-white" />;
+        return <AlertCircle className="w-5 h-5 text-primary-foreground" />;
     }
   };
 

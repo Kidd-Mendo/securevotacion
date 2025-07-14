@@ -159,7 +159,7 @@ Unidad Educativa Simulada
         <DialogContent className="max-w-md">
           <div className="text-center py-6">
             <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="text-white text-2xl" />
+              <CheckCircle className="text-primary-foreground text-2xl" />
             </div>
             <h3 className="text-xl font-bold text-foreground mb-2">¡Voto Emitido Exitosamente!</h3>
             <p className="text-muted-foreground mb-6">Su voto ha sido registrado de forma segura y anónima.</p>
@@ -268,7 +268,7 @@ Unidad Educativa Simulada
                       />
                       <div className="w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:border-primary peer-checked:bg-primary peer-checked:ring-2 peer-checked:ring-primary/20 flex items-center justify-center">
                         {selectedCandidate === candidate.id && (
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                          <div className="w-2 h-2 bg-card rounded-full"></div>
                         )}
                       </div>
                       <div className="ml-4 flex-1">

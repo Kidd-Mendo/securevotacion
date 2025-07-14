@@ -66,7 +66,7 @@ export default function Dashboard() {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* MEJORA: Welcome Section con mejor accesibilidad */}
       <section 
-        className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-white"
+        className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-primary-foreground"
         role="banner"
         aria-labelledby="welcome-title"
       >

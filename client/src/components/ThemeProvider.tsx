@@ -27,7 +27,7 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
-// Función para obtener el tema inicial de forma sincronizada
+// Función para obtener el tema inicial SOLO si fue seleccionado explícitamente
 function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
   if (typeof window === "undefined") return defaultTheme;
   
@@ -35,12 +35,12 @@ function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
     const savedTheme = localStorage.getItem(storageKey);
     console.log('ThemeProvider - Theme from localStorage:', savedTheme);
     
-    // Solo retornar temas válidos
+    // Solo aplicar tema si existe y es válido (fue seleccionado por el usuario)
     if (savedTheme === "dark" || savedTheme === "light") {
       return savedTheme as Theme;
     }
     
-    // Si no hay tema válido, retornar el default sin escribir
+    // Si no hay tema guardado, usar default (modo claro)
     return defaultTheme;
   } catch (error) {
     console.warn("ThemeProvider - localStorage error:", error);
@@ -58,15 +58,15 @@ export function ThemeProvider({
     getInitialTheme(storageKey, defaultTheme)
   );
 
-  // Sync with HTML script - don't fight it, just update state
+  // Only apply theme if DOM doesn't have it (no auto-forcing)
   useEffect(() => {
     const root = window.document.documentElement;
-    const htmlTheme = root.classList.contains('dark') ? 'dark' : 'light';
     
-    // If HTML script has different theme, update our state to match
-    if (htmlTheme !== theme) {
-      console.log('ThemeProvider - Syncing with HTML script theme:', htmlTheme);
-      setThemeState(htmlTheme);
+    // Only apply if the DOM doesn't have the correct theme
+    if (!root.classList.contains(theme)) {
+      root.classList.remove("light", "dark");
+      root.classList.add(theme);
+      console.log('ThemeProvider - Applied theme to DOM:', theme);
     }
   }, [theme]);
 

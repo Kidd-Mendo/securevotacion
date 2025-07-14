@@ -87,14 +87,17 @@ export class DatabaseStorage implements IStorage {
     const existingUser = await db.select().from(users).where(eq(users.id, userData.id!)).limit(1);
 
     if (existingUser.length > 0) {
-      // Update existing user
+      // Update existing user but preserve role
       const [updatedUser] = await db
         .update(users)
         .set({
-          ...userData,
+          email: userData.email,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          profileImageUrl: userData.profileImageUrl,
           updatedAt: new Date(),
-        },
-        )
+          // Do NOT update role here - preserve existing role
+        })
         .where(eq(users.id, userData.id!))
         .returning();
       return updatedUser;

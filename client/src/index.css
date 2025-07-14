@@ -157,9 +157,15 @@
   }
   
   /* Mejorar hover en todas las tarjetas */
-  .card:hover {
+  [data-radix-ui-popper-content-wrapper] .card:hover,
+  div.card:hover {
     @apply shadow-lg smooth-transition;
     border-color: hsl(207, 90%, 54%, 0.3);
+  }
+  
+  /* Modo oscuro para ThemeToggle */
+  .dark .smooth-transition {
+    @apply transition-all duration-200 ease-in-out;
   }
 
   /* Enlaces con mejor retroalimentación */

@@ -45,6 +45,9 @@ export const translations = {
       light: "Claro",
       dark: "Oscuro",
       auto: "Automático",
+      appName: "Sistema de Votación",
+      appSubtitle: "Unidad Educativa Simulada",
+      backToHome: "Volver al inicio",
     },
     // Header
     header: {
@@ -314,6 +317,59 @@ export const translations = {
       resolved: "Resuelto",
       closed: "Cerrado",
     },
+    // Landing page
+    landing: {
+      security: {
+        title: "Seguridad Avanzada",
+        description: "Cifrado de extremo a extremo y autenticación segura para proteger cada voto.",
+      },
+      voting: {
+        title: "Votación Intuitiva",
+        description: "Interfaz simple y accesible desde cualquier dispositivo con confirmación cifrada.",
+      },
+      results: {
+        title: "Resultados Transparentes",
+        description: "Seguimiento en tiempo real de elecciones con auditoría completa y reportes detallados.",
+      },
+      analytics: {
+        title: "Análisis Detallado",
+        description: "Estadísticas completas y visualizaciones para una mejor toma de decisiones.",
+      },
+      multiRole: {
+        title: "Gestión Multi-Rol",
+        description: "Soporte para estudiantes, docentes, administradores y autoridades educativas.",
+      },
+      cta: {
+        title: "¿Listo para comenzar?",
+        description: "Accede al sistema con tu cuenta institucional para participar en las elecciones activas o gestionar procesos electorales.",
+        button: "Acceder al Sistema",
+        secureSystem: "Sistema seguro con autenticación institucional",
+      },
+      footer: "Sistema desarrollado siguiendo estándares ISO 9241 y ISO/IEC 25010 para garantizar usabilidad, seguridad y accesibilidad.",
+    },
+    // Admin page
+    admin: {
+      title: "Panel de Administración",
+      description: "Gestiona usuarios, configuraciones y monitorea el sistema",
+      users: "Usuarios",
+      system: "Sistema",
+      audit: "Auditoría",
+      totalUsers: "Total Usuarios",
+      activeUsers: "Usuarios Activos",
+      userManagement: "Gestión de Usuarios",
+    },
+    // Errors
+    errors: {
+      pageNotFound: "Página no encontrada",
+      pageNotFoundDescription: "La página que buscas no existe",
+      requiredField: "Este campo es obligatorio",
+      invalidEmail: "Email inválido",
+      passwordTooShort: "La contraseña debe tener al menos 8 caracteres",
+      passwordsDontMatch: "Las contraseñas no coinciden",
+      loginFailed: "Error al iniciar sesión",
+      unauthorized: "No autorizado",
+      somethingWentWrong: "Algo salió mal",
+    },
   },
   en: {
     // Common
@@ -359,6 +415,9 @@ export const translations = {
       light: "Light",
       dark: "Dark",
       auto: "Auto",
+      appName: "Voting System",
+      appSubtitle: "Simulated Educational Unit",
+      backToHome: "Back to home",
     },
     // Header
     header: {
@@ -628,6 +687,59 @@ export const translations = {
       resolved: "Resolved",
       closed: "Closed",
     },
+    // Landing page
+    landing: {
+      security: {
+        title: "Advanced Security",
+        description: "End-to-end encryption and secure authentication to protect every vote.",
+      },
+      voting: {
+        title: "Intuitive Voting",
+        description: "Simple interface accessible from any device with encrypted confirmation.",
+      },
+      results: {
+        title: "Transparent Results",
+        description: "Real-time election tracking with complete audit and detailed reports.",
+      },
+      analytics: {
+        title: "Detailed Analysis",
+        description: "Complete statistics and visualizations for better decision making.",
+      },
+      multiRole: {
+        title: "Multi-Role Management",
+        description: "Support for students, teachers, administrators and educational authorities.",
+      },
+      cta: {
+        title: "Ready to start?",
+        description: "Access the system with your institutional account to participate in active elections or manage electoral processes.",
+        button: "Access the System",
+        secureSystem: "Secure system with institutional authentication",
+      },
+      footer: "System developed following ISO 9241 and ISO/IEC 25010 standards to ensure usability, security and accessibility.",
+    },
+    // Admin page
+    admin: {
+      title: "Administration Panel",
+      description: "Manage users, settings and monitor the system",
+      users: "Users",
+      system: "System",
+      audit: "Audit",
+      totalUsers: "Total Users",
+      activeUsers: "Active Users",
+      userManagement: "User Management",
+    },
+    // Errors
+    errors: {
+      pageNotFound: "Page not found",
+      pageNotFoundDescription: "The page you are looking for does not exist",
+      requiredField: "This field is required",
+      invalidEmail: "Invalid email",
+      passwordTooShort: "Password must be at least 8 characters",
+      passwordsDontMatch: "Passwords don't match",
+      loginFailed: "Login failed",
+      unauthorized: "Unauthorized",
+      somethingWentWrong: "Something went wrong",
+    },
   },
   pt: {
     // Common
@@ -673,6 +785,9 @@ export const translations = {
       light: "Claro",
       dark: "Escuro",
       auto: "Automático",
+      appName: "Sistema de Votação",
+      appSubtitle: "Unidade Educacional Simulada",
+      backToHome: "Voltar ao início",
     },
     // Header
     header: {
@@ -941,6 +1056,59 @@ export const translations = {
       inProgress: "Em Andamento", 
       resolved: "Resolvido",
       closed: "Fechado",
+    },
+    // Landing page
+    landing: {
+      security: {
+        title: "Segurança Avançada",
+        description: "Criptografia de ponta a ponta e autenticação segura para proteger cada voto.",
+      },
+      voting: {
+        title: "Votação Intuitiva",
+        description: "Interface simples acessível de qualquer dispositivo com confirmação criptografada.",
+      },
+      results: {
+        title: "Resultados Transparentes",
+        description: "Acompanhamento em tempo real das eleições com auditoria completa e relatórios detalhados.",
+      },
+      analytics: {
+        title: "Análise Detalhada",
+        description: "Estatísticas completas e visualizações para melhor tomada de decisão.",
+      },
+      multiRole: {
+        title: "Gestão Multi-Função",
+        description: "Suporte para estudantes, professores, administradores e autoridades educacionais.",
+      },
+      cta: {
+        title: "Pronto para começar?",
+        description: "Acesse o sistema com sua conta institucional para participar das eleições ativas ou gerenciar processos eleitorais.",
+        button: "Acessar o Sistema",
+        secureSystem: "Sistema seguro com autenticação institucional",
+      },
+      footer: "Sistema desenvolvido seguindo padrões ISO 9241 e ISO/IEC 25010 para garantir usabilidade, segurança e acessibilidade.",
+    },
+    // Admin page
+    admin: {
+      title: "Painel de Administração",
+      description: "Gerencie usuários, configurações e monitore o sistema",
+      users: "Usuários",
+      system: "Sistema",
+      audit: "Auditoria",
+      totalUsers: "Total de Usuários",
+      activeUsers: "Usuários Ativos",
+      userManagement: "Gestão de Usuários",
+    },
+    // Errors
+    errors: {
+      pageNotFound: "Página não encontrada",
+      pageNotFoundDescription: "A página que você procura não existe",
+      requiredField: "Este campo é obrigatório",
+      invalidEmail: "Email inválido",
+      passwordTooShort: "A senha deve ter pelo menos 8 caracteres",
+      passwordsDontMatch: "As senhas não coincidem",
+      loginFailed: "Falha no login",
+      unauthorized: "Não autorizado",
+      somethingWentWrong: "Algo deu errado",
     },
   },
 };

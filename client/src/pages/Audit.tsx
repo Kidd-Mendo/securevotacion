@@ -14,6 +14,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/lib/useTranslation";
 import { 
   Shield, 
   Search, 
@@ -29,15 +30,19 @@ import {
   AlertTriangle
 } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS, ptBR } from "date-fns/locale";
 
 export default function Audit() {
   const { user } = useAuth();
+  const { t, language } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [actionFilter, setActionFilter] = useState("all");
   const [resourceFilter, setResourceFilter] = useState("all");
 
   const canViewAudit = user?.role === "administrator" || user?.role === "authority";
+  
+  // Select the correct locale based on language
+  const dateLocale = language === 'es' ? es : language === 'pt' ? ptBR : enUS;
 
   const { data: auditLogs, isLoading } = useQuery({
     queryKey: ["/api/audit-logs", { limit: 100 }],
@@ -339,7 +344,7 @@ export default function Audit() {
       {/* Audit Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Registro de Auditoría</CardTitle>
+          <CardTitle>{t.audit.title}</CardTitle>
           <CardDescription>
             {filteredLogs.length} de {mockAuditLogs.length} eventos mostrados
           </CardDescription>

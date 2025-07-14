@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Crown, Shield, AlertCircle } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function AdminLogin() {
+  const { t } = useTranslation();
   const [credentials, setCredentials] = useState({
     email: "",
     adminId: ""

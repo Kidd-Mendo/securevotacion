@@ -39,6 +39,7 @@ import VotingModal from "@/components/VotingModal";
 const electionSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
   description: z.string().optional(),
+  status: z.enum(["draft", "active", "completed", "cancelled"]).default("draft"),
   startDate: z.date({
     required_error: "La fecha de inicio es requerida",
   }),
@@ -72,6 +73,7 @@ export default function Elections() {
     defaultValues: {
       name: "",
       description: "",
+      status: "draft",
       eligibleRoles: [],
       allowMultipleVotes: false,
       isPublic: true,
@@ -80,9 +82,11 @@ export default function Elections() {
 
   const createElectionMutation = useMutation({
     mutationFn: async (data: ElectionFormData) => {
+      console.log("Creating election with data:", data);
       return await apiRequest("POST", "/api/elections", data);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log("Election created successfully:", response);
       toast({
         title: t.elections.createElection,
         description: "La elección ha sido creada exitosamente",
@@ -143,6 +147,13 @@ export default function Elections() {
   });
 
   const onSubmit = (data: ElectionFormData) => {
+    console.log("Form submitted with data:", data);
+    console.log("Dates:", {
+      startDate: data.startDate,
+      endDate: data.endDate,
+      startDateISO: data.startDate.toISOString(),
+      endDateISO: data.endDate.toISOString()
+    });
     createElectionMutation.mutate(data);
   };
 
@@ -258,6 +269,31 @@ export default function Elections() {
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Estado Inicial</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar estado" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="draft">Borrador</SelectItem>
+                            <SelectItem value="active">Activa</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Las elecciones activas estarán disponibles inmediatamente
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}

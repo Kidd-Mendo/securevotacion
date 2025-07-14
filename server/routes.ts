@@ -82,10 +82,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/elections', isAuthenticated, async (req: any, res) => {
     try {
+      console.log("POST /api/elections - Request body:", req.body);
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
+      console.log("User creating election:", user?.email, "Role:", user?.role);
       
       if (!user || !["administrator", "authority"].includes(user.role)) {
+        console.log("Insufficient permissions for user:", user?.email);
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
@@ -93,8 +96,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         createdBy: userId,
       });
+      console.log("Validated election data:", validatedData);
 
       const election = await storage.createElection(validatedData);
+      console.log("Election created:", election);
       
       // Create audit log
       await storage.createAuditLog({

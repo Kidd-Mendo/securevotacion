@@ -177,7 +177,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createElection(election: InsertElection): Promise<Election> {
+    console.log("DatabaseStorage.createElection - Creating with data:", election);
     const [created] = await db.insert(elections).values(election).returning();
+    console.log("DatabaseStorage.createElection - Created election:", created);
     return created;
   }
 
@@ -750,4 +752,5 @@ class MemoryStorage implements IStorage {
 }
 
 // Use memory storage to bypass database issues
-export const storage = new MemoryStorage();
+// Use DatabaseStorage for persistent data
+export const storage = new DatabaseStorage();

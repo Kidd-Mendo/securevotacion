@@ -147,6 +147,11 @@ Preferred communication style: Simple, everyday language.
 - Real-time language switching works system-wide without page reload
 - Fixed duplicate translation keys and completed i18n architecture
 - All navigation, forms, buttons, and UI elements now use translation system
+- **MAJOR:** Fixed dark mode persistence issues - theme now properly persists across window changes and page refreshes
+- Enhanced ThemeProvider with better localStorage handling and system theme detection
+- Added script in HTML head to prevent theme flashing on page load and improved CSS transitions
+- Implemented automatic system preference detection when no saved theme exists
+- Fixed localStorage error handling and added fallback mechanisms
 
 ### Accessibility & Usability Enhancements (ISO 9241-11 & ISO 25010:2011)
 

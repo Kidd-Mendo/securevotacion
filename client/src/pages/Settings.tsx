@@ -71,10 +71,28 @@ export default function Settings() {
     };
     localStorage.setItem("settings", JSON.stringify(settings));
 
-    toast({
-      title: "Idioma actualizado",
-      description: "El idioma de la aplicación ha sido cambiado",
-    });
+    // Aplicar cambio de idioma inmediatamente
+    document.documentElement.lang = newLanguage;
+    
+    // Simular cambio de idioma (en una app real, esto activaría i18n)
+    if (newLanguage === 'en') {
+      toast({
+        title: "Language updated",
+        description: "The application language has been changed to English",
+      });
+    } else if (newLanguage === 'pt') {
+      toast({
+        title: "Idioma atualizado",
+        description: "O idioma do aplicativo foi alterado para Português",
+      });
+    } else {
+      toast({
+        title: "Idioma actualizado",
+        description: "El idioma de la aplicación ha sido cambiado a Español",
+      });
+    }
+
+    // No recargar la página, cambios aplicados instantáneamente
   };
 
   const resetSettings = () => {

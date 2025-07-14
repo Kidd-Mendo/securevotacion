@@ -5,37 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Sistema de Votación - Unidad Educativa Simulada</title>
     <script>
-      // Aplicar tema inmediatamente para prevenir flash
+      // Sistema de tema unificado - aplicar inmediatamente para prevenir flash
       (function() {
-        try {
-          const storageKey = 'sistema-votacion-theme';
-          let savedTheme = localStorage.getItem(storageKey);
-          
-          console.log('HTML Script - Initial theme from localStorage:', savedTheme); // Debug
-          
-          // Solo aplicar dark si está explícitamente guardado como "dark"
-          if (savedTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-            console.log('HTML Script - Applied dark theme');
-          } else {
-            // Para cualquier otro caso, aplicar light
-            document.documentElement.classList.add('light');
-            document.documentElement.classList.remove('dark');
-            console.log('HTML Script - Applied light theme (default)');
-            
-            // Solo escribir 'light' si no había nada guardado
-            if (!savedTheme) {
-              localStorage.setItem(storageKey, 'light');
-              console.log('HTML Script - Saved default light theme');
-            }
+        const THEME_KEY = 'sistema-votacion-theme';
+        
+        function getStoredTheme() {
+          try {
+            return localStorage.getItem(THEME_KEY);
+          } catch (e) {
+            return null;
           }
-        } catch (error) {
-          // En caso de error, usar tema claro por defecto
-          document.documentElement.classList.add('light');
-          document.documentElement.classList.remove('dark');
-          console.warn('HTML Script - Error loading theme:', error);
         }
+        
+        function setStoredTheme(theme) {
+          try {
+            localStorage.setItem(THEME_KEY, theme);
+            return true;
+          } catch (e) {
+            return false;
+          }
+        }
+        
+        function applyTheme(theme) {
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(theme);
+          console.log('HTML Script - Applied theme:', theme);
+        }
+        
+        // Obtener tema almacenado
+        let theme = getStoredTheme();
+        console.log('HTML Script - Theme from storage:', theme);
+        
+        // Si no hay tema o es inválido, usar light por defecto
+        if (theme !== 'dark' && theme !== 'light') {
+          theme = 'light';
+          setStoredTheme(theme);
+          console.log('HTML Script - Set default theme:', theme);
+        }
+        
+        // Aplicar tema
+        applyTheme(theme);
+        
+        // Exponer función global para sincronización
+        window.__setTheme = function(newTheme) {
+          if (newTheme === 'dark' || newTheme === 'light') {
+            setStoredTheme(newTheme);
+            applyTheme(newTheme);
+            console.log('HTML Script - Global theme change:', newTheme);
+          }
+        };
       })();
     </script>
   </head>

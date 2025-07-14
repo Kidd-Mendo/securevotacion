@@ -24,7 +24,8 @@ export default function AdminCredentialsInfo() {
         title: "Copiado",
         description: `${label} copiado al portapapeles`,
       });
-      setTimeout(() => setCopied(false), 2000);
+      // Eliminar delay innecesario
+      setCopied(false);
     });
   };
 

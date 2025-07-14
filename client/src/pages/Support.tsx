@@ -119,9 +119,8 @@ export default function Support() {
       });
       // Cambiar a la pestaña de tickets para mostrar el nuevo ticket
       setActiveTab("tickets");
-      setTimeout(() => {
-        setTicketSubmitted(false);
-      }, 5000);
+      // Eliminar el delay de 5 segundos
+      setTicketSubmitted(false);
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {

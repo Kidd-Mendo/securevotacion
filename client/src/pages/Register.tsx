@@ -138,19 +138,15 @@ export default function Register() {
     setIsLoading(true);
     
     try {
-      // Simular registro
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      // Eliminar delay artificial
       setRegistrationSuccess(true);
       toast({
         title: "¡Registro exitoso!",
         description: "Su cuenta ha sido creada correctamente. Será redirigido al inicio de sesión.",
       });
       
-      // Redirigir después de 3 segundos
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 3000);
+      // Redirigir inmediatamente
+      window.location.href = "/login";
       
     } catch (error) {
       toast({
@@ -174,7 +170,7 @@ export default function Register() {
               Su cuenta ha sido creada correctamente.
             </p>
             <p className="text-sm text-muted-foreground">
-              Será redirigido al inicio de sesión en unos segundos...
+              Redirigiendo al inicio de sesión...
             </p>
           </CardContent>
         </Card>

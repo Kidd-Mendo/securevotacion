@@ -11,21 +11,17 @@
           const storageKey = 'sistema-votacion-theme';
           const savedTheme = localStorage.getItem(storageKey);
           
-          let theme = savedTheme;
-          
-          // Si no hay tema guardado, detectar preferencia del sistema
-          if (!theme) {
-            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          }
-          
-          // Aplicar el tema inmediatamente
-          if (theme === 'dark') {
+          // Solo aplicar modo oscuro si está explícitamente guardado como "dark"
+          if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
           } else {
+            // Siempre usar modo claro por defecto y limpiar localStorage
             document.documentElement.classList.remove('dark');
+            localStorage.setItem(storageKey, 'light');
           }
         } catch (error) {
           // En caso de error, usar tema claro por defecto
+          document.documentElement.classList.remove('dark');
           console.warn('Error loading theme:', error);
         }
       })();

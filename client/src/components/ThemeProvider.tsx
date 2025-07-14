@@ -26,14 +26,18 @@ function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
   if (typeof window === "undefined") return defaultTheme;
   
   try {
-    // Intentar obtener el tema guardado
+    // TEMPORAL: Limpiar localStorage para forzar modo claro por defecto
+    // Esto resuelve el problema de usuarios que ya tenían "dark" guardado
     const savedTheme = localStorage.getItem(storageKey);
-    if (savedTheme === "dark" || savedTheme === "light") {
-      return savedTheme;
+    
+    // Solo respetar el tema guardado si es "dark" (modo seleccionado manualmente)
+    if (savedTheme === "dark") {
+      return "dark";
     }
     
-    // Si no hay tema guardado, siempre usar el tema por defecto (light)
-    return defaultTheme;
+    // Para cualquier otro caso (incluyendo "light" o null), forzar light y limpiar
+    localStorage.setItem(storageKey, "light");
+    return "light";
   } catch (error) {
     console.warn("Error accessing localStorage:", error);
     return defaultTheme;

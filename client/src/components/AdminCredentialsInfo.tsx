@@ -69,10 +69,10 @@ export default function AdminCredentialsInfo() {
         </div>
 
         {showCredentials && (
-          <div className="space-y-3 p-4 bg-white rounded-lg border">
+          <div className="space-y-3 p-4 bg-card rounded-lg border">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">Email</label>
+                <label className="text-sm font-medium text-foreground">Email</label>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -82,14 +82,14 @@ export default function AdminCredentialsInfo() {
                   {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                 </Button>
               </div>
-              <div className="font-mono text-sm bg-gray-50 p-2 rounded border">
+              <div className="font-mono text-sm bg-muted p-2 rounded border">
                 {credentials.email}
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-700">ID de Usuario</label>
+                <label className="text-sm font-medium text-foreground">ID de Usuario</label>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -99,14 +99,14 @@ export default function AdminCredentialsInfo() {
                   {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                 </Button>
               </div>
-              <div className="font-mono text-sm bg-gray-50 p-2 rounded border">
+              <div className="font-mono text-sm bg-muted p-2 rounded border">
                 {credentials.adminId}
               </div>
             </div>
 
             <div>
-              <label className="text-sm font-medium text-gray-700">Nombre Completo</label>
-              <div className="font-mono text-sm bg-gray-50 p-2 rounded border mt-1">
+              <label className="text-sm font-medium text-foreground">Nombre Completo</label>
+              <div className="font-mono text-sm bg-muted p-2 rounded border mt-1">
                 {credentials.name}
               </div>
             </div>

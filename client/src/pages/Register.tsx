@@ -188,7 +188,7 @@ export default function Register() {
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-center mb-4">
             <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-              <UserPlus className="w-8 h-8 text-white" />
+              <UserPlus className="w-8 h-8 text-primary-foreground" />
             </div>
           </div>
           <CardTitle className="text-2xl text-center">

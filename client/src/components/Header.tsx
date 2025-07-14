@@ -256,11 +256,11 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                   role="img"
                   aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
                 >
-                  <span className="text-white text-sm font-medium">
+                  <span className="text-primary-foreground text-sm font-medium">
                     {getInitials(user?.firstName, user?.lastName)}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -33,6 +33,17 @@ export default function Profile() {
     lastName: user?.lastName || "",
     email: user?.email || "",
   });
+
+  // Actualizar formData cuando user cambie (para evitar pérdida de datos al cambiar idioma)
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -144,7 +155,7 @@ export default function Profile() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">{t.profile.title}</h1>
+        <h1 className="text-3xl font-bold text-foreground dark:text-foreground">{t.profile.title}</h1>
         <p className="text-muted-foreground">{t.profile.description}</p>
       </div>
       
@@ -156,7 +167,7 @@ export default function Profile() {
               <Shield className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <p className="font-medium text-sm">{t.profile.security}</p>
+              <p className="font-medium text-sm text-foreground">{t.profile.security}</p>
               <p className="text-xs text-muted-foreground">{t.profile.securityDesc}</p>
             </div>
           </CardContent>
@@ -168,7 +179,7 @@ export default function Profile() {
               <Calendar className="w-6 h-6 text-secondary" />
             </div>
             <div>
-              <p className="font-medium text-sm">{t.profile.activity}</p>
+              <p className="font-medium text-sm text-foreground">{t.profile.activity}</p>
               <p className="text-xs text-muted-foreground">{t.profile.activityDesc}</p>
             </div>
           </CardContent>
@@ -180,7 +191,7 @@ export default function Profile() {
               <Mail className="w-6 h-6 text-accent" />
             </div>
             <div>
-              <p className="font-medium text-sm">{t.profile.notifications}</p>
+              <p className="font-medium text-sm text-foreground">{t.profile.notifications}</p>
               <p className="text-xs text-muted-foreground">{t.profile.notificationsDesc}</p>
             </div>
           </CardContent>
@@ -188,11 +199,11 @@ export default function Profile() {
         
         <Card className="hover:shadow-md transition-shadow cursor-pointer">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Settings className="w-6 h-6 text-purple-600" />
+            <div className="p-2 bg-muted/10 rounded-lg">
+              <Settings className="w-6 h-6 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-medium text-sm">{t.profile.preferences}</p>
+              <p className="font-medium text-sm text-foreground">{t.profile.preferences}</p>
               <p className="text-xs text-muted-foreground">{t.profile.preferencesDesc}</p>
             </div>
           </CardContent>
@@ -222,7 +233,7 @@ export default function Profile() {
                   </Button>
                 </div>
                 <div>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-foreground">
                     {user.firstName} {user.lastName}
                     <Badge variant={getRoleBadgeColor(user.role || "student")}>
                       {getRoleDisplayName(user.role || "student")}
@@ -245,7 +256,7 @@ export default function Profile() {
             </div>
           </CardHeader>
           <CardContent>
-            <CardTitle className="text-lg mb-2">{t.profile.personalInfo}</CardTitle>
+            <CardTitle className="text-lg mb-2 text-foreground">{t.profile.personalInfo}</CardTitle>
             <CardDescription className="mb-4">{t.profile.personalInfoDesc}</CardDescription>
             
             {isEditing ? (
@@ -264,7 +275,7 @@ export default function Profile() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">
+                    <Label htmlFor="firstName" className="text-foreground">
                       {t.profile.firstName} <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -277,7 +288,7 @@ export default function Profile() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">
+                    <Label htmlFor="lastName" className="text-foreground">
                       {t.profile.lastName} <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -291,7 +302,7 @@ export default function Profile() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="email">
+                  <Label htmlFor="email" className="text-foreground">
                     {t.profile.email} <span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -338,20 +349,20 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">{t.profile.firstName}</Label>
-                    <p className="text-sm">{user.firstName || "Sin especificar"}</p>
+                    <p className="text-sm text-foreground">{user.firstName || "Sin especificar"}</p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium text-muted-foreground">{t.profile.lastName}</Label>
-                    <p className="text-sm">{user.lastName || "Sin especificar"}</p>
+                    <p className="text-sm text-foreground">{user.lastName || "Sin especificar"}</p>
                   </div>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">{t.profile.email}</Label>
-                  <p className="text-sm">{user.email}</p>
+                  <p className="text-sm text-foreground">{user.email}</p>
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-muted-foreground">{t.profile.role}</Label>
-                  <p className="text-sm">{getRoleDisplayName(user.role || "student")}</p>
+                  <p className="text-sm text-foreground">{getRoleDisplayName(user.role || "student")}</p>
                 </div>
               </div>
             )}
@@ -361,7 +372,7 @@ export default function Profile() {
         {/* Account Details Card */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{t.profile.accountStatus}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{t.profile.accountStatus}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
@@ -377,7 +388,7 @@ export default function Profile() {
             <Separator />
             <div className="text-center text-sm text-muted-foreground">
               <p>{t.profile.authMethod}</p>
-              <p className="font-medium">Replit Auth</p>
+              <p className="font-medium text-foreground">Replit Auth</p>
             </div>
           </CardContent>
         </Card>
@@ -387,7 +398,7 @@ export default function Profile() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2 text-foreground">
               <AlertCircle className="w-5 h-5 text-amber-500" />
               {t.profile.confirmChanges}
             </DialogTitle>
@@ -398,7 +409,7 @@ export default function Profile() {
           <div className="space-y-2">
             {getChangedFields().map((change, index) => (
               <div key={index} className="bg-muted/50 p-3 rounded-lg">
-                <p className="font-medium text-sm">{change.field}</p>
+                <p className="font-medium text-sm text-foreground">{change.field}</p>
                 <div className="text-xs text-muted-foreground space-y-1">
                   <p><span className="font-medium">{t.profile.oldValue}:</span> {change.oldValue}</p>
                   <p><span className="font-medium">{t.profile.newValue}:</span> {change.newValue}</p>

@@ -13,7 +13,12 @@ import {
   TrendingUp,
   Users,
   Vote,
-  Calendar
+  Calendar,
+  Loader2,
+  Info,
+  Trophy,
+  FileDown,
+  Share2
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -96,18 +101,24 @@ export default function Results() {
   };
 
   const getWinnerBadge = (index: number) => {
-    if (index === 0) return <Badge className="bg-yellow-500 text-white ml-2">Ganador</Badge>;
-    if (index === 1) return <Badge variant="secondary" className="ml-2">2do Lugar</Badge>;
-    if (index === 2) return <Badge variant="outline" className="ml-2">3er Lugar</Badge>;
+    if (index === 0) return (
+      <Badge className="bg-yellow-500 text-white ml-2" aria-label="Ganador de la elección">
+        <Trophy className="w-3 h-3 mr-1" aria-hidden="true" />
+        Ganador
+      </Badge>
+    );
+    if (index === 1) return <Badge variant="secondary" className="ml-2" aria-label="Segundo lugar">2do Lugar</Badge>;
+    if (index === 2) return <Badge variant="outline" className="ml-2" aria-label="Tercer lugar">3er Lugar</Badge>;
     return null;
   };
 
   if (electionsLoading) {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="animate-pulse space-y-6">
-          <div className="h-24 bg-gray-200 rounded-xl"></div>
-          <div className="h-96 bg-gray-200 rounded-xl"></div>
+        <div className="text-center py-12">
+          <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Cargando resultados electorales</h2>
+          <p className="text-gray-600">Por favor espere mientras obtenemos la información...</p>
         </div>
       </div>
     );
@@ -116,37 +127,71 @@ export default function Results() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Resultados Electorales</h1>
           <p className="text-gray-600">Visualiza y analiza los resultados de las elecciones</p>
         </div>
         {currentResults && (
-          <Button onClick={handleExportResults}>
-            <Download className="w-4 h-4 mr-2" />
-            Exportar Resultados
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleExportResults}
+              className="focus-ring"
+              aria-label="Descargar resultados en formato CSV"
+            >
+              <FileDown className="w-4 h-4 mr-2" />
+              Exportar CSV
+            </Button>
+            <Button 
+              variant="outline"
+              className="focus-ring"
+              aria-label="Compartir resultados"
+              onClick={() => {
+                // Future implementation for sharing
+                const shareData = {
+                  title: currentResults.election.name,
+                  text: `Resultados de ${currentResults.election.name}`,
+                  url: window.location.href
+                };
+                if (navigator.share) {
+                  navigator.share(shareData);
+                }
+              }}
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Compartir
+            </Button>
+          </div>
         )}
       </div>
 
       {/* Election Selector */}
-      <Card>
+      <Card className="transition-shadow hover:shadow-md">
         <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <Eye className="w-5 h-5 text-gray-400" />
-            <Select value={selectedElection} onValueChange={setSelectedElection}>
-              <SelectTrigger className="w-80">
-                <SelectValue placeholder="Selecciona una elección" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas las elecciones</SelectItem>
-                {availableElections.map((election: any) => (
-                  <SelectItem key={election.id} value={election.id}>
-                    {election.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex items-center gap-2 flex-1">
+              <Eye className="w-5 h-5 text-gray-400" aria-hidden="true" />
+              <label htmlFor="election-selector" className="sr-only">
+                Seleccionar elección para ver resultados
+              </label>
+              <Select value={selectedElection} onValueChange={setSelectedElection}>
+                <SelectTrigger id="election-selector" className="w-full sm:w-80 focus-ring">
+                  <SelectValue placeholder="Selecciona una elección" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las elecciones</SelectItem>
+                  {availableElections.map((election: any) => (
+                    <SelectItem key={election.id} value={election.id}>
+                      {election.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Info className="w-4 h-4" aria-hidden="true" />
+              <span>{availableElections.length} elecciones disponibles</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -165,36 +210,55 @@ export default function Results() {
             </div>
           ) : (
             availableElections.map((election: any) => (
-              <Card key={election.id} className="hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => setSelectedElection(election.id)}>
+              <Card 
+                key={election.id} 
+                className="hover:shadow-lg transition-all cursor-pointer focus-within:ring-2 focus-within:ring-primary"
+                onClick={() => setSelectedElection(election.id)}
+                role="article"
+                aria-label={`Elección: ${election.name}`}
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div>
+                    <div className="flex-1">
                       <CardTitle className="line-clamp-2">{election.name}</CardTitle>
-                      <Badge variant={election.status === "completed" ? "secondary" : "outline"}>
+                      <Badge 
+                        variant={election.status === "completed" ? "secondary" : "outline"}
+                        className="mt-2"
+                        aria-label={`Estado: ${election.status === "completed" ? "Completada" : "En Progreso"}`}
+                      >
                         {election.status === "completed" ? "Completada" : "En Progreso"}
                       </Badge>
                     </div>
-                    <BarChartIcon className="w-6 h-6 text-gray-400" />
+                    <BarChartIcon className="w-6 h-6 text-gray-400 flex-shrink-0" aria-hidden="true" />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-gray-400" />
+                      <Calendar className="w-4 h-4 text-gray-400" aria-hidden="true" />
                       <span>
-                        {format(new Date(election.startDate), "d MMM", { locale: es })} - {" "}
-                        {format(new Date(election.endDate), "d MMM yyyy", { locale: es })}
+                        <time dateTime={election.startDate}>
+                          {format(new Date(election.startDate), "d MMM", { locale: es })}
+                        </time>
+                        {" - "}
+                        <time dateTime={election.endDate}>
+                          {format(new Date(election.endDate), "d MMM yyyy", { locale: es })}
+                        </time>
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Vote className="w-4 h-4 text-gray-400" />
+                      <Vote className="w-4 h-4 text-gray-400" aria-hidden="true" />
                       <span>
                         {mockResults[election.id as keyof typeof mockResults]?.election.totalVotes || 0} votos emitidos
                       </span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full mt-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full mt-4 focus-ring"
+                    aria-label={`Ver resultados detallados de ${election.name}`}
+                  >
                     Ver Resultados Detallados
                   </Button>
                 </CardContent>
@@ -306,40 +370,98 @@ export default function Results() {
             <TabsContent value="table">
               <Card>
                 <CardHeader>
-                  <CardTitle>Resultados Detallados</CardTitle>
+                  <CardTitle id="results-table-title">Resultados Detallados</CardTitle>
                   <CardDescription>Tabla completa de resultados ordenada por votos</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {currentResults.results.map((result, index) => (
-                      <div key={result.candidateId} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900 flex items-center">
-                              {result.candidateName}
-                              {getWinnerBadge(index)}
-                            </h4>
-                            <p className="text-sm text-gray-600">
-                              {result.voteCount} votos • {result.percentage}% del total
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-24 bg-gray-200 rounded-full h-2">
+                  <div className="overflow-x-auto">
+                    <table 
+                      className="w-full" 
+                      role="table"
+                      aria-labelledby="results-table-title"
+                    >
+                      <thead className="sr-only">
+                        <tr>
+                          <th scope="col">Posición</th>
+                          <th scope="col">Candidato</th>
+                          <th scope="col">Votos</th>
+                          <th scope="col">Porcentaje</th>
+                          <th scope="col">Progreso visual</th>
+                        </tr>
+                      </thead>
+                      <tbody className="space-y-4">
+                        {currentResults.results.map((result, index) => (
+                          <tr 
+                            key={result.candidateId} 
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="flex items-center space-x-4">
                               <div 
-                                className="bg-primary h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${result.percentage}%` }}
-                              ></div>
-                            </div>
-                            <TrendingUp className="w-4 h-4 text-secondary" />
-                          </div>
-                        </div>
+                                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold"
+                                aria-label={`Posición ${index + 1}`}
+                              >
+                                {index + 1}
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-900 flex items-center">
+                                  {result.candidateName}
+                                  {getWinnerBadge(index)}
+                                </h4>
+                                <p className="text-sm text-gray-600">
+                                  <span aria-label={`${result.voteCount} votos recibidos`}>
+                                    {result.voteCount} votos
+                                  </span>
+                                  {" • "}
+                                  <span aria-label={`${result.percentage} por ciento del total`}>
+                                    {result.percentage}% del total
+                                  </span>
+                                </p>
+                              </div>
+                            </td>
+                            <td className="text-right">
+                              <div className="flex items-center space-x-2">
+                                <div 
+                                  className="w-24 bg-gray-200 rounded-full h-2"
+                                  role="progressbar"
+                                  aria-valuenow={result.percentage}
+                                  aria-valuemin={0}
+                                  aria-valuemax={100}
+                                  aria-label={`Progreso: ${result.percentage}%`}
+                                >
+                                  <div 
+                                    className="bg-primary h-2 rounded-full transition-all duration-500 ease-out"
+                                    style={{ width: `${result.percentage}%` }}
+                                  ></div>
+                                </div>
+                                <TrendingUp className="w-4 h-4 text-secondary" aria-hidden="true" />
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {/* Summary Statistics */}
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-sm text-gray-600">Total de votos</p>
+                        <p className="text-2xl font-bold text-primary">
+                          {currentResults.election.totalVotes}
+                        </p>
                       </div>
-                    ))}
+                      <div>
+                        <p className="text-sm text-gray-600">Candidatos</p>
+                        <p className="text-2xl font-bold text-secondary">
+                          {currentResults.results.length}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600">Participación</p>
+                        <p className="text-2xl font-bold text-accent">100%</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { User, Settings, Shield, Mail, Calendar, Edit3, Check, X } from "lucide-react";
+import { User, Settings, Shield, Mail, Calendar, Edit3, Check, X, Loader2, Camera, AlertCircle, Info } from "lucide-react";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -145,6 +145,57 @@ export default function Profile() {
         <h1 className="text-3xl font-bold">Mi Perfil</h1>
         <p className="text-gray-600">Gestiona tu información personal y preferencias</p>
       </div>
+      
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Shield className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Seguridad</p>
+              <p className="text-xs text-gray-600">100% Configurado</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 bg-secondary/10 rounded-lg">
+              <Calendar className="w-6 h-6 text-secondary" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Actividad</p>
+              <p className="text-xs text-gray-600">Activo hoy</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 bg-accent/10 rounded-lg">
+              <Mail className="w-6 h-6 text-accent" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Notificaciones</p>
+              <p className="text-xs text-gray-600">Activadas</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Settings className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <p className="font-medium text-sm">Preferencias</p>
+              <p className="text-xs text-gray-600">Personalizar</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-3">
         {/* Profile Info Card */}
@@ -152,12 +203,22 @@ export default function Profile() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src={user.profileImageUrl || ""} alt={user.firstName || "Usuario"} />
-                  <AvatarFallback>
-                    <User className="h-8 w-8" />
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage src={user.profileImageUrl || ""} alt={user.firstName || "Usuario"} />
+                    <AvatarFallback>
+                      <User className="h-8 w-8" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="absolute -bottom-2 -right-2 rounded-full p-1 h-8 w-8"
+                    aria-label="Cambiar foto de perfil"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                </div>
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     {user.firstName} {user.lastName}
@@ -184,50 +245,86 @@ export default function Profile() {
           <CardContent>
             {isEditing ? (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                {/* Información sobre cambios */}
+                {hasChanges() && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="flex items-start gap-2">
+                      <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-blue-800">
+                        Tienes cambios sin guardar. Haz clic en "Guardar cambios" para aplicarlos.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">Nombre</Label>
+                    <Label htmlFor="firstName">
+                      Nombre <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                       placeholder="Ingresa tu nombre"
+                      className="focus-ring"
+                      required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Apellido</Label>
+                    <Label htmlFor="lastName">
+                      Apellido <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                       placeholder="Ingresa tu apellido"
+                      className="focus-ring"
+                      required
                     />
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="email">Correo electrónico</Label>
+                  <Label htmlFor="email">
+                    Correo electrónico <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="Ingresa tu correo"
+                    placeholder="usuario@ejemplo.com"
+                    className="focus-ring"
+                    required
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Este correo se utilizará para todas las comunicaciones del sistema
+                  </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                   <Button 
                     type="submit" 
                     disabled={!hasChanges() || updateProfileMutation.isPending}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 focus-ring"
                   >
-                    <Check className="h-4 w-4" />
-                    Guardar cambios
+                    {updateProfileMutation.isPending ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Guardando...
+                      </>
+                    ) : (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Guardar cambios
+                      </>
+                    )}
                   </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={handleCancelEdit}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 focus-ring"
                   >
                     <X className="h-4 w-4" />
                     Cancelar
@@ -304,9 +401,12 @@ export default function Profile() {
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Confirmar cambios de perfil</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-600" />
+              Confirmar cambios de perfil
+            </DialogTitle>
             <DialogDescription>
               Revisa los cambios que realizarás en tu perfil antes de guardarlos.
             </DialogDescription>
@@ -357,7 +457,7 @@ export default function Profile() {
             >
               {updateProfileMutation.isPending ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Guardando cambios...
                 </>
               ) : (

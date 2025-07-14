@@ -120,8 +120,8 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 <Vote className="text-white text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">SecureVotacion</h1>
-                <p className="text-sm text-gray-600">Sistema Electoral</p>
+                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
+                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
               </div>
             </div>
           </div>
@@ -232,8 +232,8 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 <Vote className="text-white text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">SecureVotacion</h1>
-                <p className="text-sm text-gray-600">Sistema Electoral</p>
+                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
+                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
               </div>
             </div>
             <Button

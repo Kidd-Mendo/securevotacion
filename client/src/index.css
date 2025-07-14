@@ -97,56 +97,192 @@
 }
 
 @layer components {
+  /* TODO: Mejoras de usabilidad y accesibilidad según ISO 9241-11 e ISO 25010:2011 */
+  
+  /* Animaciones suaves para retroalimentación visual */
   .voting-animation {
     @apply transition-all duration-300 ease-in-out;
   }
 
+  .smooth-transition {
+    @apply transition-all duration-200 ease-in-out;
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+  }
+
+  /* Badge de seguridad mejorado */
   .security-badge {
-    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary bg-opacity-10 text-secondary-foreground;
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-secondary bg-opacity-10 text-secondary-foreground smooth-transition;
   }
 
+  /* Tarjetas con mejor contraste y retroalimentación */
   .stat-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow;
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md smooth-transition focus-within:shadow-lg;
   }
 
+  /* MEJORA: Navegación mejorada con indicadores visuales claros */
   .sidebar-nav-item {
-    @apply flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors font-medium;
+    @apply flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 smooth-transition font-medium relative;
+    min-height: 44px; /* Cumple con WCAG AA para objetivos táctiles */
+  }
+
+  .sidebar-nav-item:hover {
+    @apply bg-gray-100 transform translate-x-1;
+  }
+
+  .sidebar-nav-item:focus {
+    @apply outline-none ring-2 ring-primary ring-offset-2;
   }
 
   .sidebar-nav-item.active {
-    @apply bg-primary text-white hover:bg-primary hover:opacity-80;
+    @apply bg-primary text-white hover:bg-primary hover:opacity-90;
   }
 
+  .sidebar-nav-item.active::before {
+    content: '';
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full;
+  }
+
+  /* MEJORA: Tarjetas de elección con mejor feedback visual */
   .election-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-shadow;
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg smooth-transition focus-within:ring-2 focus-within:ring-primary;
   }
 
+  .election-card:hover {
+    @apply border-primary border-opacity-50 transform -translate-y-1;
+  }
+
+  /* MEJORA: Filas de auditoría con mejor accesibilidad */
   .audit-row {
-    @apply hover:bg-gray-50 transition-colors;
+    @apply hover:bg-gray-50 smooth-transition focus:bg-gray-100 focus:outline-none;
   }
 
-  .notification-badge {
-    @apply absolute -top-1 -right-1 w-5 h-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center;
+  /* MEJORA: Botones con mejor contraste y retroalimentación */
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary/90 focus:bg-primary/95 smooth-transition;
+    min-height: 44px; /* WCAG AA compliance */
   }
 
-  .breadcrumb-separator {
-    @apply text-gray-400 mx-2;
+  .btn-secondary {
+    @apply bg-secondary text-white hover:bg-secondary/90 focus:bg-secondary/95 smooth-transition;
+    min-height: 44px;
+  }
+
+  .btn-destructive {
+    @apply bg-destructive text-white hover:bg-destructive/90 focus:bg-destructive/95 smooth-transition;
+    min-height: 44px;
+  }
+
+  /* MEJORA: Estados de formulario mejorados */
+  .form-field {
+    @apply smooth-transition focus-within:ring-2 focus-within:ring-primary focus-within:border-primary;
   }
 
   .form-field-error {
-    @apply text-destructive text-sm mt-1;
+    @apply border-destructive focus-within:ring-destructive focus-within:border-destructive;
   }
 
+  .form-field-success {
+    @apply border-secondary focus-within:ring-secondary focus-within:border-secondary;
+  }
+
+  /* MEJORA: Indicadores de carga mejorados */
   .loading-spinner {
-    @apply animate-spin h-4 w-4;
+    @apply animate-spin rounded-full border-2 border-gray-200 border-t-primary;
   }
 
+  .loading-pulse {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+
+  /* MEJORA: Notificaciones con mejor visibilidad */
+  .notification-badge {
+    @apply absolute -top-1 -right-1 bg-destructive text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium;
+    animation: notification-pulse 2s infinite;
+  }
+
+  @keyframes notification-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  /* MEJORA: Breadcrumbs mejorados */
+  .breadcrumb-separator {
+    @apply mx-2 text-gray-400;
+  }
+
+  /* MEJORA: Sidebar móvil mejorado */
+  .mobile-sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform smooth-transition lg:hidden;
+  }
+
+  /* MEJORA: Filtros de búsqueda */
+  .filter-container {
+    @apply space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200;
+  }
+
+  .filter-applied {
+    @apply bg-primary text-white px-2 py-1 rounded-full text-xs flex items-center gap-1;
+  }
+
+  /* MEJORA: Estados de validación en tiempo real */
+  .validation-success {
+    @apply border-secondary text-secondary-foreground;
+  }
+
+  .validation-error {
+    @apply border-destructive text-destructive;
+  }
+
+  .validation-warning {
+    @apply border-yellow-500 text-yellow-700;
+  }
+
+  /* MEJORA: Indicadores de progreso */
+  .progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-primary smooth-transition;
+  }
+
+  /* MEJORA: Modales accesibles */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4 focus:outline-none;
+  }
+
+  /* MEJORA: Tooltips mejorados */
+  .tooltip {
+    @apply absolute z-10 px-2 py-1 text-xs text-white bg-gray-900 rounded shadow-lg opacity-0 smooth-transition;
+  }
+
+  .tooltip.show {
+    @apply opacity-100;
+  }
+
+  /* MEJORA: Componentes adicionales del sistema */
   .vote-confirmation {
-    @apply p-4 bg-secondary bg-opacity-10 rounded-lg border border-secondary border-opacity-20;
+    @apply p-4 bg-secondary bg-opacity-10 rounded-lg border border-secondary border-opacity-20 smooth-transition;
   }
 
   .candidate-card {
-    @apply p-4 border-2 border-gray-200 rounded-xl hover:border-primary cursor-pointer transition-colors;
+    @apply p-4 border-2 border-gray-200 rounded-xl hover:border-primary cursor-pointer smooth-transition;
+    min-height: 44px; /* WCAG AA compliance */
+  }
+
+  .candidate-card:hover {
+    @apply transform -translate-y-0.5 shadow-md;
+  }
+
+  .candidate-card:focus {
+    @apply ring-2 ring-primary ring-offset-2 outline-none;
   }
 
   .candidate-card.selected {
@@ -158,35 +294,20 @@
   }
 
   .activity-timeline-item {
-    @apply flex items-start space-x-3 mb-4 last:mb-0;
+    @apply flex items-start space-x-3 mb-4 last:mb-0 smooth-transition hover:bg-gray-50 p-2 rounded;
   }
 
   .security-status-good {
-    @apply p-4 bg-secondary bg-opacity-10 rounded-lg;
+    @apply p-4 bg-secondary bg-opacity-10 rounded-lg smooth-transition;
   }
 
   .quick-action-button {
-    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary hover:bg-opacity-5 transition-colors;
+    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary hover:bg-opacity-5 smooth-transition focus-ring;
+    min-height: 44px; /* WCAG AA compliance */
   }
 
   .mobile-menu-overlay {
     @apply fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden;
-  }
-
-  .mobile-sidebar {
-    @apply fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out lg:hidden;
-  }
-
-  .primary-button {
-    @apply bg-primary hover:bg-primary hover:opacity-80 text-primary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
-  }
-
-  .secondary-button {
-    @apply bg-secondary hover:bg-secondary hover:opacity-90 text-secondary-foreground font-medium px-4 py-2 rounded-lg transition-colors;
-  }
-
-  .accent-button {
-    @apply bg-accent hover:bg-accent hover:opacity-90 text-accent-foreground font-medium px-4 py-2 rounded-lg transition-colors;
   }
 }
 

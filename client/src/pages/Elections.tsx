@@ -166,42 +166,65 @@ export default function Elections() {
   const canManageElections = user?.role === "administrator" || user?.role === "authority";
   const canVote = user?.role === "student" || user?.role === "teacher";
 
+  // MEJORA: Estado de carga con mejor accesibilidad
   if (isLoading) {
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div 
+        className="max-w-7xl mx-auto space-y-6"
+        role="status"
+        aria-label="Cargando elecciones"
+      >
         <div className="animate-pulse space-y-6">
-          <div className="h-24 bg-gray-200 rounded-xl"></div>
+          <div className="h-24 bg-gray-200 rounded-xl loading-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-48 bg-gray-200 rounded-xl"></div>
+              <div 
+                key={i} 
+                className="h-48 bg-gray-200 rounded-xl loading-pulse"
+                aria-hidden="true"
+              ></div>
             ))}
           </div>
         </div>
+        <span className="sr-only">Cargando información de elecciones...</span>
       </div>
     );
   }
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* MEJORA: Header con mejor estructura semántica */}
+      <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Elecciones</h1>
-          <p className="text-gray-600">Administra procesos electorales y participa en votaciones</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestión de Elecciones
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Administra procesos electorales y participa en votaciones
+          </p>
         </div>
         {canManageElections && (
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
+              <Button 
+                className="focus-ring"
+                aria-label="Crear nueva elección electoral"
+              >
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
                 Nueva Elección
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent 
+              className="max-w-2xl"
+              aria-labelledby="create-election-title"
+              aria-describedby="create-election-description"
+            >
               <DialogHeader>
-                <DialogTitle>Crear Nueva Elección</DialogTitle>
-                <DialogDescription>
-                  Configure los parámetros de la nueva elección electoral
+                <DialogTitle id="create-election-title">
+                  Crear Nueva Elección
+                </DialogTitle>
+                <DialogDescription id="create-election-description">
+                  Configure los parámetros de la nueva elección electoral. Los campos marcados con * son obligatorios.
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
@@ -426,14 +449,25 @@ export default function Elections() {
                       type="button" 
                       variant="outline" 
                       onClick={() => setIsCreateDialogOpen(false)}
+                      className="focus-ring"
+                      aria-label="Cancelar creación de elección"
                     >
                       Cancelar
                     </Button>
                     <Button 
                       type="submit" 
                       disabled={createElectionMutation.isPending}
+                      className="focus-ring"
+                      aria-label={createElectionMutation.isPending ? "Creando elección..." : "Crear nueva elección"}
                     >
-                      {createElectionMutation.isPending ? "Creando..." : "Crear Elección"}
+                      {createElectionMutation.isPending ? (
+                        <>
+                          <div className="loading-spinner w-4 h-4 mr-2" aria-hidden="true"></div>
+                          Creando...
+                        </>
+                      ) : (
+                        "Crear Elección"
+                      )}
                     </Button>
                   </div>
                 </form>
@@ -441,59 +475,101 @@ export default function Elections() {
             </DialogContent>
           </Dialog>
         )}
-      </div>
+      </header>
 
-      {/* Elections Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* MEJORA: Elections Grid con mejor accesibilidad */}
+      <main 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        role="main"
+        aria-label="Lista de elecciones disponibles"
+      >
         {elections?.length === 0 ? (
-          <div className="col-span-full text-center py-12">
-            <Vote className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay elecciones</h3>
+          <div 
+            className="col-span-full text-center py-12"
+            role="status"
+            aria-live="polite"
+          >
+            <Vote 
+              className="w-16 h-16 mx-auto text-gray-400 mb-4" 
+              aria-hidden="true"
+            />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No hay elecciones disponibles
+            </h3>
             <p className="text-gray-600 mb-4">
               {canManageElections 
-                ? "Crea tu primera elección para comenzar"
+                ? "Crea tu primera elección para comenzar el proceso electoral"
                 : "No hay elecciones disponibles en este momento"
               }
             </p>
             {canManageElections && (
-              <Button onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
+              <Button 
+                onClick={() => setIsCreateDialogOpen(true)}
+                className="focus-ring"
+                aria-label="Crear primera elección del sistema"
+              >
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
                 Crear Primera Elección
               </Button>
             )}
           </div>
         ) : (
           elections?.map((election: any) => (
-            <Card key={election.id} className="hover:shadow-lg transition-shadow">
+            <Card 
+              key={election.id} 
+              className="election-card focus-within:ring-2 focus-within:ring-primary"
+              role="article"
+              aria-labelledby={`election-title-${election.id}`}
+              aria-describedby={`election-description-${election.id}`}
+            >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                      <Vote className="text-white" />
+                    <div 
+                      className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center smooth-transition hover:bg-primary/90"
+                      role="img"
+                      aria-label="Icono de elección"
+                    >
+                      <Vote className="text-white" aria-hidden="true" />
                     </div>
                     <div>
-                      <CardTitle className="line-clamp-2">{election.name}</CardTitle>
+                      <CardTitle 
+                        id={`election-title-${election.id}`}
+                        className="line-clamp-2"
+                      >
+                        {election.name}
+                      </CardTitle>
                       {getStatusBadge(election.status)}
                     </div>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                <CardDescription className="mb-4 line-clamp-3">
-                  {election.description || "Sin descripción"}
+                <CardDescription 
+                  id={`election-description-${election.id}`}
+                  className="mb-4 line-clamp-3"
+                >
+                  {election.description || "Sin descripción disponible"}
                 </CardDescription>
                 
                 <div className="space-y-2 text-sm text-gray-600 mb-4">
                   <div className="flex items-center space-x-2">
-                    <CalendarIcon className="w-4 h-4" />
+                    <CalendarIcon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                     <span>
-                      {format(new Date(election.startDate), "d MMM", { locale: es })} - {" "}
-                      {format(new Date(election.endDate), "d MMM yyyy", { locale: es })}
+                      <time dateTime={election.startDate}>
+                        {format(new Date(election.startDate), "d MMM", { locale: es })}
+                      </time>
+                      {" - "}
+                      <time dateTime={election.endDate}>
+                        {format(new Date(election.endDate), "d MMM yyyy", { locale: es })}
+                      </time>
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4" />
-                    <span>{election.eligibleRoles.join(", ")}</span>
+                    <Users className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                    <span aria-label={`Roles elegibles: ${election.eligibleRoles.join(", ")}`}>
+                      {election.eligibleRoles.join(", ")}
+                    </span>
                   </div>
                 </div>
 
@@ -501,10 +577,11 @@ export default function Elections() {
                   {canVote && election.status === "active" && election.eligibleRoles.includes(user?.role) && (
                     <Button 
                       size="sm" 
-                      className="flex-1"
+                      className="flex-1 focus-ring"
                       onClick={() => handleVote(election)}
+                      aria-label={`Votar en la elección: ${election.name}`}
                     >
-                      <Vote className="w-4 h-4 mr-2" />
+                      <Vote className="w-4 h-4 mr-2" aria-hidden="true" />
                       Votar
                     </Button>
                   )}
@@ -517,8 +594,10 @@ export default function Elections() {
                           variant="outline"
                           onClick={() => updateElectionStatusMutation.mutate({ id: election.id, status: "active" })}
                           disabled={updateElectionStatusMutation.isPending}
+                          className="focus-ring"
+                          aria-label={`Activar elección: ${election.name}`}
                         >
-                          <Play className="w-4 h-4 mr-2" />
+                          <Play className="w-4 h-4 mr-2" aria-hidden="true" />
                           Activar
                         </Button>
                       )}
@@ -529,8 +608,10 @@ export default function Elections() {
                           variant="outline"
                           onClick={() => updateElectionStatusMutation.mutate({ id: election.id, status: "completed" })}
                           disabled={updateElectionStatusMutation.isPending}
+                          className="focus-ring"
+                          aria-label={`Finalizar elección: ${election.name}`}
                         >
-                          <CheckCircle className="w-4 h-4 mr-2" />
+                          <CheckCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                           Finalizar
                         </Button>
                       )}
@@ -538,8 +619,10 @@ export default function Elections() {
                       <Button 
                         size="sm" 
                         variant="ghost"
+                        className="focus-ring"
+                        aria-label={`Configurar elección: ${election.name}`}
                       >
-                        <Settings className="w-4 h-4" />
+                        <Settings className="w-4 h-4" aria-hidden="true" />
                       </Button>
                     </>
                   )}
@@ -548,7 +631,7 @@ export default function Elections() {
             </Card>
           ))
         )}
-      </div>
+      </main>
 
       {/* Voting Modal */}
       {selectedElection && (

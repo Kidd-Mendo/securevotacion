@@ -33,17 +33,27 @@ export default function Dashboard() {
     queryKey: ["/api/elections/active"],
   });
 
+  // MEJORA: Estado de carga con mejor accesibilidad
   if (statsLoading || electionsLoading) {
     return (
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div 
+        className="max-w-7xl mx-auto space-y-6"
+        role="status"
+        aria-label="Cargando panel de control"
+      >
         <div className="animate-pulse space-y-6">
-          <div className="h-48 bg-gray-200 rounded-2xl"></div>
+          <div className="h-48 bg-gray-200 rounded-2xl loading-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
+              <div 
+                key={i} 
+                className="h-32 bg-gray-200 rounded-xl loading-pulse"
+                aria-hidden="true"
+              ></div>
             ))}
           </div>
         </div>
+        <span className="sr-only">Cargando información del panel de control...</span>
       </div>
     );
   }
@@ -52,28 +62,47 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-white">
+      {/* MEJORA: Welcome Section con mejor accesibilidad */}
+      <section 
+        className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 text-white"
+        role="banner"
+        aria-labelledby="welcome-title"
+      >
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Bienvenido al Sistema de Votación</h2>
-            <p className="text-blue-100 mb-4">Gestiona elecciones de forma segura y transparente</p>
-            <div className="flex items-center space-x-4 text-sm">
+            <h1 
+              id="welcome-title"
+              className="text-2xl font-bold mb-2"
+            >
+              Bienvenido al Sistema de Votación
+            </h1>
+            <p className="text-blue-100 mb-4">
+              Gestiona elecciones de forma segura y transparente
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 text-sm">
               <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4" />
-                <span>{currentDate}</span>
+                <Calendar className="w-4 h-4" aria-hidden="true" />
+                <time dateTime={new Date().toISOString()}>
+                  {currentDate}
+                </time>
               </div>
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4" />
-                <span>{stats?.totalUsers || 0} usuarios registrados</span>
+                <Users className="w-4 h-4" aria-hidden="true" />
+                <span aria-label={`Total de usuarios registrados: ${stats?.totalUsers || 0}`}>
+                  {stats?.totalUsers || 0} usuarios registrados
+                </span>
               </div>
             </div>
           </div>
-          <div className="hidden md:block">
-            <Vote className="w-24 h-24 text-blue-200" />
+          <div 
+            className="hidden md:block"
+            role="img"
+            aria-label="Icono del sistema de votación"
+          >
+            <Vote className="w-24 h-24 text-blue-200" aria-hidden="true" />
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

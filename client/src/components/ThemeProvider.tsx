@@ -58,53 +58,31 @@ export function ThemeProvider({
     getInitialTheme(storageKey, defaultTheme)
   );
 
-  // Aplicar tema al montar y sincronizar con localStorage
+  // Sync with HTML script - don't fight it, just update state
   useEffect(() => {
     const root = window.document.documentElement;
+    const htmlTheme = root.classList.contains('dark') ? 'dark' : 'light';
     
-    // Verificar si el tema actual en localStorage coincide con nuestro estado
-    try {
-      const currentStoredTheme = localStorage.getItem(storageKey);
-      if (currentStoredTheme !== theme) {
-        console.log('ThemeProvider - Syncing localStorage:', theme);
-        localStorage.setItem(storageKey, theme);
-      }
-    } catch (error) {
-      console.warn('ThemeProvider - localStorage sync error:', error);
+    // If HTML script has different theme, update our state to match
+    if (htmlTheme !== theme) {
+      console.log('ThemeProvider - Syncing with HTML script theme:', htmlTheme);
+      setThemeState(htmlTheme);
     }
-    
-    // Aplicar tema al DOM
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    console.log('ThemeProvider - Applied theme to DOM:', theme);
-  }, [theme, storageKey]);
+  }, [theme]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
       console.log('ThemeProvider - Setting theme to:', newTheme);
       
-      // Save to localStorage FIRST
-      try {
-        localStorage.setItem(storageKey, newTheme);
-        console.log('ThemeProvider - Saved to localStorage:', newTheme);
-      } catch (error) {
-        console.warn("ThemeProvider - localStorage error:", error);
-      }
-      
-      // Apply to DOM immediately
-      const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(newTheme);
-      console.log('ThemeProvider - Applied to DOM:', newTheme);
-      
-      // Update React state last
-      setThemeState(newTheme);
-      
-      // Sync with global function if available
+      // Use HTML script as single source of truth
       if (typeof window !== "undefined" && window.__setTheme) {
         window.__setTheme(newTheme);
       }
+      
+      // Update React state
+      setThemeState(newTheme);
+      console.log('ThemeProvider - Theme change completed:', newTheme);
     },
   }
 

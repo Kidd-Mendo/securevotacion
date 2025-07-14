@@ -272,12 +272,12 @@
     box-shadow: 0 0 0 3px hsl(207, 90%, 54%, 0.2);
   }
   .sidebar-nav-item {
-    @apply flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 smooth-transition font-medium relative;
+    @apply flex items-center space-x-3 px-3 py-2 rounded-lg text-foreground hover:bg-muted smooth-transition font-medium relative;
     min-height: 44px; /* Cumple con WCAG AA para objetivos táctiles */
   }
 
   .sidebar-nav-item:hover {
-    @apply bg-gray-100 transform translate-x-1;
+    @apply bg-muted transform translate-x-1;
   }
 
   .sidebar-nav-item:focus {
@@ -285,12 +285,17 @@
   }
 
   .sidebar-nav-item.active {
-    @apply bg-primary text-white hover:bg-primary hover:opacity-90;
+    @apply bg-primary text-primary-foreground hover:bg-primary hover:opacity-90;
   }
 
   .sidebar-nav-item.active::before {
     content: '';
-    @apply absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full;
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-primary-foreground rounded-r-full;
+  }
+
+  /* Estilos para el sidebar móvil con soporte de modo oscuro */
+  .mobile-sidebar {
+    @apply fixed inset-y-0 left-0 w-80 bg-background z-50 transform transition-transform duration-300 ease-in-out shadow-2xl lg:hidden border-r border-border;
   }
 
   /* MEJORA: Tarjetas de elección con mejor feedback visual */

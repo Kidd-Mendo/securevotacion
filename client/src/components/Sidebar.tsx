@@ -149,48 +149,48 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
     <>
       {/* MEJORA: Desktop Sidebar con mejor accesibilidad */}
       <aside 
-        className="w-64 bg-white shadow-lg flex-shrink-0 hidden lg:block"
+        className="w-64 bg-background shadow-lg flex-shrink-0 hidden lg:block border-r border-border"
         role="complementary"
         aria-label="Barra lateral de navegación"
       >
         <div className="h-full flex flex-col">
           {/* Logo and Institution */}
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-border">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center smooth-transition hover:bg-primary/90"
                 role="img"
                 aria-label="Logo del sistema"
               >
-                <Vote className="text-white text-xl" aria-hidden="true" />
+                <Vote className="text-primary-foreground text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
-                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
+                <h1 className="text-lg font-bold text-foreground">Sistema de Votación</h1>
+                <p className="text-sm text-muted-foreground">Unidad Educativa Simulada</p>
               </div>
             </div>
           </div>
 
           {/* MEJORA: User Info con mejor visibilidad */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-8 h-8 bg-primary rounded-full flex items-center justify-center smooth-transition hover:bg-primary/90"
                 role="img"
                 aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
               >
-                <span className="text-white text-sm font-medium">
+                <span className="text-primary-foreground text-sm font-medium">
                   {getInitials(user?.firstName, user?.lastName)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {user?.firstName && user?.lastName 
                     ? `${user.firstName} ${user.lastName}`
                     : user?.email || "Usuario"
                   }
                 </p>
-                <p className="text-xs text-gray-500">{getRoleName(user?.role || "")}</p>
+                <p className="text-xs text-muted-foreground">{getRoleName(user?.role || "")}</p>
               </div>
               <div 
                 className="w-2 h-2 bg-secondary rounded-full" 
@@ -243,11 +243,11 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           </nav>
 
           {/* MEJORA: Logout con mejor accesibilidad */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border">
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start text-gray-700 hover:bg-gray-100 focus-ring"
+              className="w-full justify-start text-foreground hover:bg-muted focus-ring"
               aria-label="Cerrar sesión del sistema"
             >
               <LogOut className="text-lg mr-3" aria-hidden="true" />
@@ -269,18 +269,18 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
       >
         <div className="h-full flex flex-col">
           {/* Header con botón de cierre */}
-          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="p-6 border-b border-border flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center smooth-transition"
                 role="img"
                 aria-label="Logo del sistema"
               >
-                <Vote className="text-white text-xl" aria-hidden="true" />
+                <Vote className="text-primary-foreground text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
-                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
+                <h1 className="text-lg font-bold text-foreground">Sistema de Votación</h1>
+                <p className="text-sm text-muted-foreground">Unidad Educativa Simulada</p>
               </div>
             </div>
             <Button
@@ -295,25 +295,25 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           </div>
 
           {/* MEJORA: User Info móvil */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-border">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-8 h-8 bg-primary rounded-full flex items-center justify-center smooth-transition"
                 role="img"
                 aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
               >
-                <span className="text-white text-sm font-medium">
+                <span className="text-primary-foreground text-sm font-medium">
                   {getInitials(user?.firstName, user?.lastName)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {user?.firstName && user?.lastName 
                     ? `${user.firstName} ${user.lastName}`
                     : user?.email || "Usuario"
                   }
                 </p>
-                <p className="text-xs text-gray-500">{getRoleName(user?.role || "")}</p>
+                <p className="text-xs text-muted-foreground">{getRoleName(user?.role || "")}</p>
               </div>
               <div 
                 className="w-2 h-2 bg-secondary rounded-full" 
@@ -366,11 +366,11 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           </nav>
 
           {/* MEJORA: Logout móvil */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border">
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start text-gray-700 hover:bg-gray-100 focus-ring"
+              className="w-full justify-start text-foreground hover:bg-muted focus-ring"
               aria-label="Cerrar sesión del sistema"
             >
               <LogOut className="text-lg mr-3" aria-hidden="true" />

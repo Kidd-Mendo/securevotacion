@@ -58,18 +58,26 @@ export function ThemeProvider({
     getInitialTheme(storageKey, defaultTheme)
   );
 
-  // Sincronizar con el DOM al montar (no sobrescribir el script HTML)
+  // Aplicar tema al montar y sincronizar con localStorage
   useEffect(() => {
-    // Solo sincronizar si el DOM no tiene la clase correcta
     const root = window.document.documentElement;
-    const hasCorrectTheme = root.classList.contains(theme);
     
-    if (!hasCorrectTheme) {
-      console.log('ThemeProvider - Synchronizing theme:', theme);
-      root.classList.remove("light", "dark");
-      root.classList.add(theme);
+    // Verificar si el tema actual en localStorage coincide con nuestro estado
+    try {
+      const currentStoredTheme = localStorage.getItem(storageKey);
+      if (currentStoredTheme !== theme) {
+        console.log('ThemeProvider - Syncing localStorage:', theme);
+        localStorage.setItem(storageKey, theme);
+      }
+    } catch (error) {
+      console.warn('ThemeProvider - localStorage sync error:', error);
     }
-  }, [theme]);
+    
+    // Aplicar tema al DOM
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+    console.log('ThemeProvider - Applied theme to DOM:', theme);
+  }, [theme, storageKey]);
 
   const value = {
     theme,

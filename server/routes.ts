@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { insertElectionSchema, insertCandidateSchema, insertVoteSchema } from "@shared/schema";
+import { insertElectionSchema, insertCandidateSchema, insertVoteSchema, insertSupportTicketSchema } from "@shared/schema";
 import crypto from "crypto";
 import { z } from "zod";
 
@@ -515,6 +515,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching audit logs:", error);
       res.status(500).json({ message: "Failed to fetch audit logs" });
+    }
+  });
+
+  // Support tickets endpoints
+  app.get('/api/support-tickets', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      let tickets;
+      if (user && ["administrator", "authority"].includes(user.role)) {
+        // Administrators and authorities can see all tickets
+        tickets = await storage.getAllSupportTickets();
+      } else {
+        // Regular users only see their own tickets
+        tickets = await storage.getUserSupportTickets(userId);
+      }
+      
+      res.json(tickets);
+    } catch (error) {
+      console.error("Error fetching support tickets:", error);
+      res.status(500).json({ message: "Failed to fetch support tickets" });
+    }
+  });
+
+  app.post('/api/support-tickets', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const validatedData = insertSupportTicketSchema.parse({
+        ...req.body,
+        userId,
+      });
+      
+      const ticket = await storage.createSupportTicket(validatedData);
+      res.status(201).json(ticket);
+    } catch (error) {
+      console.error("Error creating support ticket:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid ticket data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create support ticket" });
+    }
+  });
+
+  app.patch('/api/support-tickets/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      
+      // Only administrators and authorities can update tickets
+      if (!user || !["administrator", "authority"].includes(user.role)) {
+        return res.status(403).json({ message: "Insufficient permissions" });
+      }
+      
+      const updates = req.body;
+      const updatedTicket = await storage.updateSupportTicket(req.params.id, updates);
+      
+      if (!updatedTicket) {
+        return res.status(404).json({ message: "Support ticket not found" });
+      }
+      
+      res.json(updatedTicket);
+    } catch (error) {
+      console.error("Error updating support ticket:", error);
+      res.status(500).json({ message: "Failed to update support ticket" });
     }
   });
 

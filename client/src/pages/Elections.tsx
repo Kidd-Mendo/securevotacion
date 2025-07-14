@@ -199,10 +199,10 @@ export default function Elections() {
       {/* MEJORA: Header con mejor estructura semántica */}
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-foreground">
             {t.elections.title}
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-muted-foreground mt-1">
             {t.elections.description}
           </p>
         </div>
@@ -493,13 +493,13 @@ export default function Elections() {
             aria-live="polite"
           >
             <Vote 
-              className="w-16 h-16 mx-auto text-gray-400 mb-4" 
+              className="w-16 h-16 mx-auto text-muted-foreground mb-4" 
               aria-hidden="true"
             />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               No hay elecciones disponibles
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               {canManageElections 
                 ? "Crea tu primera elección para comenzar el proceso electoral"
                 : "No hay elecciones disponibles en este momento"
@@ -555,7 +555,7 @@ export default function Elections() {
                   {election.description || "Sin descripción disponible"}
                 </CardDescription>
                 
-                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                <div className="space-y-2 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center space-x-2">
                     <CalendarIcon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                     <span>

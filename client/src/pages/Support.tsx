@@ -286,8 +286,8 @@ export default function Support() {
             <LifeBuoy className="text-white text-2xl" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{t.support.title}</h1>
-            <p className="text-gray-600">{t.support.description}</p>
+            <h1 className="text-3xl font-bold text-foreground">{t.support.title}</h1>
+            <p className="text-muted-foreground">{t.support.description}</p>
           </div>
         </div>
       </div>
@@ -328,7 +328,7 @@ export default function Support() {
               <CardContent className="p-4 text-center">
                 <Vote className="w-8 h-8 text-primary mx-auto mb-2" />
                 <h3 className="font-semibold">Cómo Votar</h3>
-                <p className="text-sm text-gray-600">Guía paso a paso</p>
+                <p className="text-sm text-muted-foreground">Guía paso a paso</p>
               </CardContent>
             </Card>
 
@@ -347,7 +347,7 @@ export default function Support() {
               <CardContent className="p-4 text-center">
                 <Shield className="w-8 h-8 text-secondary mx-auto mb-2" />
                 <h3 className="font-semibold">Seguridad</h3>
-                <p className="text-sm text-gray-600">Información de seguridad</p>
+                <p className="text-sm text-muted-foreground">Información de seguridad</p>
               </CardContent>
             </Card>
 
@@ -360,7 +360,7 @@ export default function Support() {
               <CardContent className="p-4 text-center">
                 <Settings className="w-8 h-8 text-accent mx-auto mb-2" />
                 <h3 className="font-semibold">Configuración</h3>
-                <p className="text-sm text-gray-600">Ajustar preferencias</p>
+                <p className="text-sm text-muted-foreground">Ajustar preferencias</p>
               </CardContent>
             </Card>
 
@@ -373,7 +373,7 @@ export default function Support() {
               <CardContent className="p-4 text-center">
                 <User className="w-8 h-8 text-purple-500 mx-auto mb-2" />
                 <h3 className="font-semibold">Mi Cuenta</h3>
-                <p className="text-sm text-gray-600">Gestionar perfil</p>
+                <p className="text-sm text-muted-foreground">Gestionar perfil</p>
               </CardContent>
             </Card>
           </div>

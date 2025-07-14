@@ -129,14 +129,14 @@ export default function Audit() {
       UPDATE_ELECTION: { label: "Actualizar Elección", className: "bg-yellow-100 text-yellow-800" },
       CREATE_CANDIDATE: { label: "Crear Candidato", className: "bg-purple-100 text-purple-800" },
       DELETE_CANDIDATE: { label: "Eliminar Candidato", className: "bg-red-100 text-red-800" },
-      LOGIN: { label: "Inicio Sesión", className: "bg-gray-100 text-gray-800" },
-      LOGOUT: { label: "Cerrar Sesión", className: "bg-gray-100 text-gray-800" },
+      LOGIN: { label: "Inicio Sesión", className: "bg-muted text-foreground" },
+      LOGOUT: { label: "Cerrar Sesión", className: "bg-muted text-foreground" },
       VIEW_RESULTS: { label: "Ver Resultados", className: "bg-indigo-100 text-indigo-800" },
     };
 
     const config = actionConfig[action as keyof typeof actionConfig] || { 
       label: action.replace(/_/g, ' '), 
-      className: "bg-gray-100 text-gray-800" 
+      className: "bg-muted text-foreground" 
     };
     
     return (
@@ -206,7 +206,7 @@ export default function Audit() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               No tienes permisos para acceder a los registros de auditoría. Esta sección está reservada para administradores y autoridades educativas.
             </p>
           </CardContent>
@@ -219,8 +219,8 @@ export default function Audit() {
     return (
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="animate-pulse space-y-6">
-          <div className="h-24 bg-gray-200 rounded-xl"></div>
-          <div className="h-96 bg-gray-200 rounded-xl"></div>
+          <div className="h-24 bg-muted rounded-xl"></div>
+          <div className="h-96 bg-muted rounded-xl"></div>
         </div>
       </div>
     );
@@ -232,7 +232,7 @@ export default function Audit() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Auditoría y Seguridad</h1>
-          <p className="text-gray-600">Monitoreo de actividades y registro de eventos del sistema</p>
+          <p className="text-muted-foreground">Monitoreo de actividades y registro de eventos del sistema</p>
         </div>
         <Button onClick={handleExportLogs}>
           <Download className="w-4 h-4 mr-2" />
@@ -248,7 +248,7 @@ export default function Audit() {
               <Shield className="w-8 h-8 text-green-500" />
               <div>
                 <p className="text-2xl font-bold text-green-600">100%</p>
-                <p className="text-sm text-gray-600">Seguridad</p>
+                <p className="text-sm text-muted-foreground">Seguridad</p>
               </div>
             </div>
           </CardContent>
@@ -260,7 +260,7 @@ export default function Audit() {
               <Lock className="w-8 h-8 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold">{mockAuditLogs.filter(log => log.action === "CAST_VOTE").length}</p>
-                <p className="text-sm text-gray-600">Votos Seguros</p>
+                <p className="text-sm text-muted-foreground">Votos Seguros</p>
               </div>
             </div>
           </CardContent>
@@ -272,7 +272,7 @@ export default function Audit() {
               <Activity className="w-8 h-8 text-purple-500" />
               <div>
                 <p className="text-2xl font-bold">{mockAuditLogs.length}</p>
-                <p className="text-sm text-gray-600">Eventos Registrados</p>
+                <p className="text-sm text-muted-foreground">Eventos Registrados</p>
               </div>
             </div>
           </CardContent>
@@ -284,7 +284,7 @@ export default function Audit() {
               <AlertTriangle className="w-8 h-8 text-orange-500" />
               <div>
                 <p className="text-2xl font-bold">0</p>
-                <p className="text-sm text-gray-600">Incidentes</p>
+                <p className="text-sm text-muted-foreground">Incidentes</p>
               </div>
             </div>
           </CardContent>

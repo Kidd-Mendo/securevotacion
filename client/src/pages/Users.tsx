@@ -93,7 +93,7 @@ export default function UsersPage() {
       authority: { label: "Autoridad", className: "bg-red-100 text-red-800" },
     };
 
-    const config = roleConfig[role as keyof typeof roleConfig] || { label: role, className: "bg-gray-100 text-gray-800" };
+    const config = roleConfig[role as keyof typeof roleConfig] || { label: role, className: "bg-muted text-foreground" };
     
     return (
       <Badge variant="secondary" className={config.className}>
@@ -136,7 +136,7 @@ export default function UsersPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               No tienes permisos para acceder a la gestión de usuarios. Esta sección está reservada para administradores y autoridades educativas.
             </p>
           </CardContent>
@@ -150,8 +150,8 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestión de Usuarios</h1>
-          <p className="text-gray-600">Administra roles y permisos de la comunidad educativa</p>
+          <h1 className="text-3xl font-bold text-foreground">Gestión de Usuarios</h1>
+          <p className="text-muted-foreground">Administra roles y permisos de la comunidad educativa</p>
         </div>
         <Button>
           <UserPlus className="w-4 h-4 mr-2" />
@@ -167,7 +167,7 @@ export default function UsersPage() {
               <Users className="w-8 h-8 text-primary" />
               <div>
                 <p className="text-2xl font-bold">{userStats.total}</p>
-                <p className="text-sm text-gray-600">Total</p>
+                <p className="text-sm text-muted-foreground">Total</p>
               </div>
             </div>
           </CardContent>
@@ -179,7 +179,7 @@ export default function UsersPage() {
               <GraduationCap className="w-8 h-8 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold">{userStats.students}</p>
-                <p className="text-sm text-gray-600">Estudiantes</p>
+                <p className="text-sm text-muted-foreground">Estudiantes</p>
               </div>
             </div>
           </CardContent>
@@ -191,7 +191,7 @@ export default function UsersPage() {
               <BookOpen className="w-8 h-8 text-green-500" />
               <div>
                 <p className="text-2xl font-bold">{userStats.teachers}</p>
-                <p className="text-sm text-gray-600">Docentes</p>
+                <p className="text-sm text-muted-foreground">Docentes</p>
               </div>
             </div>
           </CardContent>
@@ -203,7 +203,7 @@ export default function UsersPage() {
               <Shield className="w-8 h-8 text-purple-500" />
               <div>
                 <p className="text-2xl font-bold">{userStats.administrators}</p>
-                <p className="text-sm text-gray-600">Administradores</p>
+                <p className="text-sm text-muted-foreground">Administradores</p>
               </div>
             </div>
           </CardContent>
@@ -215,7 +215,7 @@ export default function UsersPage() {
               <Crown className="w-8 h-8 text-red-500" />
               <div>
                 <p className="text-2xl font-bold">{userStats.authorities}</p>
-                <p className="text-sm text-gray-600">Autoridades</p>
+                <p className="text-sm text-muted-foreground">Autoridades</p>
               </div>
             </div>
           </CardContent>
@@ -227,7 +227,7 @@ export default function UsersPage() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Buscar por nombre o email..."
                 value={searchTerm}
@@ -236,7 +236,7 @@ export default function UsersPage() {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-400" />
+              <Filter className="w-4 h-4 text-muted-foreground" />
               <Select value={roleFilter} onValueChange={setRoleFilter}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filtrar por rol" />
@@ -280,7 +280,7 @@ export default function UsersPage() {
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8">
                       <div className="flex flex-col items-center space-y-2">
-                        <Users className="w-12 h-12 text-gray-400" />
+                        <Users className="w-12 h-12 text-muted-foreground" />
                         <p className="text-gray-500">No se encontraron usuarios</p>
                       </div>
                     </TableCell>
@@ -304,7 +304,7 @@ export default function UsersPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-gray-600">{user.email}</span>
+                        <span className="text-sm text-muted-foreground">{user.email}</span>
                       </TableCell>
                       <TableCell>
                         {getRoleBadge(user.role)}
@@ -315,7 +315,7 @@ export default function UsersPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-muted-foreground">
                           {format(user.createdAt, "d MMM yyyy", { locale: es })}
                         </span>
                       </TableCell>

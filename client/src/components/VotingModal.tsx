@@ -161,30 +161,30 @@ Unidad Educativa Simulada
             <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="text-white text-2xl" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">¡Voto Emitido Exitosamente!</h3>
-            <p className="text-gray-600 mb-6">Su voto ha sido registrado de forma segura y anónima.</p>
+            <h3 className="text-xl font-bold text-foreground mb-2">¡Voto Emitido Exitosamente!</h3>
+            <p className="text-muted-foreground mb-6">Su voto ha sido registrado de forma segura y anónima.</p>
             
             {/* Vote Receipt */}
-            <Card className="bg-gray-50 mb-6 text-left">
+            <Card className="bg-muted mb-6 text-left">
               <CardContent className="p-4">
-                <h4 className="font-medium text-gray-900 mb-2">Comprobante de Voto</h4>
+                <h4 className="font-medium text-foreground mb-2">Comprobante de Voto</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Elección:</span>
+                    <span className="text-muted-foreground">Elección:</span>
                     <span className="font-medium">{election.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Fecha:</span>
+                    <span className="text-muted-foreground">Fecha:</span>
                     <span className="font-medium">
                       {format(new Date(voteReceipt.timestamp), "d MMM yyyy, HH:mm", { locale: es })}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">ID de Transacción:</span>
+                    <span className="text-muted-foreground">ID de Transacción:</span>
                     <span className="font-mono text-xs">{voteReceipt.transactionId}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Estado:</span>
+                    <span className="text-muted-foreground">Estado:</span>
                     <span className="text-secondary font-medium">
                       <Shield className="w-4 h-4 inline mr-1" />
                       Cifrado y Verificado
@@ -224,7 +224,7 @@ Unidad Educativa Simulada
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle className="text-xl font-bold">Emisión de Voto</DialogTitle>
-              <p className="text-sm text-gray-600 mt-1">Elección: {election.name}</p>
+              <p className="text-sm text-muted-foreground mt-1">Elección: {election.name}</p>
             </div>
             <Button variant="ghost" size="sm" onClick={handleClose}>
               <X className="h-5 w-5" />
@@ -246,7 +246,7 @@ Unidad Educativa Simulada
         <div className="space-y-6">
           {/* Candidate Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-900 mb-4">
+            <label className="block text-sm font-medium text-foreground mb-4">
               Seleccione su candidato preferido:
             </label>
             <div className="space-y-3">
@@ -280,9 +280,9 @@ Unidad Educativa Simulada
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium text-gray-900">{candidate.name}</p>
+                            <p className="font-medium text-foreground">{candidate.name}</p>
                             {candidate.party && (
-                              <p className="text-sm text-gray-600">{candidate.party}</p>
+                              <p className="text-sm text-muted-foreground">{candidate.party}</p>
                             )}
                             {candidate.proposal && (
                               <p className="text-xs text-gray-500 line-clamp-2 mt-1">

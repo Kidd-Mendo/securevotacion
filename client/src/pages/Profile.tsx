@@ -60,7 +60,9 @@ export default function Profile() {
       });
       setIsEditing(false);
       setShowConfirmDialog(false);
+      // Force refresh user data
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.refetchQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: () => {
       toast({

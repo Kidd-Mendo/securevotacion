@@ -202,7 +202,7 @@ export default function Dashboard() {
               <CardTitle className="text-foreground">{t.dashboard.activeElections}</CardTitle>
               <Link href="/elections">
                 <Button variant="ghost" size="sm">
-                  {t.dashboard.viewAll} →
+                  {t.dashboard.seeAll} →
                 </Button>
               </Link>
             </CardHeader>

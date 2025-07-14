@@ -132,9 +132,9 @@ export default function Dashboard() {
           color="accent"
         />
         <StatsCard
-          title={t.dashboard.security}
+          title={t.dashboard.security || "Seguridad"}
           value="100%"
-          subtitle={t.dashboard.protectedSystems}
+          subtitle={t.dashboard.systemSecure || "Sistema Seguro"}
           icon={Shield}
           color="secondary"
         />

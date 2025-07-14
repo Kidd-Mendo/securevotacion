@@ -1,0 +1,108 @@
+Estoy trabajando en un sistema web funcional de votación electrónica llamado SecureVotacion, desarrollado para comunidades educativas. Este sistema ya incluye: inicio de sesión, registro de usuarios, formulario de votación, formularios CRUD, y filtros de búsqueda.
+
+Necesito que revises todo el proyecto y:
+
+✅ Añadas todas las funcionalidades que falten para cumplir con los principios de usabilidad, accesibilidad, diseño responsive y retroalimentación al usuario, basados en las normas ISO 9241-11 (usabilidad) y ISO 25010:2011 (calidad del producto).
+
+✅ Mejores o ajustes las funcionalidades existentes sin romper la lógica ni la funcionalidad actual del sistema.
+
+❌ No elimines funciones operativas existentes ni alteres el flujo base de votación o la estructura de base de datos.
+
+🔧 Asegúrate de cumplir con los siguientes criterios:
+1. 🧭 MENÚ DE NAVEGACIÓN
+Ubicación consistente (superior o lateral fija).
+
+Ítems organizados jerárquicamente, etiquetas claras.
+
+Ítem activo resaltado visualmente.
+
+Agrega íconos + texto en los menús.
+
+Menú responsive (hamburguesa en móvil/tablet).
+
+Navegación por teclado y compatibilidad con lectores de pantalla (aria-* y tabindex).
+
+Retroalimentación visual (hover y clic).
+
+Evita sobrecarga cognitiva: máx. 7 ítems visibles.
+
+2. 🔐 INICIO DE SESIÓN
+Campos con etiquetas visibles (<label for="">).
+
+Foco automático en el campo de usuario.
+
+Validación en tiempo real con mensajes claros (ej. “Usuario requerido”).
+
+Retroalimentación visual con estilos (errores, éxito).
+
+Botón mostrar/ocultar contraseña.
+
+Prevención de múltiples intentos (captcha o bloqueo temporal).
+
+Compatible con teclado, ARIA, y diseño responsivo.
+
+Mensajes neutros en caso de error (“Credenciales inválidas”).
+
+Autocompletado seguro del usuario anterior.
+
+3. 🧾 REGISTRO DE USUARIO
+Campos obligatorios marcados con asterisco (*).
+
+Validación en tiempo real (formato de email, contraseñas).
+
+Barra visual de fortaleza de contraseña.
+
+Confirmación visual del registro exitoso.
+
+Agrupación lógica por secciones (datos personales, acceso).
+
+Botones visibles y descriptivos (“Registrarse”, “Cancelar”).
+
+Responsive + accesible (tab + lectores).
+
+4. 🗳️ FORMULARIOS CRUD (guardar, editar, eliminar)
+Etiquetas claras, campos con validación al escribir y al enviar.
+
+Autocompletado en campos como ciudad, país, etc.
+
+Confirmación visual al guardar, editar, eliminar.
+
+Botones diferenciados (color y texto).
+
+Modal de confirmación antes de eliminar.
+
+Evitar borrado permanente: implementar eliminación lógica (estado inactivo).
+
+Accesible y compatible con móviles.
+
+5. 🔍 FILTROS DE BÚSQUEDA
+Filtros dinámicos sin recargar la página (AJAX o JavaScript).
+
+Etiquetas claras en cada filtro.
+
+Botones “Aplicar” y “Limpiar filtros”.
+
+Autocompletado y sugerencias en campos de texto.
+
+Feedback visual (ej. animación de carga, mensaje si no hay resultados).
+
+Mostrar número de resultados encontrados.
+
+6. ♿ ACCESIBILIDAD Y USABILIDAD GLOBAL
+Todo debe ser navegable con teclado (tab), lectores de pantalla (aria-label, aria-live).
+
+Contraste alto en textos y botones.
+
+Mensajes de retroalimentación visibles y con colores diferenciados.
+
+Responsive completo para móvil, tablet y escritorio.
+
+⚠️ IMPORTANTE:
+
+No modifiques la lógica de votación, permisos de usuario ni autenticación base.
+
+Si se requiere una validación crítica que afecte la seguridad, coméntala claramente en el código.
+
+Usa // TODO: y // MEJORA: como comentarios donde agregues o modifiques funciones importantes.
+
+Trabaja sobre el proyecto SecureVotacion, el cual ya tiene estructura HTML/CSS/JS y backend funcional. Revisa especialmente las vistas de login, registro, votación, CRUD y los componentes del menú.

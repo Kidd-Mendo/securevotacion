@@ -43,44 +43,57 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
     return roleNames[role as keyof typeof roleNames] || role;
   };
 
+  // MEJORA: Navegación mejorada con descripciones y mejor organización
   const navigationItems = [
     {
       href: "/",
       icon: LayoutDashboard,
       label: "Panel Principal",
+      description: "Vista general del sistema",
       isActive: location === "/",
+      keyboardShortcut: "Alt+1",
     },
     {
       href: "/elections",
       icon: Vote,
-      label: "Gestión de Elecciones",
+      label: "Elecciones",
+      description: "Gestionar procesos electorales",
       isActive: location === "/elections",
+      keyboardShortcut: "Alt+2",
     },
     {
       href: "/users",
       icon: Users,
-      label: "Gestión de Usuarios",
+      label: "Usuarios",
+      description: "Administrar usuarios del sistema",
       isActive: location === "/users",
       visible: user?.role === "administrator" || user?.role === "authority",
+      keyboardShortcut: "Alt+3",
     },
     {
       href: "/results",
       icon: BarChart3,
       label: "Resultados",
+      description: "Ver resultados electorales",
       isActive: location === "/results",
+      keyboardShortcut: "Alt+4",
     },
     {
       href: "/audit",
       icon: Shield,
       label: "Auditoría",
+      description: "Registro de actividades",
       isActive: location === "/audit",
       visible: user?.role === "administrator" || user?.role === "authority",
+      keyboardShortcut: "Alt+5",
     },
     {
       href: "/support",
       icon: LifeBuoy,
       label: "Soporte",
+      description: "Ayuda y contacto",
       isActive: location === "/support",
+      keyboardShortcut: "Alt+6",
     },
   ];
 
@@ -88,26 +101,38 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="w-64 bg-white shadow-lg flex-shrink-0 hidden lg:block">
+      {/* MEJORA: Desktop Sidebar con mejor accesibilidad */}
+      <aside 
+        className="w-64 bg-white shadow-lg flex-shrink-0 hidden lg:block"
+        role="complementary"
+        aria-label="Barra lateral de navegación"
+      >
         <div className="h-full flex flex-col">
           {/* Logo and Institution */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Vote className="text-white text-xl" />
+              <div 
+                className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center smooth-transition hover:bg-primary/90"
+                role="img"
+                aria-label="Logo del sistema"
+              >
+                <Vote className="text-white text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
-                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
+                <h1 className="text-lg font-bold text-gray-900">SecureVotacion</h1>
+                <p className="text-sm text-gray-600">Sistema Electoral</p>
               </div>
             </div>
           </div>
 
-          {/* User Info */}
+          {/* MEJORA: User Info con mejor visibilidad */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+              <div 
+                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center smooth-transition hover:bg-primary/90"
+                role="img"
+                aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
+              >
                 <span className="text-white text-sm font-medium">
                   {getInitials(user?.firstName, user?.lastName)}
                 </span>
@@ -121,65 +146,114 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 </p>
                 <p className="text-xs text-gray-500">{getRoleName(user?.role || "")}</p>
               </div>
-              <div className="w-2 h-2 bg-secondary rounded-full" title="En línea"></div>
+              <div 
+                className="w-2 h-2 bg-secondary rounded-full" 
+                title="En línea"
+                role="status"
+                aria-label="Usuario en línea"
+              ></div>
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="flex-1 p-4 space-y-2">
-            {visibleItems.map((item) => (
+          {/* MEJORA: Navigation Menu con mejor accesibilidad */}
+          <nav className="flex-1 p-4 space-y-2" role="navigation" aria-label="Menú principal">
+            {visibleItems.map((item, index) => (
               <Link key={item.href} href={item.href}>
                 <a
                   className={cn(
-                    "sidebar-nav-item",
+                    "sidebar-nav-item focus-ring",
                     item.isActive && "active"
                   )}
                   onClick={onCloseMobileMenu}
+                  aria-current={item.isActive ? "page" : undefined}
+                  aria-label={`${item.label} - ${item.description}`}
+                  title={`${item.description} (${item.keyboardShortcut})`}
+                  tabIndex={0}
+                  role="menuitem"
                 >
-                  <item.icon className="text-lg" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon 
+                    className="text-lg flex-shrink-0" 
+                    aria-hidden="true"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium block truncate">
+                      {item.label}
+                    </span>
+                    <span className="text-xs text-gray-500 block truncate">
+                      {item.description}
+                    </span>
+                  </div>
+                  {item.isActive && (
+                    <div 
+                      className="w-2 h-2 bg-white rounded-full"
+                      aria-hidden="true"
+                    />
+                  )}
                 </a>
               </Link>
             ))}
           </nav>
 
-          {/* Logout */}
+          {/* MEJORA: Logout con mejor accesibilidad */}
           <div className="p-4 border-t border-gray-200">
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
+              className="w-full justify-start text-gray-700 hover:bg-gray-100 focus-ring"
+              aria-label="Cerrar sesión del sistema"
             >
-              <LogOut className="text-lg mr-3" />
+              <LogOut className="text-lg mr-3" aria-hidden="true" />
               <span className="font-medium">Cerrar Sesión</span>
             </Button>
           </div>
         </div>
       </aside>
 
-      {/* Mobile Sidebar */}
-      <aside className={cn(
-        "mobile-sidebar",
-        isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
+      {/* MEJORA: Mobile Sidebar con mejor accesibilidad */}
+      <aside 
+        className={cn(
+          "mobile-sidebar",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+        role="complementary"
+        aria-label="Menú de navegación móvil"
+        aria-hidden={!isMobileMenuOpen}
+      >
         <div className="h-full flex flex-col">
-          {/* Logo and Institution */}
-          <div className="p-6 border-b border-gray-200">
+          {/* Header con botón de cierre */}
+          <div className="p-6 border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Vote className="text-white text-xl" />
+              <div 
+                className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center smooth-transition"
+                role="img"
+                aria-label="Logo del sistema"
+              >
+                <Vote className="text-white text-xl" aria-hidden="true" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Sistema de Votación</h1>
-                <p className="text-sm text-gray-600">Unidad Educativa Simulada</p>
+                <h1 className="text-lg font-bold text-gray-900">SecureVotacion</h1>
+                <p className="text-sm text-gray-600">Sistema Electoral</p>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onCloseMobileMenu}
+              className="p-2 focus-ring"
+              aria-label="Cerrar menú de navegación"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </Button>
           </div>
 
-          {/* User Info */}
+          {/* MEJORA: User Info móvil */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+              <div 
+                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center smooth-transition"
+                role="img"
+                aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
+              >
                 <span className="text-white text-sm font-medium">
                   {getInitials(user?.firstName, user?.lastName)}
                 </span>
@@ -193,36 +267,62 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 </p>
                 <p className="text-xs text-gray-500">{getRoleName(user?.role || "")}</p>
               </div>
-              <div className="w-2 h-2 bg-secondary rounded-full" title="En línea"></div>
+              <div 
+                className="w-2 h-2 bg-secondary rounded-full" 
+                title="En línea"
+                role="status"
+                aria-label="Usuario en línea"
+              ></div>
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="flex-1 p-4 space-y-2">
-            {visibleItems.map((item) => (
+          {/* MEJORA: Navigation Menu móvil */}
+          <nav className="flex-1 p-4 space-y-2" role="navigation" aria-label="Menú principal móvil">
+            {visibleItems.map((item, index) => (
               <Link key={item.href} href={item.href}>
                 <a
                   className={cn(
-                    "sidebar-nav-item",
+                    "sidebar-nav-item focus-ring",
                     item.isActive && "active"
                   )}
                   onClick={onCloseMobileMenu}
+                  aria-current={item.isActive ? "page" : undefined}
+                  aria-label={`${item.label} - ${item.description}`}
+                  tabIndex={0}
+                  role="menuitem"
                 >
-                  <item.icon className="text-lg" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon 
+                    className="text-lg flex-shrink-0" 
+                    aria-hidden="true"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium block truncate">
+                      {item.label}
+                    </span>
+                    <span className="text-xs text-gray-500 block truncate">
+                      {item.description}
+                    </span>
+                  </div>
+                  {item.isActive && (
+                    <div 
+                      className="w-2 h-2 bg-white rounded-full"
+                      aria-hidden="true"
+                    />
+                  )}
                 </a>
               </Link>
             ))}
           </nav>
 
-          {/* Logout */}
+          {/* MEJORA: Logout móvil */}
           <div className="p-4 border-t border-gray-200">
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
+              className="w-full justify-start text-gray-700 hover:bg-gray-100 focus-ring"
+              aria-label="Cerrar sesión del sistema"
             >
-              <LogOut className="text-lg mr-3" />
+              <LogOut className="text-lg mr-3" aria-hidden="true" />
               <span className="font-medium">Cerrar Sesión</span>
             </Button>
           </div>

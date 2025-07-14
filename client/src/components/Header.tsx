@@ -27,6 +27,8 @@ import {
   CheckCircle,
   AlertCircle,
   Info,
+  Crown,
+  X,
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -77,30 +79,45 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          {/* Mobile menu button */}
+          {/* MEJORA: Mobile menu button con mejor accesibilidad */}
           <Button
             variant="ghost"
             size="sm"
-            className="lg:hidden p-2"
+            className="lg:hidden p-2 focus-ring"
             onClick={onToggleMobileMenu}
+            aria-label="Abrir menú de navegación"
+            aria-expanded="false"
+            tabIndex={0}
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-6 w-6" aria-hidden="true" />
+            <span className="sr-only">Menú</span>
           </Button>
 
-          {/* Breadcrumbs */}
-          <nav className="hidden md:flex" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm">
+          {/* MEJORA: Breadcrumbs mejorados con mejor accesibilidad */}
+          <nav className="hidden md:flex" aria-label="Navegación de páginas">
+            <ol className="flex items-center space-x-2 text-sm" role="list">
               {breadcrumbs.map((crumb, index) => (
-                <li key={crumb.href} className="flex items-center">
-                  {index > 0 && <span className="breadcrumb-separator">→</span>}
+                <li key={crumb.href} className="flex items-center" role="listitem">
+                  {index > 0 && (
+                    <span 
+                      className="breadcrumb-separator" 
+                      aria-hidden="true"
+                    >
+                      →
+                    </span>
+                  )}
                   {index === breadcrumbs.length - 1 ? (
-                    <span className="text-gray-900 font-medium">
+                    <span 
+                      className="text-gray-900 font-medium"
+                      aria-current="page"
+                    >
                       {crumb.label}
                     </span>
                   ) : (
                     <a
                       href={crumb.href}
-                      className="text-gray-500 hover:text-gray-700"
+                      className="text-gray-500 hover:text-gray-700 smooth-transition focus-ring rounded px-1"
+                      aria-label={`Ir a ${crumb.label}`}
                     >
                       {crumb.label}
                     </a>
@@ -112,16 +129,29 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Notifications */}
+          {/* MEJORA: Notificaciones con mejor accesibilidad */}
           <Popover open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <PopoverTrigger asChild>
-              <Button variant="ghost" size="sm" className="relative p-2">
-                <Bell className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="relative p-2 focus-ring"
+                aria-label={`Notificaciones${unreadCount > 0 ? ` (${unreadCount} sin leer)` : ''}`}
+                aria-expanded={notificationsOpen}
+                aria-haspopup="dialog"
+              >
+                <Bell className="h-5 w-5" aria-hidden="true" />
                 {unreadCount > 0 && (
-                  <span className="notification-badge">
+                  <span 
+                    className="notification-badge" 
+                    aria-label={`${unreadCount} notificaciones sin leer`}
+                  >
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
+                <span className="sr-only">
+                  {unreadCount > 0 ? `${unreadCount} notificaciones sin leer` : 'Sin notificaciones'}
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80" align="end">
@@ -194,27 +224,37 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
             <span className="text-sm font-medium">Conexión Segura</span>
           </div>
 
-          {/* Admin Badge */}
+          {/* MEJORA: Admin Badge con mejor visibilidad y accesibilidad */}
           {user?.role === "administrator" && (
-            <div className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full">
-              <Crown className="w-4 h-4" />
-              <span className="text-sm font-medium">Admin</span>
+            <div 
+              className="hidden sm:flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full smooth-transition hover:bg-purple-200"
+              role="status"
+              aria-label="Usuario administrador"
+            >
+              <Crown className="w-4 h-4" aria-hidden="true" />
+              <span className="text-sm font-medium">Administrador</span>
             </div>
           )}
 
-          {/* User Menu */}
+          {/* MEJORA: User Menu con mejor accesibilidad */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex items-center space-x-2 p-2"
+                className="flex items-center space-x-2 p-2 focus-ring"
+                aria-label="Menú de usuario"
+                aria-haspopup="menu"
               >
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                <div 
+                  className="w-8 h-8 bg-primary rounded-full flex items-center justify-center smooth-transition hover:bg-primary/90"
+                  role="img"
+                  aria-label={`Avatar de ${user?.firstName || 'usuario'} ${user?.lastName || ''}`}
+                >
                   <span className="text-white text-sm font-medium">
                     {getInitials(user?.firstName, user?.lastName)}
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-4 w-4 text-gray-400" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">

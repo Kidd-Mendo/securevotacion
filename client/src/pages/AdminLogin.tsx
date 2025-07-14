@@ -27,15 +27,15 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background dark:bg-background transition-colors duration-200">
       <div className="w-full max-w-md space-y-6 p-6">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-            <Crown className="w-8 h-8 text-white" />
+            <Crown className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Acceso de Administrador</h1>
-          <p className="text-gray-600">Plataforma de Votación Educativa</p>
+          <h1 className="text-2xl font-bold text-foreground dark:text-foreground">Acceso de Administrador</h1>
+          <p className="text-muted-foreground dark:text-muted-foreground">Plataforma de Votación Educativa</p>
         </div>
 
         {/* Admin Access Card */}
@@ -69,22 +69,22 @@ export default function AdminLogin() {
 
             {/* Credentials Display */}
             {showCredentials && (
-              <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
+              <div className="space-y-3 p-4 bg-muted dark:bg-muted rounded-lg">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Email</Label>
-                  <div className="mt-1 font-mono text-sm bg-white p-2 rounded border">
+                  <Label className="text-sm font-medium text-foreground dark:text-foreground">Email</Label>
+                  <div className="mt-1 font-mono text-sm bg-background dark:bg-background p-2 rounded border border-border dark:border-border text-foreground dark:text-foreground">
                     {defaultAdminCredentials.email}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">ID de Usuario</Label>
-                  <div className="mt-1 font-mono text-sm bg-white p-2 rounded border">
+                  <Label className="text-sm font-medium text-foreground dark:text-foreground">ID de Usuario</Label>
+                  <div className="mt-1 font-mono text-sm bg-background dark:bg-background p-2 rounded border border-border dark:border-border text-foreground dark:text-foreground">
                     {defaultAdminCredentials.adminId}
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">Nombre</Label>
-                  <div className="mt-1 font-mono text-sm bg-white p-2 rounded border">
+                  <Label className="text-sm font-medium text-foreground dark:text-foreground">Nombre</Label>
+                  <div className="mt-1 font-mono text-sm bg-background dark:bg-background p-2 rounded border border-border dark:border-border text-foreground dark:text-foreground">
                     {defaultAdminCredentials.name}
                   </div>
                 </div>
@@ -92,7 +92,7 @@ export default function AdminLogin() {
             )}
 
             {/* Instructions */}
-            <div className="space-y-2 text-sm text-gray-600">
+            <div className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground">
               <p><strong>Instrucciones de acceso:</strong></p>
               <ol className="list-decimal list-inside space-y-1 ml-2">
                 <li>El primer usuario en registrarse será automáticamente administrador</li>
@@ -111,13 +111,13 @@ export default function AdminLogin() {
         </Card>
 
         {/* Security Notice */}
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/20">
           <CardContent className="pt-6">
             <div className="flex items-start gap-3">
-              <Shield className="w-5 h-5 text-amber-600 mt-0.5" />
+              <Shield className="w-5 h-5 text-amber-600 dark:text-amber-400 mt-0.5" />
               <div className="space-y-1">
-                <h3 className="font-medium text-amber-800">Aviso de Seguridad</h3>
-                <p className="text-sm text-amber-700">
+                <h3 className="font-medium text-amber-800 dark:text-amber-300">Aviso de Seguridad</h3>
+                <p className="text-sm text-amber-700 dark:text-amber-400">
                   Cambia las credenciales por defecto después del primer acceso. Los administradores tienen acceso completo al sistema.
                 </p>
               </div>

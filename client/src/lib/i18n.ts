@@ -76,6 +76,40 @@ export const translations = {
       online: "En línea",
       offline: "Desconectado",
     },
+    // Settings
+    settings: {
+      title: "Configuración",
+      description: "Gestiona tus preferencias del sistema",
+      notifications: {
+        title: "Notificaciones",
+        description: "Configurar cómo quieres recibir notificaciones",
+        email: "Notificaciones por correo",
+        emailDesc: "Recibir notificaciones por correo electrónico",
+        browser: "Notificaciones del navegador",
+        browserDesc: "Mostrar notificaciones en el navegador",
+        elections: "Alertas de elecciones",
+        electionsDesc: "Notificar sobre nuevas elecciones y cambios",
+        results: "Resultados de votación",
+        resultsDesc: "Notificar cuando estén disponibles los resultados",
+      },
+      language: {
+        title: "Idioma",
+        description: "Seleccionar idioma de la interfaz",
+        spanish: "Español",
+        english: "English",
+      },
+      security: {
+        title: "Seguridad",
+        description: "Configurar opciones de seguridad de tu cuenta",
+        twoFactor: "Autenticación de dos factores",
+        twoFactorDesc: "Agregar capa extra de seguridad a tu cuenta",
+        sessionTimeout: "Tiempo límite de sesión",
+        sessionTimeoutDesc: "Cerrar sesión automáticamente por inactividad",
+      },
+      saved: "Configuración guardada",
+      notificationsSaved: "Las preferencias de notificaciones han sido actualizadas",
+      languageSaved: "El idioma ha sido cambiado",
+    },
   },
   en: {
     // Navigation
@@ -152,6 +186,40 @@ export const translations = {
       reset: "Reset",
       online: "Online",
       offline: "Offline",
+    },
+    // Settings
+    settings: {
+      title: "Settings",
+      description: "Manage your system preferences",
+      notifications: {
+        title: "Notifications",
+        description: "Configure how you want to receive notifications",
+        email: "Email notifications",
+        emailDesc: "Receive notifications via email",
+        browser: "Browser notifications",
+        browserDesc: "Show notifications in browser",
+        elections: "Election alerts",
+        electionsDesc: "Notify about new elections and changes",
+        results: "Voting results",
+        resultsDesc: "Notify when results are available",
+      },
+      language: {
+        title: "Language",
+        description: "Select interface language",
+        spanish: "Español",
+        english: "English",
+      },
+      security: {
+        title: "Security",
+        description: "Configure your account security options",
+        twoFactor: "Two-factor authentication",
+        twoFactorDesc: "Add extra security layer to your account",
+        sessionTimeout: "Session timeout",
+        sessionTimeoutDesc: "Automatically log out due to inactivity",
+      },
+      saved: "Settings saved",
+      notificationsSaved: "Notification preferences have been updated",
+      languageSaved: "Language has been changed",
     },
   },
   pt: {
@@ -244,28 +312,39 @@ export function getTranslation(lang: Language = 'es') {
 import { useEffect, useState } from 'react';
 
 export function useTranslation() {
-  const [language, setLanguage] = useState<Language>('es');
+  const [language, setLanguageState] = useState<Language>('es');
 
   useEffect(() => {
     // Cargar idioma guardado
     const savedSettings = localStorage.getItem('settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setLanguage(settings.language || 'es');
+      setLanguageState(settings.language || 'es');
     }
 
-    // Escuchar cambios de idioma
-    const handleStorageChange = () => {
+    const handleLanguageChange = () => {
       const savedSettings = localStorage.getItem('settings');
       if (savedSettings) {
         const settings = JSON.parse(savedSettings);
-        setLanguage(settings.language || 'es');
+        setLanguageState(settings.language || 'es');
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    // Escuchar cambios de idioma
+    window.addEventListener('storage', handleLanguageChange);
+    return () => window.removeEventListener('storage', handleLanguageChange);
   }, []);
+
+  const setLanguage = (newLanguage: Language) => {
+    const settings = JSON.parse(localStorage.getItem('settings') || '{}');
+    settings.language = newLanguage;
+    localStorage.setItem('settings', JSON.stringify(settings));
+    setLanguageState(newLanguage);
+    document.documentElement.lang = newLanguage;
+    
+    // Trigger storage event para notificar otros componentes
+    window.dispatchEvent(new Event('storage'));
+  };
 
   const t = getTranslation(language);
 

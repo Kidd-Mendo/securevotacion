@@ -79,6 +79,7 @@ export default function Settings() {
 
   const resetSettings = () => {
     localStorage.removeItem("settings");
+    // NO eliminar el tema - mantenerlo intacto
     setNotifications({
       email: true,
       browser: true,

@@ -68,12 +68,7 @@ export function ThemeProvider({
     setTheme: (newTheme: Theme) => {
       console.log('ThemeProvider setTheme called with:', newTheme); // Debug
       
-      // Aplicar el tema inmediatamente al DOM
-      const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(newTheme);
-      
-      // Guardar en localStorage inmediatamente
+      // Guardar PRIMERO en localStorage
       try {
         localStorage.setItem(storageKey, newTheme);
         console.log('ThemeProvider saved to localStorage:', newTheme); // Debug
@@ -81,7 +76,13 @@ export function ThemeProvider({
         console.warn("Error saving theme:", error);
       }
       
-      // Actualizar el estado React (esto no cambiará el DOM duplicadamente)
+      // Aplicar el tema inmediatamente al DOM
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(newTheme);
+      console.log('ThemeProvider applied to DOM:', newTheme); // Debug
+      
+      // Actualizar el estado React
       setThemeState(newTheme);
     },
   }

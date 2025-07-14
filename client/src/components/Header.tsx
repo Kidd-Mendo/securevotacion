@@ -41,6 +41,7 @@ interface HeaderProps {
 
 export default function Header({ onToggleMobileMenu }: HeaderProps) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const { data: notifications } = useQuery({
@@ -87,12 +88,12 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
             size="sm"
             className="lg:hidden p-2 focus-ring"
             onClick={onToggleMobileMenu}
-            aria-label="Abrir menú de navegación"
+            aria-label={t.nav.openMenu || "Abrir menú de navegación"}
             aria-expanded="false"
             tabIndex={0}
           >
             <Menu className="h-6 w-6" aria-hidden="true" />
-            <span className="sr-only">Menú</span>
+            <span className="sr-only">{t.nav.menu || "Menú"}</span>
           </Button>
 
           {/* MEJORA: Breadcrumbs mejorados con mejor accesibilidad */}
@@ -171,7 +172,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                   {!notifications || notifications.length === 0 ? (
                     <div className="text-center py-6 text-gray-500">
                       <Bell className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm">No hay notificaciones</p>
+                      <p className="text-sm">{t.notifications?.noNotifications || "No hay notificaciones"}</p>
                     </div>
                   ) : (
                     notifications.slice(0, 5).map((notification: any) => (
@@ -212,7 +213,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                 {notifications && notifications.length > 5 && (
                   <div className="pt-2 border-t">
                     <Button variant="ghost" size="sm" className="w-full">
-                      Ver todas las notificaciones
+                      {t.notifications?.viewAll || "Ver todas las notificaciones"}
                     </Button>
                   </div>
                 )}
@@ -226,7 +227,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
           {/* Security Status */}
           <div className="security-badge hidden sm:flex">
             <Shield className="w-4 h-4 mr-1" />
-            <span className="text-sm font-medium">Conexión Segura</span>
+            <span className="text-sm font-medium">{t.header?.secureConnection || "Conexión Segura"}</span>
           </div>
 
           {/* MEJORA: Admin Badge con mejor visibilidad y accesibilidad */}
@@ -237,7 +238,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               aria-label="Usuario administrador"
             >
               <Crown className="w-4 h-4" aria-hidden="true" />
-              <span className="text-sm font-medium">Administrador</span>
+              <span className="text-sm font-medium">{t.roles.administrator}</span>
             </div>
           )}
 
@@ -279,19 +280,19 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
               <DropdownMenuItem>
                 <a href="/profile" className="flex items-center w-full">
                   <User className="mr-2 h-4 w-4" />
-                  <span>Mi Perfil</span>
+                  <span>{t.nav.profile}</span>
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <a href="/settings" className="flex items-center w-full">
                   <Settings className="mr-2 h-4 w-4" />
-                  <span>Configuración</span>
+                  <span>{t.nav.settings}</span>
                 </a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Cerrar Sesión</span>
+                <span>{t.nav.logout}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

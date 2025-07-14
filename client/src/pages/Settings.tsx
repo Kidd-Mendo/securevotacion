@@ -198,6 +198,7 @@ export default function Settings() {
                 <SelectContent>
                   <SelectItem value="es">{t.settings.language.spanish}</SelectItem>
                   <SelectItem value="en">{t.settings.language.english}</SelectItem>
+                  <SelectItem value="pt">{t.settings.language.portuguese}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

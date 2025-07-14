@@ -119,8 +119,8 @@ export default function Results() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center py-12">
           <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t.common.loading}</h2>
-          <p className="text-gray-600">{t.common.loading}</p>
+          <h2 className="text-lg font-semibold text-foreground mb-2">{t.common.loading}</h2>
+          <p className="text-muted-foreground">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -131,8 +131,8 @@ export default function Results() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t.results.title}</h1>
-          <p className="text-gray-600">{t.results.description}</p>
+          <h1 className="text-3xl font-bold text-foreground">{t.results.title}</h1>
+          <p className="text-muted-foreground">{t.results.description}</p>
         </div>
         {currentResults && (
           <div className="flex gap-2">
@@ -172,7 +172,7 @@ export default function Results() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="flex items-center gap-2 flex-1">
-              <Eye className="w-5 h-5 text-gray-400" aria-hidden="true" />
+              <Eye className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
               <label htmlFor="election-selector" className="sr-only">
                 Seleccionar elección para ver resultados
               </label>
@@ -190,7 +190,7 @@ export default function Results() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Info className="w-4 h-4" aria-hidden="true" />
               <span>{availableElections.length} elecciones disponibles</span>
             </div>
@@ -204,9 +204,9 @@ export default function Results() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {availableElections.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <BarChartIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.results.noResultsAvailable}</h3>
-              <p className="text-gray-600">
+              <BarChartIcon className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">{t.results.noResultsAvailable}</h3>
+              <p className="text-muted-foreground">
                 Los resultados aparecerán cuando las elecciones estén completadas.
               </p>
             </div>
@@ -231,13 +231,13 @@ export default function Results() {
                         {election.status === "completed" ? "Completada" : "En Progreso"}
                       </Badge>
                     </div>
-                    <BarChartIcon className="w-6 h-6 text-gray-400 flex-shrink-0" aria-hidden="true" />
+                    <BarChartIcon className="w-6 h-6 text-muted-foreground flex-shrink-0" aria-hidden="true" />
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center space-x-2">
-                      <Calendar className="w-4 h-4 text-gray-400" aria-hidden="true" />
+                      <Calendar className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                       <span>
                         <time dateTime={election.startDate}>
                           {format(new Date(election.startDate), "d MMM", { locale: es })}
@@ -249,7 +249,7 @@ export default function Results() {
                       </span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Vote className="w-4 h-4 text-gray-400" aria-hidden="true" />
+                      <Vote className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                       <span>
                         {mockResults[election.id as keyof typeof mockResults]?.election.totalVotes || 0} votos emitidos
                       </span>
@@ -405,11 +405,11 @@ export default function Results() {
                                 {index + 1}
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-900 flex items-center">
+                                <h4 className="font-semibold text-foreground flex items-center">
                                   {result.candidateName}
                                   {getWinnerBadge(index)}
                                 </h4>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-muted-foreground">
                                   <span aria-label={`${result.voteCount} votos recibidos`}>
                                     {result.voteCount} votos
                                   </span>
@@ -445,22 +445,22 @@ export default function Results() {
                   </div>
                   
                   {/* Summary Statistics */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="mt-6 pt-6 border-t border-border">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                       <div>
-                        <p className="text-sm text-gray-600">Total de votos</p>
+                        <p className="text-sm text-muted-foreground">Total de votos</p>
                         <p className="text-2xl font-bold text-primary">
                           {currentResults.election.totalVotes}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Candidatos</p>
+                        <p className="text-sm text-muted-foreground">Candidatos</p>
                         <p className="text-2xl font-bold text-secondary">
                           {currentResults.results.length}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Participación</p>
+                        <p className="text-sm text-muted-foreground">Participación</p>
                         <p className="text-2xl font-bold text-accent">100%</p>
                       </div>
                     </div>
@@ -473,9 +473,9 @@ export default function Results() {
       ) : (
         <Card>
           <CardContent className="p-12 text-center">
-            <BarChartIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Selecciona una elección</h3>
-            <p className="text-gray-600">
+            <BarChartIcon className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">Selecciona una elección</h3>
+            <p className="text-muted-foreground">
               Elige una elección del menú desplegable para ver sus resultados detallados.
             </p>
           </CardContent>

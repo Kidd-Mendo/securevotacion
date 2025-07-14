@@ -215,7 +215,7 @@ export default function Admin() {
           <Crown className="h-8 w-8 text-yellow-500" />
           Panel de Administración
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Gestiona usuarios, configuraciones y monitorea el sistema
         </p>
       </div>
@@ -369,7 +369,7 @@ export default function Admin() {
                               <div className="font-medium">
                                 {user.firstName} {user.lastName}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-muted-foreground">
                                 ID: {user.id}
                               </div>
                             </div>
@@ -535,7 +535,7 @@ export default function Admin() {
             <CardContent>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">
+                  <Label className="text-sm text-muted-foreground">
                     Elecciones activas
                   </Label>
                   <p className="text-2xl font-bold">
@@ -543,7 +543,7 @@ export default function Admin() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">
+                  <Label className="text-sm text-muted-foreground">
                     Votos registrados
                   </Label>
                   <p className="text-2xl font-bold">
@@ -551,7 +551,7 @@ export default function Admin() {
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm text-gray-500">
+                  <Label className="text-sm text-muted-foreground">
                     Usuarios online
                   </Label>
                   <p className="text-2xl font-bold">

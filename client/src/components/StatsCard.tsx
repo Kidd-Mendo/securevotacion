@@ -39,8 +39,8 @@ export default function StatsCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-600">{title}</p>
-            <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-3xl font-bold text-foreground mt-1">{value}</p>
             {(subtitle || trend) && (
               <div className="flex items-center space-x-2 mt-2">
                 {trend && (
@@ -54,7 +54,7 @@ export default function StatsCard({
                   </div>
                 )}
                 {subtitle && (
-                  <p className={cn("text-sm", trend ? "text-gray-600" : "text-secondary")}>
+                  <p className={cn("text-sm", trend ? "text-muted-foreground" : "text-secondary")}>
                     {subtitle}
                   </p>
                 )}

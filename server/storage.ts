@@ -81,9 +81,9 @@ export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     
-    // CRITICAL FIX: Force administrator role for alexandermendoza1011@gmail.com
-    if (user && user.email === 'alexandermendoza1011@gmail.com') {
-      console.log('🔧 CRITICAL FIX: Forcing administrator role for alexandermendoza1011@gmail.com');
+    // CRITICAL FIX: Force administrator role for specific users
+    if (user && (user.email === 'alexandermendoza1011@gmail.com' || user.email === 'mxndo1011@gmail.com')) {
+      console.log(`🔧 CRITICAL FIX: Forcing administrator role for ${user.email}`);
       const correctedUser = { ...user, role: 'administrator' as const };
       console.log(`DatabaseStorage.getUser: CORRECTED user ${correctedUser.email} with role: ${correctedUser.role}`);
       return correctedUser;

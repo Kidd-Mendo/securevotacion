@@ -574,7 +574,7 @@ export default function Admin() {
             <CardContent>
               <div className="space-y-4">
                 {auditLogs.length === 0 ? (
-                  <p className="text-center py-6 text-gray-500">
+                  <p className="text-center py-6 text-muted-foreground">
                     No hay registros de auditoría
                   </p>
                 ) : (
@@ -585,10 +585,10 @@ export default function Admin() {
                     >
                       <div>
                         <p className="font-medium">{log.action}</p>
-                        <p className="text-sm text-gray-500">{log.details}</p>
+                        <p className="text-sm text-muted-foreground">{log.details}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {new Date(log.timestamp).toLocaleString("es-ES")}
                         </p>
                         <Badge variant="outline">{log.entityType}</Badge>

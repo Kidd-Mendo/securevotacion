@@ -231,7 +231,7 @@ export default function Audit() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Auditoría y Seguridad</h1>
+          <h1 className="text-3xl font-bold text-foreground">Auditoría y Seguridad</h1>
           <p className="text-muted-foreground">Monitoreo de actividades y registro de eventos del sistema</p>
         </div>
         <Button onClick={handleExportLogs}>
@@ -296,7 +296,7 @@ export default function Audit() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Buscar en logs de auditoría..."
                 value={searchTerm}
@@ -305,7 +305,7 @@ export default function Audit() {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-400" />
+              <Filter className="w-4 h-4 text-muted-foreground" />
               <Select value={actionFilter} onValueChange={setActionFilter}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Filtrar por acción" />
@@ -363,8 +363,8 @@ export default function Audit() {
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8">
                       <div className="flex flex-col items-center space-y-2">
-                        <Shield className="w-12 h-12 text-gray-400" />
-                        <p className="text-gray-500">No se encontraron registros</p>
+                        <Shield className="w-12 h-12 text-muted-foreground" />
+                        <p className="text-muted-foreground">No se encontraron registros</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -383,7 +383,7 @@ export default function Audit() {
                             <div className="font-medium">
                               {format(log.timestamp, "d MMM yyyy", { locale: es })}
                             </div>
-                            <div className="text-gray-500">
+                            <div className="text-muted-foreground">
                               {format(log.timestamp, "HH:mm:ss")}
                             </div>
                           </div>
@@ -404,7 +404,7 @@ export default function Audit() {
                         </TableCell>
                         <TableCell>
                           <div className="max-w-xs">
-                            <div className="text-sm text-gray-900 truncate">
+                            <div className="text-sm text-foreground truncate">
                               {log.details && typeof log.details === 'object' ? (
                                 Object.entries(log.details).map(([key, value]) => (
                                   <div key={key} className="truncate">

@@ -170,15 +170,15 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
 
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {!notifications || notifications.length === 0 ? (
-                    <div className="text-center py-6 text-gray-500">
-                      <Bell className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                    <div className="text-center py-6 text-muted-foreground">
+                      <Bell className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                       <p className="text-sm">{t.notifications?.noNotifications || "No hay notificaciones"}</p>
                     </div>
                   ) : (
                     notifications.slice(0, 5).map((notification: any) => (
                       <div
                         key={notification.id}
-                        className={`p-3 rounded-lg border transition-colors hover:bg-gray-50 ${
+                        className={`p-3 rounded-lg border transition-colors hover:bg-muted ${
                           !notification.isRead
                             ? "bg-blue-50 border-blue-200"
                             : ""
@@ -187,13 +187,13 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                         <div className="flex items-start space-x-3">
                           {getNotificationIcon(notification.type)}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-foreground">
                               {notification.title}
                             </p>
-                            <p className="text-xs text-gray-600 mt-1">
+                            <p className="text-xs text-muted-foreground mt-1">
                               {notification.message}
                             </p>
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                               {format(
                                 new Date(notification.createdAt),
                                 "d MMM, HH:mm",

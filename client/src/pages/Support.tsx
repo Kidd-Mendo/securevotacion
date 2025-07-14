@@ -240,7 +240,7 @@ export default function Support() {
       case "urgent":
         return <Badge variant="destructive">{t.support.urgent}</Badge>;
       case "high":
-        return <Badge className="bg-orange-500 text-white">Alta</Badge>;
+        return <Badge className="bg-orange-500 text-primary-foreground">Alta</Badge>;
       case "medium":
         return <Badge variant="secondary">Media</Badge>;
       case "low":
@@ -283,7 +283,7 @@ export default function Support() {
       <div className="text-center mb-8">
         <div className="flex items-center justify-center space-x-3 mb-4">
           <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
-            <LifeBuoy className="text-white text-2xl" />
+            <LifeBuoy className="text-primary-foreground text-2xl" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-foreground">{t.support.title}</h1>
@@ -393,7 +393,7 @@ export default function Support() {
                     <AccordionTrigger className="text-left">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-gray-600">
+                    <AccordionContent className="text-muted-foreground">
                       {faq.answer}
                     </AccordionContent>
                   </AccordionItem>
@@ -412,7 +412,7 @@ export default function Support() {
                   <contact.icon className="w-12 h-12 text-primary mx-auto mb-4" />
                   <h3 className="font-semibold text-lg mb-2">{contact.title}</h3>
                   <p className="text-xl font-bold text-primary mb-2">{contact.value}</p>
-                  <p className="text-sm text-gray-600 mb-4">{contact.description}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{contact.description}</p>
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -521,7 +521,7 @@ export default function Support() {
                           <FormLabel>Nombre completo *</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                              <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                               <Input 
                                 {...field} 
                                 placeholder="Juan Pérez"
@@ -543,7 +543,7 @@ export default function Support() {
                           <FormLabel>Correo electrónico *</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                               <Input 
                                 {...field} 
                                 type="email"
@@ -695,20 +695,20 @@ export default function Support() {
               ) : tickets.length === 0 ? (
                 <div className="text-center py-8">
                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">No has enviado ningún ticket todavía</p>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-muted-foreground">No has enviado ningún ticket todavía</p>
+                  <p className="text-sm text-muted-foreground mt-1">
                     Los tickets que envíes aparecerán aquí
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {tickets.map((ticket: any) => (
-                    <div key={ticket.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-gray-50">
+                    <div key={ticket.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-muted">
                       <div className="flex items-start space-x-4 flex-1">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                           ticket.status === 'resolved' ? 'bg-green-100' :
                           ticket.status === 'in_progress' ? 'bg-yellow-100' :
-                          ticket.status === 'closed' ? 'bg-gray-100' :
+                          ticket.status === 'closed' ? 'bg-muted' :
                           'bg-blue-100'
                         }`}>
                           {ticket.status === 'resolved' ? (
@@ -716,17 +716,17 @@ export default function Support() {
                           ) : ticket.status === 'in_progress' ? (
                             <Clock className="w-5 h-5 text-yellow-600" />
                           ) : ticket.status === 'closed' ? (
-                            <X className="w-5 h-5 text-gray-600" />
+                            <X className="w-5 h-5 text-muted-foreground" />
                           ) : (
                             <MessageCircle className="w-5 h-5 text-blue-600" />
                           )}
                         </div>
                         <div className="flex-1">
                           <h4 className="font-medium">{ticket.subject}</h4>
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             Ticket #{ticket.id} • {getCategoryDisplay(ticket.category)}
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-muted-foreground mt-1">
                             Creado el {new Date(ticket.createdAt).toLocaleDateString('es-ES', {
                               year: 'numeric',
                               month: 'long',
@@ -735,7 +735,7 @@ export default function Support() {
                               minute: '2-digit'
                             })}
                           </p>
-                          <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                             {ticket.description}
                           </p>
                         </div>
@@ -762,7 +762,7 @@ export default function Support() {
                     <resource.icon className="w-10 h-10 text-primary mt-1" />
                     <div className="flex-1">
                       <h3 className="font-semibold text-lg mb-2">{resource.title}</h3>
-                      <p className="text-gray-600 mb-4">{resource.description}</p>
+                      <p className="text-muted-foreground mb-4">{resource.description}</p>
                       <div className="flex items-center justify-between">
                         <Badge variant="outline">{resource.type}</Badge>
                         <Button 
@@ -804,14 +804,14 @@ export default function Support() {
                   { title: "Reportar problemas", duration: "2:45" },
                   { title: "Gestión de notificaciones", duration: "3:10" }
                 ].map((video, index) => (
-                  <div key={index} className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <div className="aspect-video bg-gray-200 rounded mb-3 flex items-center justify-center">
+                  <div key={index} className="p-4 border rounded-lg hover:bg-muted cursor-pointer">
+                    <div className="aspect-video bg-muted rounded mb-3 flex items-center justify-center">
                       <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
                         <div className="w-0 h-0 border-l-4 border-l-white border-y-2 border-y-transparent ml-1"></div>
                       </div>
                     </div>
                     <h4 className="font-medium mb-1">{video.title}</h4>
-                    <p className="text-sm text-gray-600">{video.duration}</p>
+                    <p className="text-sm text-muted-foreground">{video.duration}</p>
                   </div>
                 ))}
               </div>
@@ -833,12 +833,12 @@ export default function Support() {
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+            <div className="bg-muted rounded-lg p-4 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-medium">Agente disponible</span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Un agente de soporte está listo para ayudarte. Tiempo de respuesta promedio: menos de 1 minuto.
               </p>
             </div>

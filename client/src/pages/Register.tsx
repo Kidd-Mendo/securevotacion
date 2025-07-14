@@ -170,10 +170,10 @@ export default function Register() {
           <CardContent className="pt-6 text-center">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">¡Registro Exitoso!</h2>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Su cuenta ha sido creada correctamente.
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Será redirigido al inicio de sesión en unos segundos...
             </p>
           </CardContent>
@@ -214,7 +214,7 @@ export default function Register() {
                         <FormLabel>Nombre *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                             <Input 
                               {...field} 
                               placeholder="Juan"
@@ -236,7 +236,7 @@ export default function Register() {
                         <FormLabel>Apellido *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                             <Input 
                               {...field} 
                               placeholder="Pérez"
@@ -260,7 +260,7 @@ export default function Register() {
                         <FormLabel>Correo Institucional *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                             <Input 
                               {...field} 
                               type="email"
@@ -286,7 +286,7 @@ export default function Register() {
                         <FormLabel>Teléfono *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                             <Input 
                               {...field} 
                               placeholder="0999999999"
@@ -311,7 +311,7 @@ export default function Register() {
                         <FormLabel>Fecha de Nacimiento *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                            <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                             <Input 
                               {...field} 
                               type="date"
@@ -361,7 +361,7 @@ export default function Register() {
                       <FormLabel>Contraseña *</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             {...field}
                             type={showPassword ? "text" : "password"}
@@ -378,9 +378,9 @@ export default function Register() {
                             aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                           >
                             {showPassword ? (
-                              <EyeOff className="h-4 w-4 text-gray-400" />
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
                             ) : (
-                              <Eye className="h-4 w-4 text-gray-400" />
+                              <Eye className="h-4 w-4 text-muted-foreground" />
                             )}
                           </Button>
                         </div>
@@ -416,7 +416,7 @@ export default function Register() {
                       <FormLabel>Confirmar Contraseña *</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             {...field}
                             type={showConfirmPassword ? "text" : "password"}
@@ -433,9 +433,9 @@ export default function Register() {
                             aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                           >
                             {showConfirmPassword ? (
-                              <EyeOff className="h-4 w-4 text-gray-400" />
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
                             ) : (
-                              <Eye className="h-4 w-4 text-gray-400" />
+                              <Eye className="h-4 w-4 text-muted-foreground" />
                             )}
                           </Button>
                         </div>
@@ -503,7 +503,7 @@ export default function Register() {
               </div>
 
               {/* Enlace a login */}
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-sm text-muted-foreground">
                 ¿Ya tiene cuenta?{" "}
                 <Link href="/login" className="text-primary hover:underline">
                   Inicie sesión aquí

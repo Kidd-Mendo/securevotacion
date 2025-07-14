@@ -281,7 +281,7 @@ export default function UsersPage() {
                     <TableCell colSpan={6} className="text-center py-8">
                       <div className="flex flex-col items-center space-y-2">
                         <Users className="w-12 h-12 text-muted-foreground" />
-                        <p className="text-gray-500">No se encontraron usuarios</p>
+                        <p className="text-muted-foreground">No se encontraron usuarios</p>
                       </div>
                     </TableCell>
                   </TableRow>

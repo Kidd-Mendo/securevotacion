@@ -43,42 +43,42 @@
 }
 
 .dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 33%, 17%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 33%, 17%);
+  --input: hsl(217, 33%, 17%);
   --primary: hsl(207, 90%, 54%);
   --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
+  --secondary: hsl(217, 33%, 17%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 33%, 17%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 63%, 31%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 27%, 84%);
 
-  /* Chart colors for dark mode */
-  --chart-1: hsl(207, 90%, 54%);
-  --chart-2: hsl(142, 69%, 58%);
-  --chart-3: hsl(32, 95%, 44%);
-  --chart-4: hsl(0, 84%, 60%);
-  --chart-5: hsl(270, 95%, 60%);
+  /* Chart colors for dark mode - mejor contraste */
+  --chart-1: hsl(207, 90%, 61%);
+  --chart-2: hsl(142, 69%, 65%);
+  --chart-3: hsl(32, 95%, 51%);
+  --chart-4: hsl(0, 84%, 67%);
+  --chart-5: hsl(270, 95%, 67%);
 
-  /* Sidebar colors for dark mode */
-  --sidebar-background: hsl(240, 10%, 3.9%);
-  --sidebar-foreground: hsl(0, 0%, 98%);
+  /* Sidebar colors for dark mode - mejor contraste */
+  --sidebar-background: hsl(222, 84%, 4.9%);
+  --sidebar-foreground: hsl(210, 40%, 98%);
   --sidebar-primary: hsl(207, 90%, 54%);
   --sidebar-primary-foreground: hsl(211, 100%, 99%);
-  --sidebar-accent: hsl(240, 3.7%, 15.9%);
-  --sidebar-accent-foreground: hsl(0, 0%, 98%);
-  --sidebar-border: hsl(240, 3.7%, 15.9%);
-  --sidebar-ring: hsl(240, 4.9%, 83.9%);
+  --sidebar-accent: hsl(217, 33%, 17%);
+  --sidebar-accent-foreground: hsl(210, 40%, 98%);
+  --sidebar-border: hsl(217, 33%, 17%);
+  --sidebar-ring: hsl(212, 27%, 84%);
 }
 
 @layer base {
@@ -119,7 +119,62 @@
 
   /* Tarjetas con mejor contraste y retroalimentación */
   .stat-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md smooth-transition focus-within:shadow-lg;
+    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6 hover:shadow-md smooth-transition focus-within:shadow-lg;
+  }
+
+  /* MEJORA: Modo oscuro - mejores contrastes para cumplir ISO */
+  .dark .stat-card {
+    @apply bg-card border-border shadow-lg;
+  }
+
+  .dark .sidebar-nav-item {
+    @apply text-sidebar-foreground hover:bg-sidebar-accent;
+  }
+
+  .dark .sidebar-nav-item.active {
+    @apply bg-sidebar-primary text-sidebar-primary-foreground;
+  }
+
+  .dark .election-card {
+    @apply bg-card border-border shadow-lg;
+  }
+
+  .dark .audit-row {
+    @apply hover:bg-muted;
+  }
+
+  /* Más mejoras de contraste para modo oscuro - cumplimiento ISO */
+  .dark {
+    /* Mejor contraste para texto */
+    color-scheme: dark;
+  }
+
+  .dark .bg-gray-50 {
+    @apply bg-muted;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-foreground;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-muted-foreground;
+  }
+
+  .dark .text-gray-500 {
+    @apply text-muted-foreground;
+  }
+
+  .dark .border-gray-200 {
+    @apply border-border;
+  }
+
+  .dark .hover\:bg-gray-100:hover {
+    @apply bg-muted;
+  }
+
+  .dark .hover\:bg-gray-50:hover {
+    @apply bg-muted;
   }
 
   /* MEJORA: Navegación mejorada con indicadores visuales claros */

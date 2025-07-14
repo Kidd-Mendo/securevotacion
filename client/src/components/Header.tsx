@@ -74,11 +74,11 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
   // Mock breadcrumbs - in real app this would be dynamic based on route
   const breadcrumbs = [
     { label: "Inicio", href: "/" },
-    { label: "Panel Principal", href: "/" },
+    { label: "Panel Principal", href: "/dashboard" },
   ];
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+    <header className="bg-background shadow-sm border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* MEJORA: Mobile menu button con mejor accesibilidad */}
@@ -99,7 +99,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
           <nav className="hidden md:flex" aria-label="Navegación de páginas">
             <ol className="flex items-center space-x-2 text-sm" role="list">
               {breadcrumbs.map((crumb, index) => (
-                <li key={crumb.href} className="flex items-center" role="listitem">
+                <li key={`${crumb.href}-${index}`} className="flex items-center" role="listitem">
                   {index > 0 && (
                     <span 
                       className="breadcrumb-separator" 
@@ -110,7 +110,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                   )}
                   {index === breadcrumbs.length - 1 ? (
                     <span 
-                      className="text-gray-900 font-medium"
+                      className="text-foreground font-medium"
                       aria-current="page"
                     >
                       {crumb.label}
@@ -118,7 +118,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                   ) : (
                     <a
                       href={crumb.href}
-                      className="text-gray-500 hover:text-gray-700 smooth-transition focus-ring rounded px-1"
+                      className="text-muted-foreground hover:text-foreground smooth-transition focus-ring rounded px-1"
                       aria-label={`Ir a ${crumb.label}`}
                     >
                       {crumb.label}

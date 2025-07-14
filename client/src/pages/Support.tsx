@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "@/lib/i18n";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,9 +68,9 @@ export default function Support() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("help");
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
-  const [userTickets, setUserTickets] = useState<Ticket[]>([]);
   const [showLiveChat, setShowLiveChat] = useState(false);
 
   const form = useForm<SupportFormData>({
@@ -87,33 +87,27 @@ export default function Support() {
 
   const submitTicketMutation = useMutation({
     mutationFn: async (data: SupportFormData) => {
-      // In a real implementation, this would call the support API
-      return new Promise(resolve => setTimeout(resolve, 1000));
+      return await apiRequest("/api/support-tickets", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     },
-    onSuccess: (_, variables) => {
-      const ticketId = Math.random().toString(36).substr(2, 9).toUpperCase();
-      const newTicket: Ticket = {
-        id: ticketId,
-        subject: variables.subject,
-        category: variables.category,
-        priority: variables.priority,
-        description: variables.description,
-        status: "open",
-        createdAt: new Date()
-      };
-      
-      setUserTickets(prev => [newTicket, ...prev]);
+    onSuccess: (newTicket) => {
       setTicketSubmitted(true);
+      queryClient.invalidateQueries({ queryKey: ['/api/support-tickets'] });
       toast({
         title: "✓ Ticket enviado exitosamente",
-        description: `Su solicitud ha sido recibida. Número de ticket: #${ticketId}`,
+        description: `Su solicitud ha sido recibida. Número de ticket: #${newTicket.id}`,
       });
       form.reset({
         name: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
         email: user?.email || "",
         subject: "",
         category: "",
-        priority: "",
+        priority: "medium",
         description: "",
       });
       // Cambiar a la pestaña de tickets para mostrar el nuevo ticket
@@ -687,7 +681,11 @@ export default function Support() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {userTickets.length === 0 ? (
+              {ticketsLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                </div>
+              ) : tickets.length === 0 ? (
                 <div className="text-center py-8">
                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500">No has enviado ningún ticket todavía</p>
@@ -697,7 +695,7 @@ export default function Support() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {userTickets.map((ticket) => (
+                  {tickets.map((ticket: any) => (
                     <div key={ticket.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-gray-50">
                       <div className="flex items-start space-x-4 flex-1">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${

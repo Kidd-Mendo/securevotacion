@@ -5,6 +5,7 @@ import {
   votes,
   auditLogs,
   notifications,
+  supportTickets,
   type User,
   type UpsertUser,
   type Election,
@@ -17,6 +18,8 @@ import {
   type InsertAuditLog,
   type Notification,
   type InsertNotification,
+  type SupportTicket,
+  type InsertSupportTicket,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, count, sql } from "drizzle-orm";
@@ -55,6 +58,12 @@ export interface IStorage {
   createNotification(notification: InsertNotification): Promise<Notification>;
   getUserNotifications(userId: string): Promise<Notification[]>;
   markNotificationAsRead(id: string): Promise<void>;
+
+  // Support ticket operations
+  createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket>;
+  getUserSupportTickets(userId: string): Promise<SupportTicket[]>;
+  getAllSupportTickets(): Promise<SupportTicket[]>;
+  updateSupportTicket(id: string, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined>;
 
   // Statistics
   getDashboardStats(): Promise<{
@@ -356,6 +365,86 @@ export class DatabaseStorage implements IStorage {
   async deleteUser(userId: string): Promise<void> {
     await db.delete(users).where(eq(users.id, userId));
   }
+
+  // Support ticket operations
+  async createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket> {
+    const [newTicket] = await db
+      .insert(supportTickets)
+      .values(ticket)
+      .returning();
+    return newTicket;
+  }
+
+  async getUserSupportTickets(userId: string): Promise<SupportTicket[]> {
+    return await db
+      .select()
+      .from(supportTickets)
+      .where(eq(supportTickets.userId, userId))
+      .orderBy(desc(supportTickets.createdAt));
+  }
+
+  async getAllSupportTickets(): Promise<SupportTicket[]> {
+    return await db
+      .select()
+      .from(supportTickets)
+      .orderBy(desc(supportTickets.createdAt));
+  }
+
+  async updateSupportTicket(id: string, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined> {
+    const [updatedTicket] = await db
+      .update(supportTickets)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(supportTickets.id, id))
+      .returning();
+    return updatedTicket;
+  }
+
+  // Notification operations
+  async createNotification(notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values(notification)
+      .returning();
+    return newNotification;
+  }
+
+  async getUserNotifications(userId: string): Promise<Notification[]> {
+    return await db
+      .select()
+      .from(notifications)
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt));
+  }
+
+  async markNotificationAsRead(id: string): Promise<void> {
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.id, id));
+  }
+
+  async getDashboardStats(): Promise<{
+    activeElections: number;
+    totalUsers: number;
+    votesToday: number;
+    onlineUsers: number;
+  }> {
+    const [userCount] = await db.select({ count: sql<number>`count(*)` }).from(users);
+    const [activeElectionCount] = await db.select({ count: sql<number>`count(*)` }).from(elections).where(eq(elections.status, "active"));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [todayVoteCount] = await db.select({ count: sql<number>`count(*)` }).from(votes).where(sql`${votes.createdAt} >= ${today}`);
+    
+    return {
+      activeElections: activeElectionCount.count || 0,
+      totalUsers: userCount.count || 0,
+      votesToday: todayVoteCount.count || 0,
+      onlineUsers: Math.floor(Math.random() * 10) + 1, // Mock value
+    };
+  }
 }
 
 // In-memory storage implementation for development
@@ -366,6 +455,7 @@ class MemoryStorage implements IStorage {
   private votes: Map<string, Vote> = new Map();
   private auditLogs: AuditLog[] = [];
   private notifications: Map<string, Notification> = new Map();
+  private supportTickets: Map<string, SupportTicket> = new Map();
 
   constructor() {
     // Create default admin user
@@ -595,6 +685,43 @@ class MemoryStorage implements IStorage {
 
   async deleteUser(userId: string): Promise<void> {
     this.users.delete(userId);
+  }
+
+  // Support ticket operations for MemoryStorage
+  async createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket> {
+    const newTicket: SupportTicket = {
+      id: `ticket-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      ...ticket,
+      status: "open",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.supportTickets.set(newTicket.id, newTicket);
+    return newTicket;
+  }
+
+  async getUserSupportTickets(userId: string): Promise<SupportTicket[]> {
+    return Array.from(this.supportTickets.values())
+      .filter(ticket => ticket.userId === userId)
+      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  }
+
+  async getAllSupportTickets(): Promise<SupportTicket[]> {
+    return Array.from(this.supportTickets.values())
+      .sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0));
+  }
+
+  async updateSupportTicket(id: string, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined> {
+    const ticket = this.supportTickets.get(id);
+    if (!ticket) return undefined;
+
+    const updatedTicket = {
+      ...ticket,
+      ...updates,
+      updatedAt: new Date(),
+    };
+    this.supportTickets.set(id, updatedTicket);
+    return updatedTicket;
   }
 }
 

@@ -54,35 +54,30 @@ export function ThemeProvider({
     getInitialTheme(storageKey, defaultTheme)
   );
 
-  // Aplicar el tema inmediatamente al cargar y cuando cambie
+  // Aplicar el tema inicialmente
   useEffect(() => {
     const root = window.document.documentElement;
-    
-    // Remover todas las clases de tema
     root.classList.remove("light", "dark");
-    
-    // Agregar la clase del tema actual
     root.classList.add(theme);
-    
-    // Asegurar que el tema se mantenga en localStorage
-    try {
-      localStorage.setItem(storageKey, theme);
-    } catch (error) {
-      console.warn("Error saving theme to localStorage:", error);
-    }
-  }, [theme, storageKey]);
+  }, [theme]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
+      // Aplicar el tema inmediatamente al DOM
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(newTheme);
+      
+      // Guardar en localStorage inmediatamente
       try {
         localStorage.setItem(storageKey, newTheme);
-        setTheme(newTheme);
       } catch (error) {
         console.warn("Error saving theme:", error);
-        // Aún cambiar el tema aunque no se pueda guardar
-        setTheme(newTheme);
       }
+      
+      // Actualizar el estado React (esto no cambiará el DOM duplicadamente)
+      setTheme(newTheme);
     },
   }
 

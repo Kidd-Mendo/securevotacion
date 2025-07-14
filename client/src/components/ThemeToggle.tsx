@@ -5,11 +5,16 @@ import { useTheme } from "@/components/ThemeProvider";
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+  };
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      onClick={toggleTheme}
       className="w-9 h-9 smooth-transition hover-brightness relative"
       aria-label={theme === "light" ? "Activar modo oscuro" : "Activar modo claro"}
     >

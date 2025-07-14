@@ -32,11 +32,7 @@ function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
       return savedTheme;
     }
     
-    // Si no hay tema guardado, detectar preferencia del sistema
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return "dark";
-    }
-    
+    // Si no hay tema guardado, siempre usar el tema por defecto (light)
     return defaultTheme;
   } catch (error) {
     console.warn("Error accessing localStorage:", error);
@@ -71,32 +67,6 @@ export function ThemeProvider({
       console.warn("Error saving theme to localStorage:", error);
     }
   }, [theme, storageKey]);
-
-  // Escuchar cambios en la preferencia del sistema
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    const handleChange = (e: MediaQueryListEvent) => {
-      // Solo cambiar si no hay tema guardado explícitamente
-      try {
-        const savedTheme = localStorage.getItem(storageKey);
-        if (!savedTheme) {
-          setTheme(e.matches ? "dark" : "light");
-        }
-      } catch (error) {
-        console.warn("Error checking localStorage:", error);
-      }
-    };
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
-      // Fallback para navegadores más antiguos
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
-    }
-  }, [storageKey]);
 
   const value = {
     theme,

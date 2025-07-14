@@ -147,10 +147,14 @@ Preferred communication style: Simple, everyday language.
 - Real-time language switching works system-wide without page reload
 - Fixed duplicate translation keys and completed i18n architecture
 - All navigation, forms, buttons, and UI elements now use translation system
+- **THEME:** Modified theme system to always start in light mode by default (no automatic system detection)
+- Fixed Landing and AdminLogin pages to properly respect dark mode when manually selected
+- Corrected ticketsLoading undefined variable error in Support.tsx
 - **MAJOR:** Fixed dark mode persistence issues - theme now properly persists across window changes and page refreshes
-- Enhanced ThemeProvider with better localStorage handling and system theme detection
+- Enhanced ThemeProvider with better localStorage handling and manual theme control
 - Added script in HTML head to prevent theme flashing on page load and improved CSS transitions
-- Implemented automatic system preference detection when no saved theme exists
+- **IMPORTANT:** Modified theme behavior - system always starts in light mode by default, no automatic system preference detection
+- Theme only changes when user explicitly selects dark/light mode, ensuring consistent user experience
 - Fixed localStorage error handling and added fallback mechanisms
 
 ### Accessibility & Usability Enhancements (ISO 9241-11 & ISO 25010:2011)

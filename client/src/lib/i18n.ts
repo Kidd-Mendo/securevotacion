@@ -129,6 +129,11 @@ export const translations = {
       createElectoralProcess: "Crear proceso electoral",
       viewResults: "Ver Resultados",
       analyzeStatistics: "Analizar datos de votación",
+      registerUser: "Registrar Usuario",
+      addNewParticipant: "Agregar nuevo participante",
+      seeAll: "Ver todo",
+      noActiveElections: "No hay elecciones activas",
+      analyzeVotingData: "Analizar datos de votación",
     },
     // Settings
     settings: {
@@ -438,6 +443,11 @@ export const translations = {
       createElectoralProcess: "Create electoral process",
       viewResults: "View Results",
       analyzeStatistics: "Analyze voting data",
+      registerUser: "Register User",
+      addNewParticipant: "Add new participant",
+      seeAll: "See all",
+      noActiveElections: "No active elections",
+      analyzeVotingData: "Analyze voting data",
     },
     // Settings
     settings: {
@@ -747,6 +757,11 @@ export const translations = {
       createElectoralProcess: "Criar processo eleitoral",
       viewResults: "Ver Resultados",
       analyzeStatistics: "Analisar dados de votação",
+      registerUser: "Registrar Usuário",
+      addNewParticipant: "Adicionar novo participante",
+      seeAll: "Ver tudo",
+      noActiveElections: "Nenhuma eleição ativa",
+      analyzeVotingData: "Analisar dados de votação",
     },
     // Settings
     settings: {
@@ -937,27 +952,5 @@ export function getTranslation(lang: Language = 'es') {
   return translations[lang] || translations.es;
 }
 
-export function useTranslation() {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('sistema-votacion-language');
-      return (stored as Language) || 'es';
-    }
-    return 'es';
-  });
-
-  const setLanguage = (newLanguage: Language) => {
-    setLanguageState(newLanguage);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('sistema-votacion-language', newLanguage);
-    }
-  };
-
-  const t = getTranslation(language);
-
-  return {
-    t,
-    language,
-    setLanguage,
-  };
-}
+// useTranslation has been moved to useTranslation.ts
+// It now uses the global LanguageContext for instant updates

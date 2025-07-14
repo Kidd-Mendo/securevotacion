@@ -33,7 +33,7 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslation } from "@/lib/useTranslation";
 
 interface HeaderProps {
   onToggleMobileMenu: () => void;

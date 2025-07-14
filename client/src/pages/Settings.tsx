@@ -20,13 +20,16 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
-import { Bell, Globe, Shield } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Bell, Globe, Shield, Monitor, Moon, Sun } from "lucide-react";
 
 
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t, language, setLanguage } = useTranslation();
+  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState({
     email: true,
     browser: true,
@@ -174,6 +177,38 @@ export default function Settings() {
                   handleNotificationChange("results", checked)
                 }
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tema de la aplicación */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Monitor className="h-5 w-5" />
+              Tema de la aplicación
+            </CardTitle>
+            <CardDescription>
+              Personaliza la apariencia de la interfaz
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <Label className="text-sm font-medium">
+                  {theme === "dark" ? "Modo oscuro" : "Modo claro"}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {theme === "dark" 
+                    ? "Interfaz oscura para reducir la fatiga visual" 
+                    : "Interfaz clara y brillante"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Sun className="h-4 w-4" />
+                <ThemeToggle />
+                <Moon className="h-4 w-4" />
+              </div>
             </div>
           </CardContent>
         </Card>

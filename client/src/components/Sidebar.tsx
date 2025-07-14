@@ -205,9 +205,9 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           <nav className="flex-1 p-4 space-y-2" role="navigation" aria-label="Menú principal">
             {visibleItems.map((item, index) => (
               <Link key={item.href} href={item.href}>
-                <a
+                <div
                   className={cn(
-                    "sidebar-nav-item focus-ring",
+                    "sidebar-nav-item focus-ring cursor-pointer",
                     item.isActive && "active",
                     selectedIndex === index && "ring-2 ring-primary ring-offset-2"
                   )}
@@ -227,17 +227,17 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                     <span className="font-medium block truncate">
                       {item.label}
                     </span>
-                    <span className="text-xs text-gray-500 block truncate">
+                    <span className="text-xs text-muted-foreground block truncate">
                       {item.description}
                     </span>
                   </div>
                   {item.isActive && (
                     <div 
-                      className="w-2 h-2 bg-white rounded-full"
+                      className="w-2 h-2 bg-primary-foreground rounded-full"
                       aria-hidden="true"
                     />
                   )}
-                </a>
+                </div>
               </Link>
             ))}
           </nav>
@@ -328,15 +328,16 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           <nav className="flex-1 p-4 space-y-2" role="navigation" aria-label="Menú principal móvil">
             {visibleItems.map((item, index) => (
               <Link key={item.href} href={item.href}>
-                <a
+                <div
                   className={cn(
-                    "sidebar-nav-item focus-ring",
+                    "sidebar-nav-item focus-ring cursor-pointer",
                     item.isActive && "active",
                     selectedIndex === index && "ring-2 ring-primary ring-offset-2"
                   )}
                   onClick={onCloseMobileMenu}
                   aria-current={item.isActive ? "page" : undefined}
                   aria-label={`${item.label} - ${item.description}`}
+                  title={`${item.description} (${item.keyboardShortcut})`}
                   tabIndex={0}
                   role="menuitem"
                   onFocus={() => setSelectedIndex(index)}
@@ -349,17 +350,17 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                     <span className="font-medium block truncate">
                       {item.label}
                     </span>
-                    <span className="text-xs text-gray-500 block truncate">
+                    <span className="text-xs text-muted-foreground block truncate">
                       {item.description}
                     </span>
                   </div>
                   {item.isActive && (
                     <div 
-                      className="w-2 h-2 bg-white rounded-full"
+                      className="w-2 h-2 bg-primary-foreground rounded-full"
                       aria-hidden="true"
                     />
                   )}
-                </a>
+                </div>
               </Link>
             ))}
           </nav>

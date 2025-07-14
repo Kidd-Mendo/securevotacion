@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "@/lib/i18n";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,7 @@ import { es } from "date-fns/locale";
 const COLORS = ['hsl(207, 90%, 54%)', 'hsl(142, 69%, 58%)', 'hsl(32, 95%, 44%)', 'hsl(0, 84%, 60%)'];
 
 export default function Results() {
+  const { t } = useTranslation();
   const [selectedElection, setSelectedElection] = useState<string>("all");
 
   const { data: elections, isLoading: electionsLoading } = useQuery({
@@ -104,11 +106,11 @@ export default function Results() {
     if (index === 0) return (
       <Badge className="bg-yellow-500 text-white ml-2" aria-label="Ganador de la elección">
         <Trophy className="w-3 h-3 mr-1" aria-hidden="true" />
-        Ganador
+        {t.results.winner}
       </Badge>
     );
-    if (index === 1) return <Badge variant="secondary" className="ml-2" aria-label="Segundo lugar">2do Lugar</Badge>;
-    if (index === 2) return <Badge variant="outline" className="ml-2" aria-label="Tercer lugar">3er Lugar</Badge>;
+    if (index === 1) return <Badge variant="secondary" className="ml-2" aria-label="Segundo lugar">{t.results.secondPlace}</Badge>;
+    if (index === 2) return <Badge variant="outline" className="ml-2" aria-label="Tercer lugar">{t.results.thirdPlace}</Badge>;
     return null;
   };
 
@@ -117,8 +119,8 @@ export default function Results() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center py-12">
           <Loader2 className="w-12 h-12 mx-auto text-primary animate-spin mb-4" />
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Cargando resultados electorales</h2>
-          <p className="text-gray-600">Por favor espere mientras obtenemos la información...</p>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">{t.common.loading}</h2>
+          <p className="text-gray-600">{t.common.loading}</p>
         </div>
       </div>
     );
@@ -129,8 +131,8 @@ export default function Results() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Resultados Electorales</h1>
-          <p className="text-gray-600">Visualiza y analiza los resultados de las elecciones</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t.results.title}</h1>
+          <p className="text-gray-600">{t.results.description}</p>
         </div>
         {currentResults && (
           <div className="flex gap-2">
@@ -140,7 +142,7 @@ export default function Results() {
               aria-label="Descargar resultados en formato CSV"
             >
               <FileDown className="w-4 h-4 mr-2" />
-              Exportar CSV
+              {t.results.exportResults}
             </Button>
             <Button 
               variant="outline"
@@ -159,7 +161,7 @@ export default function Results() {
               }}
             >
               <Share2 className="w-4 h-4 mr-2" />
-              Compartir
+              {t.results.shareResults}
             </Button>
           </div>
         )}
@@ -179,7 +181,7 @@ export default function Results() {
                   <SelectValue placeholder="Selecciona una elección" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todas las elecciones</SelectItem>
+                  <SelectItem value="all">{t.results.allElections}</SelectItem>
                   {availableElections.map((election: any) => (
                     <SelectItem key={election.id} value={election.id}>
                       {election.name}
@@ -203,7 +205,7 @@ export default function Results() {
           {availableElections.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <BarChartIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay resultados disponibles</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t.results.noResultsAvailable}</h3>
               <p className="text-gray-600">
                 Los resultados aparecerán cuando las elecciones estén completadas.
               </p>

@@ -83,9 +83,9 @@ export class DatabaseStorage implements IStorage {
     
     // CRITICAL FIX: Force administrator role for specific users
     if (user && (user.email === 'alexandermendoza1011@gmail.com' || user.email === 'mxndo1011@gmail.com')) {
-      console.log(`🔧 CRITICAL FIX: Forcing administrator role for ${user.email}`);
+      console.log(`🔧 ADMIN FIX: Forcing administrator role for ${user.email}`);
       const correctedUser = { ...user, role: 'administrator' as const };
-      console.log(`DatabaseStorage.getUser: CORRECTED user ${correctedUser.email} with role: ${correctedUser.role}`);
+      console.log(`DatabaseStorage.getUser: ADMIN role enforced for ${correctedUser.email}`);
       return correctedUser;
     }
     

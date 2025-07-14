@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   Crown,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";

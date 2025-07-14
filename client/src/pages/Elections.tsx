@@ -84,7 +84,7 @@ export default function Elections() {
     },
     onSuccess: () => {
       toast({
-        title: "Elección creada",
+        title: t.elections.createElection,
         description: "La elección ha sido creada exitosamente",
       });
       setIsCreateDialogOpen(false);
@@ -154,13 +154,13 @@ export default function Elections() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-secondary text-white">Activa</Badge>;
+        return <Badge className="bg-secondary text-white">{t.elections.active}</Badge>;
       case "completed":
-        return <Badge variant="outline">Completada</Badge>;
+        return <Badge variant="outline">{t.elections.completed}</Badge>;
       case "draft":
-        return <Badge variant="secondary">Borrador</Badge>;
+        return <Badge variant="secondary">{t.elections.draft}</Badge>;
       case "cancelled":
-        return <Badge variant="destructive">Cancelada</Badge>;
+        return <Badge variant="destructive">{t.elections.cancelled}</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -200,10 +200,10 @@ export default function Elections() {
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Gestión de Elecciones
+            {t.elections.title}
           </h1>
           <p className="text-gray-600 mt-1">
-            Administra procesos electorales y participa en votaciones
+            {t.elections.description}
           </p>
         </div>
         {canManageElections && (
@@ -214,7 +214,7 @@ export default function Elections() {
                 aria-label="Crear nueva elección electoral"
               >
                 <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
-                Nueva Elección
+                {t.elections.newElection}
               </Button>
             </DialogTrigger>
             <DialogContent 
@@ -224,7 +224,7 @@ export default function Elections() {
             >
               <DialogHeader>
                 <DialogTitle id="create-election-title">
-                  Crear Nueva Elección
+                  {t.elections.createElection}
                 </DialogTitle>
                 <DialogDescription id="create-election-description">
                   Configure los parámetros de la nueva elección electoral. Los campos marcados con * son obligatorios.

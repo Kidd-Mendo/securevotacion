@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslation } from "@/lib/i18n";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
@@ -65,6 +66,7 @@ interface Ticket {
 
 export default function Support() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("help");
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
@@ -235,7 +237,7 @@ export default function Support() {
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case "urgent":
-        return <Badge variant="destructive">Urgente</Badge>;
+        return <Badge variant="destructive">{t.support.urgent}</Badge>;
       case "high":
         return <Badge className="bg-orange-500 text-white">Alta</Badge>;
       case "medium":
@@ -250,13 +252,13 @@ export default function Support() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "open":
-        return <Badge className="bg-blue-100 text-blue-800">Abierto</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800">{t.support.open}</Badge>;
       case "in_progress":
-        return <Badge className="bg-yellow-100 text-yellow-800">En Progreso</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">{t.support.inProgress}</Badge>;
       case "resolved":
-        return <Badge className="bg-green-100 text-green-800">Resuelto</Badge>;
+        return <Badge className="bg-green-100 text-green-800">{t.support.resolved}</Badge>;
       case "closed":
-        return <Badge variant="outline">Cerrado</Badge>;
+        return <Badge variant="outline">{t.support.closed}</Badge>;
       default:
         return null;
     }
@@ -283,8 +285,8 @@ export default function Support() {
             <LifeBuoy className="text-white text-2xl" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Centro de Soporte</h1>
-            <p className="text-gray-600">Obtén ayuda y resuelve tus dudas</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t.support.title}</h1>
+            <p className="text-gray-600">{t.support.description}</p>
           </div>
         </div>
       </div>
@@ -293,15 +295,15 @@ export default function Support() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="help">
             <HelpCircle className="w-4 h-4 mr-2" />
-            Ayuda
+            {t.support.faq}
           </TabsTrigger>
           <TabsTrigger value="contact">
             <Mail className="w-4 h-4 mr-2" />
-            Contacto
+            {t.support.contactForm}
           </TabsTrigger>
           <TabsTrigger value="tickets">
             <MessageCircle className="w-4 h-4 mr-2" />
-            Tickets
+            {t.support.myTickets}
           </TabsTrigger>
           <TabsTrigger value="resources">
             <FileText className="w-4 h-4 mr-2" />

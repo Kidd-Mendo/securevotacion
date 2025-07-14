@@ -192,7 +192,7 @@ export default function Results() {
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Info className="w-4 h-4" aria-hidden="true" />
-              <span>{availableElections.length} elecciones disponibles</span>
+              <span>{availableElections.length} {t.results.availableElections}</span>
             </div>
           </div>
         </CardContent>

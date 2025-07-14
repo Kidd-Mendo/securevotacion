@@ -78,7 +78,11 @@ export async function setupAuth(app: Express) {
   ) => {
     const user = {};
     updateUserSession(user, tokens);
+    // Ensure user is properly upserted in database
     await upsertUser(tokens.claims());
+    // Get the complete user data with role from database
+    const completeUser = await storage.getUser(tokens.claims()["sub"]);
+    console.log(`Authentication: User ${completeUser?.email} has role: ${completeUser?.role}`);
     verified(null, user);
   };
 

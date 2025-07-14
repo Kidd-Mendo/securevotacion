@@ -86,6 +86,17 @@ export const translations = {
       teacher: "Profesor",
       authority: "Autoridad",
     },
+    // Menu descriptions for sidebar
+    menuDescriptions: {
+      dashboard: "Resumen y estadísticas del sistema",
+      elections: "Gestionar procesos electorales",
+      users: "Administrar usuarios del sistema",
+      results: "Ver resultados de elecciones",
+      audit: "Registros de actividad y seguridad",
+      support: "Soporte técnico y ayuda",
+      profile: "Información personal",
+      settings: "Configuración del sistema",
+    },
     // Roles
     roles: {
       administrator: "Administrador",
@@ -365,6 +376,17 @@ export const translations = {
       teacher: "Teacher",
       authority: "Authority",
     },
+    // Menu descriptions for sidebar
+    menuDescriptions: {
+      dashboard: "System overview and statistics",
+      elections: "Manage electoral processes",
+      users: "Manage system users",
+      results: "View election results",
+      audit: "Activity and security logs",
+      support: "Technical support and help",
+      profile: "Personal information",
+      settings: "System configuration",
+    },
     // Roles
     roles: {
       administrator: "Administrator",
@@ -643,6 +665,17 @@ export const translations = {
       student: "Estudante",
       teacher: "Professor",
       authority: "Autoridade",
+    },
+    // Menu descriptions for sidebar
+    menuDescriptions: {
+      dashboard: "Visão geral e estatísticas do sistema",
+      elections: "Gerenciar processos eleitorais",
+      users: "Gerenciar usuários do sistema",
+      results: "Ver resultados das eleições",
+      audit: "Logs de atividade e segurança",
+      support: "Suporte técnico e ajuda",
+      profile: "Informações pessoais",
+      settings: "Configuração do sistema",
     },
     // Roles
     roles: {

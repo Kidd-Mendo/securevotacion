@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,7 +35,9 @@ import {
   Settings,
   User,
   Vote,
-  Loader2
+  Loader2,
+  X,
+  Info
 } from "lucide-react";
 
 const supportSchema = z.object({
@@ -50,11 +53,23 @@ const supportSchema = z.object({
 
 type SupportFormData = z.infer<typeof supportSchema>;
 
+interface Ticket {
+  id: string;
+  subject: string;
+  category: string;
+  priority: string;
+  status: "open" | "in_progress" | "resolved" | "closed";
+  createdAt: Date;
+  description: string;
+}
+
 export default function Support() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("help");
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
+  const [userTickets, setUserTickets] = useState<Ticket[]>([]);
+  const [showLiveChat, setShowLiveChat] = useState(false);
 
   const form = useForm<SupportFormData>({
     resolver: zodResolver(supportSchema),
@@ -73,14 +88,34 @@ export default function Support() {
       // In a real implementation, this would call the support API
       return new Promise(resolve => setTimeout(resolve, 1000));
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      const ticketId = Math.random().toString(36).substr(2, 9).toUpperCase();
+      const newTicket: Ticket = {
+        id: ticketId,
+        subject: variables.subject,
+        category: variables.category,
+        priority: variables.priority,
+        description: variables.description,
+        status: "open",
+        createdAt: new Date()
+      };
+      
+      setUserTickets(prev => [newTicket, ...prev]);
       setTicketSubmitted(true);
       toast({
         title: "✓ Ticket enviado exitosamente",
-        description: "Su solicitud ha sido recibida. Número de ticket: #" + Math.random().toString(36).substr(2, 9).toUpperCase(),
+        description: `Su solicitud ha sido recibida. Número de ticket: #${ticketId}`,
       });
-      form.reset();
-      // Volver a la pestaña normal después de 5 segundos
+      form.reset({
+        name: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
+        email: user?.email || "",
+        subject: "",
+        category: "",
+        priority: "",
+        description: "",
+      });
+      // Cambiar a la pestaña de tickets para mostrar el nuevo ticket
+      setActiveTab("tickets");
       setTimeout(() => {
         setTicketSubmitted(false);
       }, 5000);
@@ -212,6 +247,33 @@ export default function Support() {
     }
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "open":
+        return <Badge className="bg-blue-100 text-blue-800">Abierto</Badge>;
+      case "in_progress":
+        return <Badge className="bg-yellow-100 text-yellow-800">En Progreso</Badge>;
+      case "resolved":
+        return <Badge className="bg-green-100 text-green-800">Resuelto</Badge>;
+      case "closed":
+        return <Badge variant="outline">Cerrado</Badge>;
+      default:
+        return null;
+    }
+  };
+
+  const getCategoryDisplay = (category: string) => {
+    switch (category) {
+      case "technical": return "Problema Técnico";
+      case "voting": return "Dificultad para Votar";
+      case "account": return "Problema de Cuenta";
+      case "results": return "Consulta sobre Resultados";
+      case "security": return "Incidente de Seguridad";
+      case "other": return "Otro";
+      default: return category;
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
@@ -250,7 +312,16 @@ export default function Support() {
         <TabsContent value="help" className="space-y-6">
           {/* Quick Help Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => {
+                toast({
+                  title: "Guía de Votación",
+                  description: "Abriendo guía paso a paso para votar...",
+                });
+                setActiveTab("resources");
+              }}
+            >
               <CardContent className="p-4 text-center">
                 <Vote className="w-8 h-8 text-primary mx-auto mb-2" />
                 <h3 className="font-semibold">Cómo Votar</h3>
@@ -258,7 +329,18 @@ export default function Support() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => {
+                const securityFAQ = faqItems.filter(item => item.category === "security");
+                if (securityFAQ.length > 0) {
+                  toast({
+                    title: "Información de Seguridad",
+                    description: "Consulte las preguntas frecuentes sobre seguridad abajo",
+                  });
+                }
+              }}
+            >
               <CardContent className="p-4 text-center">
                 <Shield className="w-8 h-8 text-secondary mx-auto mb-2" />
                 <h3 className="font-semibold">Seguridad</h3>
@@ -266,7 +348,12 @@ export default function Support() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => {
+                window.location.href = "/settings";
+              }}
+            >
               <CardContent className="p-4 text-center">
                 <Settings className="w-8 h-8 text-accent mx-auto mb-2" />
                 <h3 className="font-semibold">Configuración</h3>
@@ -274,7 +361,12 @@ export default function Support() {
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-md transition-shadow cursor-pointer">
+            <Card 
+              className="hover:shadow-md transition-shadow cursor-pointer"
+              onClick={() => {
+                window.location.href = "/profile";
+              }}
+            >
               <CardContent className="p-4 text-center">
                 <User className="w-8 h-8 text-purple-500 mx-auto mb-2" />
                 <h3 className="font-semibold">Mi Cuenta</h3>
@@ -352,11 +444,19 @@ export default function Support() {
                     comuníquese inmediatamente con el equipo de soporte técnico.
                   </p>
                   <div className="flex space-x-3">
-                    <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+                    <Button 
+                      size="sm" 
+                      className="bg-orange-600 hover:bg-orange-700"
+                      onClick={() => window.location.href = "tel:+15551234567"}
+                    >
                       <Phone className="w-4 h-4 mr-2" />
                       Llamar Ahora
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setShowLiveChat(true)}
+                    >
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Chat Urgente
                     </Button>
@@ -576,7 +676,7 @@ export default function Support() {
             </CardContent>
           </Card>
 
-          {/* Recent Tickets (Mock) */}
+          {/* User Tickets */}
           <Card>
             <CardHeader>
               <CardTitle>Mis Tickets Recientes</CardTitle>
@@ -585,39 +685,62 @@ export default function Support() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">Problema con acceso a elección</h4>
-                      <p className="text-sm text-gray-600">Ticket #12345 • Creado hace 2 días</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-green-100 text-green-800">Resuelto</Badge>
-                    {getPriorityBadge("medium")}
-                  </div>
+              {userTickets.length === 0 ? (
+                <div className="text-center py-8">
+                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No has enviado ningún ticket todavía</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Los tickets que envíes aparecerán aquí
+                  </p>
                 </div>
-
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-yellow-600" />
+              ) : (
+                <div className="space-y-4">
+                  {userTickets.map((ticket) => (
+                    <div key={ticket.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-gray-50">
+                      <div className="flex items-start space-x-4 flex-1">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          ticket.status === 'resolved' ? 'bg-green-100' :
+                          ticket.status === 'in_progress' ? 'bg-yellow-100' :
+                          ticket.status === 'closed' ? 'bg-gray-100' :
+                          'bg-blue-100'
+                        }`}>
+                          {ticket.status === 'resolved' ? (
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                          ) : ticket.status === 'in_progress' ? (
+                            <Clock className="w-5 h-5 text-yellow-600" />
+                          ) : ticket.status === 'closed' ? (
+                            <X className="w-5 h-5 text-gray-600" />
+                          ) : (
+                            <MessageCircle className="w-5 h-5 text-blue-600" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium">{ticket.subject}</h4>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Ticket #{ticket.id} • {getCategoryDisplay(ticket.category)}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Creado el {new Date(ticket.createdAt).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                            {ticket.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-2 ml-4">
+                        {getStatusBadge(ticket.status)}
+                        {getPriorityBadge(ticket.priority)}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium">Consulta sobre resultados</h4>
-                      <p className="text-sm text-gray-600">Ticket #12346 • Creado hace 1 día</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-yellow-100 text-yellow-800">En Progreso</Badge>
-                    {getPriorityBadge("low")}
-                  </div>
+                  ))}
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -635,7 +758,16 @@ export default function Support() {
                       <p className="text-gray-600 mb-4">{resource.description}</p>
                       <div className="flex items-center justify-between">
                         <Badge variant="outline">{resource.type}</Badge>
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            toast({
+                              title: "Descargando recurso",
+                              description: `Descargando ${resource.title}...`,
+                            });
+                          }}
+                        >
                           <Download className="w-4 h-4 mr-2" />
                           Descargar
                         </Button>
@@ -680,6 +812,72 @@ export default function Support() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Live Chat Modal */}
+      <Dialog open={showLiveChat} onOpenChange={setShowLiveChat}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="h-5 w-5 text-primary" />
+              Chat en Vivo
+            </DialogTitle>
+            <DialogDescription>
+              Conéctate con un agente de soporte en tiempo real
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium">Agente disponible</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Un agente de soporte está listo para ayudarte. Tiempo de respuesta promedio: menos de 1 minuto.
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <strong>Agente:</strong> ¡Hola! Soy Ana del equipo de soporte. ¿En qué puedo ayudarte hoy?
+                </p>
+              </div>
+              
+              <div className="relative">
+                <Input 
+                  placeholder="Escribe tu mensaje..."
+                  className="pr-10"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      toast({
+                        title: "Mensaje enviado",
+                        description: "Tu mensaje ha sido enviado al agente",
+                      });
+                    }
+                  }}
+                />
+                <Button 
+                  size="sm" 
+                  className="absolute right-1 top-1 h-8 w-8 p-0"
+                  onClick={() => {
+                    toast({
+                      title: "Mensaje enviado",
+                      description: "Tu mensaje ha sido enviado al agente",
+                    });
+                  }}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLiveChat(false)}>
+              Cerrar chat
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

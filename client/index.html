@@ -6,47 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema de Votación - Unidad Educativa Simulada</title>
     <script>
+      // FORCE LIGHT THEME BY DEFAULT - NO AUTOMATIC DETECTION
       (function() {
+        // Apply light theme immediately to prevent flash
+        document.documentElement.classList.add('light');
+        
         const THEME_KEY = 'sistema-votacion-theme';
         
-        // Simple theme management - just apply what's stored
+        // Theme application function
         function applyTheme(theme) {
           document.documentElement.classList.remove('light', 'dark');
           document.documentElement.classList.add(theme);
-          console.log('HTML Script - Applied initial theme:', theme);
         }
         
-        // ALWAYS start with light theme - no automatic detection
-        let theme = 'light';
-        console.log('HTML Script - FORCED light theme as default');
-        
-        // Only override with dark if user explicitly selected it
+        // Check if user has explicitly selected dark theme
         try {
           const stored = localStorage.getItem(THEME_KEY);
           if (stored === 'dark') {
-            theme = 'dark';
-            console.log('HTML Script - User explicitly selected dark theme');
-          } else {
-            // Clear any wrong theme data
-            localStorage.removeItem(THEME_KEY);
-            console.log('HTML Script - Cleared theme storage, using light');
+            applyTheme('dark');
           }
-        } catch (error) {
-          console.warn('HTML Script - Storage error:', error);
+          // If no stored theme or light, stay in light (already applied)
+        } catch (e) {
+          // Stay in light mode on error
         }
         
-        console.log('HTML Script - Initial theme:', theme);
-        applyTheme(theme);
-        
-        // Global function for React to use
+        // Global function for theme switching
         window.__setTheme = function(newTheme) {
           if (newTheme === 'dark' || newTheme === 'light') {
             try {
               localStorage.setItem(THEME_KEY, newTheme);
               applyTheme(newTheme);
-              console.log('HTML Script - Theme updated to:', newTheme);
-            } catch (error) {
-              console.warn('HTML Script - Theme update error:', error);
+            } catch (e) {
+              console.warn('Theme storage error:', e);
             }
           }
         };

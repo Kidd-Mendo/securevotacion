@@ -12,9 +12,9 @@ export default function AdminCredentialsInfo() {
   const { toast } = useToast();
 
   const credentials = {
-    email: "admin@votacion.edu",
-    adminId: "admin-default-001",
-    name: "Administrador Sistema"
+    email: "alexandermendoza1011@gmail.com",
+    adminId: "43856992",
+    name: "Joan Mendoza (Administrador Principal)"
   };
 
   const copyToClipboard = (text: string, label: string) => {
@@ -41,9 +41,9 @@ export default function AdminCredentialsInfo() {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Alert className="border-amber-200 bg-amber-50">
-          <AlertDescription className="text-amber-800">
-            <strong>Importante:</strong> El primer usuario que se registre automáticamente será asignado como administrador.
+        <Alert className="border-green-200 bg-green-50">
+          <AlertDescription className="text-green-800">
+            <strong>✅ Configurado:</strong> La cuenta de administrador principal ya está configurada y activa.
           </AlertDescription>
         </Alert>
 
@@ -115,12 +115,13 @@ export default function AdminCredentialsInfo() {
         )}
 
         <div className="text-sm text-purple-700 space-y-1">
-          <p><strong>Instrucciones:</strong></p>
+          <p><strong>Instrucciones de Acceso:</strong></p>
           <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>Utiliza tu cuenta de Replit para iniciar sesión</li>
-            <li>Si eres el primer usuario, automáticamente serás administrador</li>
-            <li>Los administradores pueden gestionar usuarios, elecciones y configuración</li>
-            <li>Accede al panel de administración desde el menú lateral</li>
+            <li>Haz clic en "Iniciar sesión" en la página principal</li>
+            <li>Usa tu cuenta de Replit (alexandermendoza1011@gmail.com)</li>
+            <li>Sistema de autenticación: Replit OpenID Connect (sin contraseña)</li>
+            <li>Acceso automático como administrador una vez autenticado</li>
+            <li>Panel de administración disponible en el menú lateral</li>
           </ul>
         </div>
       </CardContent>

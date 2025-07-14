@@ -20,7 +20,7 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
-// Función para obtener el tema inicial
+// Función para obtener el tema inicial sin modificar localStorage
 function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
   // Verificar si estamos en el navegador
   if (typeof window === "undefined") return defaultTheme;
@@ -35,9 +35,8 @@ function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
       return savedTheme as Theme;
     }
     
-    // Si no hay tema guardado, usar el tema por defecto (light) y guardarlo
-    localStorage.setItem(storageKey, defaultTheme);
-    console.log('ThemeProvider using default theme:', defaultTheme); // Debug
+    // Si no hay tema guardado, NO escribir al localStorage aquí
+    console.log('ThemeProvider using default theme (no write):', defaultTheme); // Debug
     return defaultTheme;
   } catch (error) {
     console.warn("Error accessing localStorage:", error);
@@ -51,7 +50,7 @@ export function ThemeProvider({
   storageKey = "sistema-votacion-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => 
+  const [theme, setThemeState] = useState<Theme>(() => 
     getInitialTheme(storageKey, defaultTheme)
   );
 
@@ -83,7 +82,7 @@ export function ThemeProvider({
       }
       
       // Actualizar el estado React (esto no cambiará el DOM duplicadamente)
-      setTheme(newTheme);
+      setThemeState(newTheme);
     },
   }
 

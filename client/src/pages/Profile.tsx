@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,7 @@ export default function Profile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,8 +44,8 @@ export default function Profile() {
     },
     onSuccess: () => {
       toast({
-        title: "Perfil actualizado",
-        description: "Tus datos han sido actualizados correctamente.",
+        title: t.profile.profileUpdated,
+        description: t.profile.profileUpdatedDesc,
       });
       setIsEditing(false);
       setShowConfirmDialog(false);
@@ -51,8 +53,8 @@ export default function Profile() {
     },
     onError: () => {
       toast({
-        title: "Error",
-        description: "No se pudo actualizar el perfil.",
+        title: t.profile.profileUpdateError,
+        description: t.profile.profileUpdateErrorDesc,
         variant: "destructive",
       });
       setShowConfirmDialog(false);
@@ -75,7 +77,7 @@ export default function Profile() {
 
     if (formData.firstName !== (user?.firstName || "")) {
       changes.push({
-        field: "Nombre",
+        field: t.profile.firstName,
         oldValue: user?.firstName || "Sin especificar",
         newValue: formData.firstName || "Sin especificar"
       });
@@ -83,7 +85,7 @@ export default function Profile() {
 
     if (formData.lastName !== (user?.lastName || "")) {
       changes.push({
-        field: "Apellido", 
+        field: t.profile.lastName, 
         oldValue: user?.lastName || "Sin especificar",
         newValue: formData.lastName || "Sin especificar"
       });
@@ -91,7 +93,7 @@ export default function Profile() {
 
     if (formData.email !== (user?.email || "")) {
       changes.push({
-        field: "Correo electrónico",
+        field: t.profile.email,
         oldValue: user?.email || "",
         newValue: formData.email
       });
@@ -121,10 +123,10 @@ export default function Profile() {
 
   const getRoleDisplayName = (role: string) => {
     switch (role) {
-      case "administrator": return "Administrador";
-      case "teacher": return "Profesor";
-      case "student": return "Estudiante";
-      case "educational_authority": return "Autoridad Educativa";
+      case "administrator": return t.roles.administrator;
+      case "teacher": return t.roles.teacher;
+      case "student": return t.roles.student;
+      case "authority": return t.roles.authority;
       default: return role;
     }
   };
@@ -142,8 +144,8 @@ export default function Profile() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Mi Perfil</h1>
-        <p className="text-muted-foreground">Gestiona tu información personal y preferencias</p>
+        <h1 className="text-3xl font-bold">{t.profile.title}</h1>
+        <p className="text-muted-foreground">{t.profile.description}</p>
       </div>
       
       {/* Quick Actions */}
@@ -154,8 +156,8 @@ export default function Profile() {
               <Shield className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <p className="font-medium text-sm">Seguridad</p>
-              <p className="text-xs text-muted-foreground">100% Configurado</p>
+              <p className="font-medium text-sm">{t.profile.security}</p>
+              <p className="text-xs text-muted-foreground">{t.profile.securityDesc}</p>
             </div>
           </CardContent>
         </Card>
@@ -166,8 +168,8 @@ export default function Profile() {
               <Calendar className="w-6 h-6 text-secondary" />
             </div>
             <div>
-              <p className="font-medium text-sm">Actividad</p>
-              <p className="text-xs text-muted-foreground">Activo hoy</p>
+              <p className="font-medium text-sm">{t.profile.activity}</p>
+              <p className="text-xs text-muted-foreground">{t.profile.activityDesc}</p>
             </div>
           </CardContent>
         </Card>
@@ -178,8 +180,8 @@ export default function Profile() {
               <Mail className="w-6 h-6 text-accent" />
             </div>
             <div>
-              <p className="font-medium text-sm">Notificaciones</p>
-              <p className="text-xs text-muted-foreground">Activadas</p>
+              <p className="font-medium text-sm">{t.profile.notifications}</p>
+              <p className="text-xs text-muted-foreground">{t.profile.notificationsDesc}</p>
             </div>
           </CardContent>
         </Card>
@@ -190,8 +192,8 @@ export default function Profile() {
               <Settings className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <p className="font-medium text-sm">Preferencias</p>
-              <p className="text-xs text-muted-foreground">Personalizar</p>
+              <p className="font-medium text-sm">{t.profile.preferences}</p>
+              <p className="text-xs text-muted-foreground">{t.profile.preferencesDesc}</p>
             </div>
           </CardContent>
         </Card>
@@ -214,7 +216,7 @@ export default function Profile() {
                     size="sm"
                     variant="secondary"
                     className="absolute -bottom-2 -right-2 rounded-full p-1 h-8 w-8"
-                    aria-label="Cambiar foto de perfil"
+                    aria-label={t.profile.changeProfilePicture}
                   >
                     <Camera className="h-4 w-4" />
                   </Button>
@@ -238,20 +240,23 @@ export default function Profile() {
                 onClick={() => setIsEditing(!isEditing)}
               >
                 <Edit3 className="h-4 w-4 mr-2" />
-                {isEditing ? "Cancelar" : "Editar"}
+                {isEditing ? t.profile.cancel : t.profile.edit}
               </Button>
             </div>
           </CardHeader>
           <CardContent>
+            <CardTitle className="text-lg mb-2">{t.profile.personalInfo}</CardTitle>
+            <CardDescription className="mb-4">{t.profile.personalInfoDesc}</CardDescription>
+            
             {isEditing ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Información sobre cambios */}
                 {hasChanges() && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                     <div className="flex items-start gap-2">
-                      <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-blue-800">
-                        Tienes cambios sin guardar. Haz clic en "Guardar cambios" para aplicarlos.
+                      <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-blue-800 dark:text-blue-200">
+                        {t.profile.unsavedChanges}
                       </p>
                     </div>
                   </div>
@@ -260,26 +265,26 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">
-                      Nombre <span className="text-red-500">*</span>
+                      {t.profile.firstName} <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
                       onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                      placeholder="Ingresa tu nombre"
+                      placeholder={t.profile.firstName}
                       className="focus-ring"
                       required
                     />
                   </div>
                   <div>
                     <Label htmlFor="lastName">
-                      Apellido <span className="text-red-500">*</span>
+                      {t.profile.lastName} <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
                       onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                      placeholder="Ingresa tu apellido"
+                      placeholder={t.profile.lastName}
                       className="focus-ring"
                       required
                     />
@@ -287,20 +292,17 @@ export default function Profile() {
                 </div>
                 <div>
                   <Label htmlFor="email">
-                    Correo electrónico <span className="text-red-500">*</span>
+                    {t.profile.email} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="usuario@ejemplo.com"
+                    placeholder={t.profile.email}
                     className="focus-ring"
                     required
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Este correo se utilizará para todas las comunicaciones del sistema
-                  </p>
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button 
@@ -311,160 +313,111 @@ export default function Profile() {
                     {updateProfileMutation.isPending ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Guardando...
+                        {t.common.loading}
                       </>
                     ) : (
                       <>
                         <Check className="h-4 w-4" />
-                        Guardar cambios
+                        {t.profile.save}
                       </>
                     )}
                   </Button>
                   <Button 
                     type="button" 
-                    variant="outline" 
+                    variant="outline"
                     onClick={handleCancelEdit}
                     className="flex items-center gap-2 focus-ring"
                   >
                     <X className="h-4 w-4" />
-                    Cancelar
+                    {t.profile.cancel}
                   </Button>
                 </div>
               </form>
             ) : (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm text-muted-foreground">Nombre</Label>
-                    <p className="font-medium">{user.firstName || "No especificado"}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">{t.profile.firstName}</Label>
+                    <p className="text-sm">{user.firstName || "Sin especificar"}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-muted-foreground">Apellido</Label>
-                    <p className="font-medium">{user.lastName || "No especificado"}</p>
+                    <Label className="text-sm font-medium text-muted-foreground">{t.profile.lastName}</Label>
+                    <p className="text-sm">{user.lastName || "Sin especificar"}</p>
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Correo electrónico</Label>
-                  <p className="font-medium">{user.email}</p>
+                  <Label className="text-sm font-medium text-muted-foreground">{t.profile.email}</Label>
+                  <p className="text-sm">{user.email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm text-muted-foreground">Fecha de registro</Label>
-                  <p className="font-medium flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {user.createdAt ? new Date(user.createdAt).toLocaleDateString("es-ES") : "No disponible"}
-                  </p>
+                  <Label className="text-sm font-medium text-muted-foreground">{t.profile.role}</Label>
+                  <p className="text-sm">{getRoleDisplayName(user.role || "student")}</p>
                 </div>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Security & Settings Card */}
+        {/* Account Details Card */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Seguridad
-            </CardTitle>
-            <CardDescription>
-              Configuración de seguridad y privacidad
-            </CardDescription>
+            <CardTitle className="text-lg">{t.profile.accountStatus}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Estado de la cuenta</Label>
-              <Badge variant="default" className="bg-green-100 text-green-800">
-                Activa
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">{t.profile.status}</span>
+              <Badge variant="secondary">{t.profile.active}</Badge>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">{t.profile.role}</span>
+              <Badge variant={getRoleBadgeColor(user.role || "student")}>
+                {getRoleDisplayName(user.role || "student")}
               </Badge>
             </div>
             <Separator />
-            <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Autenticación</Label>
-              <p className="text-sm">Autenticación vía Replit</p>
-            </div>
-            <Separator />
-            <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Permisos</Label>
-              <div className="space-y-1">
-                <Badge variant="outline" className="mr-2">Votar</Badge>
-                {(user.role === "teacher" || user.role === "administrator") && (
-                  <Badge variant="outline" className="mr-2">Crear elecciones</Badge>
-                )}
-                {user.role === "administrator" && (
-                  <Badge variant="outline" className="mr-2">Gestión completa</Badge>
-                )}
-              </div>
+            <div className="text-center text-sm text-muted-foreground">
+              <p>{t.profile.authMethod}</p>
+              <p className="font-medium">Replit Auth</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Confirmation Dialog */}
+      {/* Confirm Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600" />
-              Confirmar cambios de perfil
+              <AlertCircle className="w-5 h-5 text-amber-500" />
+              {t.profile.confirmChanges}
             </DialogTitle>
             <DialogDescription>
-              Revisa los cambios que realizarás en tu perfil antes de guardarlos.
+              {t.profile.confirmChangesDesc}
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-foreground">Cambios a realizar:</h4>
-              <div className="space-y-3">
-                {getChangedFields().map((change, index) => (
-                  <div key={index} className="bg-muted p-3 rounded-lg">
-                    <div className="text-sm font-medium text-foreground mb-1">
-                      {change.field}
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Actual:</span>
-                        <span className="text-muted-foreground bg-red-50 px-2 py-1 rounded">
-                          {change.oldValue}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">Nuevo:</span>
-                        <span className="text-muted-foreground bg-green-50 px-2 py-1 rounded">
-                          {change.newValue}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+          <div className="space-y-2">
+            {getChangedFields().map((change, index) => (
+              <div key={index} className="bg-muted/50 p-3 rounded-lg">
+                <p className="font-medium text-sm">{change.field}</p>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p><span className="font-medium">{t.profile.oldValue}:</span> {change.oldValue}</p>
+                  <p><span className="font-medium">{t.profile.newValue}:</span> {change.newValue}</p>
+                </div>
               </div>
-              {getChangedFields().length === 0 && (
-                <p className="text-sm text-muted-foreground italic">No hay cambios para guardar.</p>
-              )}
-            </div>
+            ))}
           </div>
-          <DialogFooter className="gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowConfirmDialog(false)}
-              disabled={updateProfileMutation.isPending}
-            >
-              Cancelar
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              {t.profile.cancel}
             </Button>
-            <Button 
-              onClick={handleConfirmUpdate}
-              disabled={updateProfileMutation.isPending || getChangedFields().length === 0}
-              className="flex items-center gap-2"
-            >
+            <Button onClick={handleConfirmUpdate} disabled={updateProfileMutation.isPending}>
               {updateProfileMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Guardando cambios...
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  {t.common.loading}
                 </>
               ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  Guardar cambios ({getChangedFields().length})
-                </>
+                t.profile.confirmUpdate
               )}
             </Button>
           </DialogFooter>

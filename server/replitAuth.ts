@@ -76,13 +76,22 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
-    updateUserSession(user, tokens);
     // Ensure user is properly upserted in database
     await upsertUser(tokens.claims());
     // Get the complete user data with role from database
     const completeUser = await storage.getUser(tokens.claims()["sub"]);
     console.log(`Authentication: User ${completeUser?.email} has role: ${completeUser?.role}`);
+    
+    // Create user object with complete data
+    const user = {
+      id: completeUser?.id,
+      email: completeUser?.email,
+      role: completeUser?.role,
+      firstName: completeUser?.firstName,
+      lastName: completeUser?.lastName
+    };
+    updateUserSession(user, tokens);
+    
     verified(null, user);
   };
 

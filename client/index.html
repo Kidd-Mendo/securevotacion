@@ -16,12 +16,15 @@
           console.log('HTML Script - Applied initial theme:', theme);
         }
         
-        // Get stored theme or use default
-        let theme = 'light'; // Default to light
+        // Get stored theme ONLY if user explicitly selected it
+        let theme = 'light'; // Always default to light
         try {
           const stored = localStorage.getItem(THEME_KEY);
-          if (stored === 'dark' || stored === 'light') {
-            theme = stored;
+          if (stored === 'dark') {
+            theme = 'dark';
+            console.log('HTML Script - User selected dark theme');
+          } else {
+            console.log('HTML Script - Using default light theme');
           }
         } catch (error) {
           console.warn('HTML Script - Storage read error:', error);

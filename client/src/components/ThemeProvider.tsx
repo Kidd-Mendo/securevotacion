@@ -84,23 +84,27 @@ export function ThemeProvider({
     setTheme: (newTheme: Theme) => {
       console.log('ThemeProvider - Setting theme to:', newTheme);
       
-      // Usar la función global si está disponible (sincronización con HTML script)
-      if (typeof window !== "undefined" && window.__setTheme) {
-        window.__setTheme(newTheme);
-      } else {
-        // Fallback: aplicar manualmente
-        try {
-          localStorage.setItem(storageKey, newTheme);
-          const root = window.document.documentElement;
-          root.classList.remove("light", "dark");
-          root.classList.add(newTheme);
-        } catch (error) {
-          console.warn("ThemeProvider - Error setting theme:", error);
-        }
+      // Save to localStorage FIRST
+      try {
+        localStorage.setItem(storageKey, newTheme);
+        console.log('ThemeProvider - Saved to localStorage:', newTheme);
+      } catch (error) {
+        console.warn("ThemeProvider - localStorage error:", error);
       }
       
-      // Actualizar estado React
+      // Apply to DOM immediately
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(newTheme);
+      console.log('ThemeProvider - Applied to DOM:', newTheme);
+      
+      // Update React state last
       setThemeState(newTheme);
+      
+      // Sync with global function if available
+      if (typeof window !== "undefined" && window.__setTheme) {
+        window.__setTheme(newTheme);
+      }
     },
   }
 

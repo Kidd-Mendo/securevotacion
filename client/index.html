@@ -43,6 +43,9 @@
           console.log('HTML Script - Set default theme:', theme);
         }
         
+        // Force synchronization - prevent conflicts
+        setStoredTheme(theme);
+        
         // Aplicar tema
         applyTheme(theme);
         
@@ -51,9 +54,7 @@
           if (newTheme === 'dark' || newTheme === 'light') {
             setStoredTheme(newTheme);
             applyTheme(newTheme);
-            console.log('HTML Script - Global theme change:', newTheme);
-            // Forzar actualización del storage para próxima carga
-            window.localStorage.setItem(THEME_KEY, newTheme);
+            console.log('HTML Script - Global theme change to:', newTheme);
           }
         };
       })();

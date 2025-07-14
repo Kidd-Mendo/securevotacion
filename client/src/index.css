@@ -73,7 +73,12 @@
   /* Sidebar colors for dark mode - mejor contraste */
   --sidebar-background: hsl(222, 84%, 4.9%);
   --sidebar-foreground: hsl(210, 40%, 98%);
-  --sidebar-primary: hsl(207, 90%, 54%);
+  --sidebar-primary: hsl(207, 90%, 61%);
+  --sidebar-primary-foreground: hsl(210, 40%, 98%);
+  --sidebar-accent: hsl(217, 33%, 17%);
+  --sidebar-accent-foreground: hsl(210, 40%, 98%);
+  --sidebar-border: hsl(217, 33%, 17%);
+  --sidebar-ring: hsl(212, 27%, 84%);
   --sidebar-primary-foreground: hsl(211, 100%, 99%);
   --sidebar-accent: hsl(217, 33%, 17%);
   --sidebar-accent-foreground: hsl(210, 40%, 98%);

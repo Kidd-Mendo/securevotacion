@@ -4,6 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Sistema de Votación - Unidad Educativa Simulada</title>
+    <script>
+      // Aplicar tema inmediatamente para prevenir flash
+      (function() {
+        try {
+          const storageKey = 'sistema-votacion-theme';
+          const savedTheme = localStorage.getItem(storageKey);
+          
+          let theme = savedTheme;
+          
+          // Si no hay tema guardado, detectar preferencia del sistema
+          if (!theme) {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          
+          // Aplicar el tema inmediatamente
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (error) {
+          // En caso de error, usar tema claro por defecto
+          console.warn('Error loading theme:', error);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

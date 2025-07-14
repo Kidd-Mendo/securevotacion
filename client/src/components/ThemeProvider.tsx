@@ -20,28 +20,95 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+// Función para obtener el tema inicial
+function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
+  // Verificar si estamos en el navegador
+  if (typeof window === "undefined") return defaultTheme;
+  
+  try {
+    // Intentar obtener el tema guardado
+    const savedTheme = localStorage.getItem(storageKey);
+    if (savedTheme === "dark" || savedTheme === "light") {
+      return savedTheme;
+    }
+    
+    // Si no hay tema guardado, detectar preferencia del sistema
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return "dark";
+    }
+    
+    return defaultTheme;
+  } catch (error) {
+    console.warn("Error accessing localStorage:", error);
+    return defaultTheme;
+  }
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "light",
-  storageKey = "vite-ui-theme",
+  storageKey = "sistema-votacion-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const [theme, setTheme] = useState<Theme>(() => 
+    getInitialTheme(storageKey, defaultTheme)
+  );
 
+  // Aplicar el tema inmediatamente al cargar y cuando cambie
   useEffect(() => {
-    const root = window.document.documentElement
+    const root = window.document.documentElement;
+    
+    // Remover todas las clases de tema
+    root.classList.remove("light", "dark");
+    
+    // Agregar la clase del tema actual
+    root.classList.add(theme);
+    
+    // Asegurar que el tema se mantenga en localStorage
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch (error) {
+      console.warn("Error saving theme to localStorage:", error);
+    }
+  }, [theme, storageKey]);
 
-    root.classList.remove("light", "dark")
-    root.classList.add(theme)
-  }, [theme])
+  // Escuchar cambios en la preferencia del sistema
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Solo cambiar si no hay tema guardado explícitamente
+      try {
+        const savedTheme = localStorage.getItem(storageKey);
+        if (!savedTheme) {
+          setTheme(e.matches ? "dark" : "light");
+        }
+      } catch (error) {
+        console.warn("Error checking localStorage:", error);
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      // Fallback para navegadores más antiguos
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, [storageKey]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      localStorage.setItem(storageKey, newTheme)
-      setTheme(newTheme)
+      try {
+        localStorage.setItem(storageKey, newTheme);
+        setTheme(newTheme);
+      } catch (error) {
+        console.warn("Error saving theme:", error);
+        // Aún cambiar el tema aunque no se pueda guardar
+        setTheme(newTheme);
+      }
     },
   }
 

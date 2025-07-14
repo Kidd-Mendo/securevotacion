@@ -85,6 +85,13 @@ export default function Support() {
     },
   });
 
+  // Query para obtener tickets del usuario
+  const { data: tickets = [], isLoading: ticketsLoading } = useQuery<Ticket[]>({
+    queryKey: ["/api/support-tickets"],
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
+
   const submitTicketMutation = useMutation({
     mutationFn: async (data: SupportFormData) => {
       return await apiRequest("/api/support-tickets", {

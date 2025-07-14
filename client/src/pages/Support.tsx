@@ -690,11 +690,11 @@ export default function Support() {
             <CardContent>
               {ticketsLoading ? (
                 <div className="flex justify-center py-8">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
               ) : tickets.length === 0 ? (
                 <div className="text-center py-8">
-                  <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                   <p className="text-muted-foreground">No has enviado ningún ticket todavía</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Los tickets que envíes aparecerán aquí

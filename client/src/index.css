@@ -409,16 +409,16 @@
 
   /* MEJORA: Modales accesibles */
   .modal-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+    @apply fixed inset-0 bg-black/50 flex items-center justify-center z-50;
   }
 
   .modal-content {
-    @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4 focus:outline-none;
+    @apply bg-background rounded-lg shadow-xl max-w-md w-full mx-4 focus:outline-none;
   }
 
   /* MEJORA: Tooltips mejorados */
   .tooltip {
-    @apply absolute z-10 px-2 py-1 text-xs text-white bg-gray-900 rounded shadow-lg opacity-0 smooth-transition;
+    @apply absolute z-10 px-2 py-1 text-xs text-foreground bg-popover rounded shadow-lg opacity-0 smooth-transition;
   }
 
   .tooltip.show {
@@ -431,7 +431,7 @@
   }
 
   .candidate-card {
-    @apply p-4 border-2 border-gray-200 rounded-xl hover:border-primary cursor-pointer smooth-transition;
+    @apply p-4 border-2 border-border rounded-xl hover:border-primary cursor-pointer smooth-transition;
     min-height: 44px; /* WCAG AA compliance */
   }
 

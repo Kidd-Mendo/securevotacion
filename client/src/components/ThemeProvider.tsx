@@ -27,14 +27,17 @@ function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
   
   try {
     const savedTheme = localStorage.getItem(storageKey);
+    console.log('ThemeProvider getInitialTheme - savedTheme:', savedTheme); // Debug
     
     // Si hay un tema guardado válido, usarlo
     if (savedTheme === "dark" || savedTheme === "light") {
+      console.log('ThemeProvider returning saved theme:', savedTheme); // Debug
       return savedTheme as Theme;
     }
     
     // Si no hay tema guardado, usar el tema por defecto (light) y guardarlo
     localStorage.setItem(storageKey, defaultTheme);
+    console.log('ThemeProvider using default theme:', defaultTheme); // Debug
     return defaultTheme;
   } catch (error) {
     console.warn("Error accessing localStorage:", error);
@@ -55,13 +58,17 @@ export function ThemeProvider({
   // Aplicar el tema inicialmente
   useEffect(() => {
     const root = window.document.documentElement;
+    console.log('ThemeProvider useEffect - applying theme:', theme); // Debug
     root.classList.remove("light", "dark");
     root.classList.add(theme);
+    console.log('ThemeProvider useEffect - classList after:', root.classList.toString()); // Debug
   }, [theme]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
+      console.log('ThemeProvider setTheme called with:', newTheme); // Debug
+      
       // Aplicar el tema inmediatamente al DOM
       const root = window.document.documentElement;
       root.classList.remove("light", "dark");
@@ -70,6 +77,7 @@ export function ThemeProvider({
       // Guardar en localStorage inmediatamente
       try {
         localStorage.setItem(storageKey, newTheme);
+        console.log('ThemeProvider saved to localStorage:', newTheme); // Debug
       } catch (error) {
         console.warn("Error saving theme:", error);
       }

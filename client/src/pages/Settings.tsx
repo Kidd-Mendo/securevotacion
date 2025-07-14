@@ -19,19 +19,20 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
 import { Bell, Globe, Shield } from "lucide-react";
 
 
 export default function Settings() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t, language, setLanguage } = useTranslation();
   const [notifications, setNotifications] = useState({
     email: true,
     browser: true,
     elections: true,
     results: true,
   });
-  const [language, setLanguage] = useState("es");
 
   useEffect(() => {
     // Load saved settings
@@ -39,7 +40,6 @@ export default function Settings() {
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       setNotifications(settings.notifications || notifications);
-      setLanguage(settings.language || "es");
     }
   }, []);
 
@@ -57,13 +57,13 @@ export default function Settings() {
     localStorage.setItem("settings", JSON.stringify(settings));
 
     toast({
-      title: "Configuración guardada",
-      description: "Las preferencias de notificaciones han sido actualizadas",
+      title: t.settings.saved,
+      description: t.settings.notificationsSaved,
     });
   };
 
   const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage);
+    setLanguage(newLanguage as any);
 
     const settings = {
       notifications,
@@ -71,28 +71,10 @@ export default function Settings() {
     };
     localStorage.setItem("settings", JSON.stringify(settings));
 
-    // Aplicar cambio de idioma inmediatamente
-    document.documentElement.lang = newLanguage;
-    
-    // Simular cambio de idioma (en una app real, esto activaría i18n)
-    if (newLanguage === 'en') {
-      toast({
-        title: "Language updated",
-        description: "The application language has been changed to English",
-      });
-    } else if (newLanguage === 'pt') {
-      toast({
-        title: "Idioma atualizado",
-        description: "O idioma do aplicativo foi alterado para Português",
-      });
-    } else {
-      toast({
-        title: "Idioma actualizado",
-        description: "El idioma de la aplicación ha sido cambiado a Español",
-      });
-    }
-
-    // No recargar la página, cambios aplicados instantáneamente
+    toast({
+      title: t.settings.saved,
+      description: t.settings.languageSaved,
+    });
   };
 
   const resetSettings = () => {
@@ -106,18 +88,17 @@ export default function Settings() {
     setLanguage("es");
 
     toast({
-      title: "Configuración restablecida",
-      description:
-        "Todas las configuraciones han sido restablecidas a los valores por defecto",
+      title: t.settings.saved,
+      description: t.settings.saved,
     });
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Configuración</h1>
-        <p className="text-gray-600">
-          Personaliza tu experiencia en la plataforma de votación
+        <h1 className="text-3xl font-bold text-foreground">{t.settings.title}</h1>
+        <p className="text-muted-foreground">
+          {t.settings.description}
         </p>
       </div>
 
@@ -127,18 +108,18 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
-              Notificaciones
+              {t.settings.notifications.title}
             </CardTitle>
             <CardDescription>
-              Controla cómo y cuándo recibir notificaciones
+              {t.settings.notifications.description}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Notificaciones por correo</Label>
-                <p className="text-sm text-gray-500">
-                  Recibir notificaciones importantes por email
+                <Label>{t.settings.notifications.email}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t.settings.notifications.emailDesc}
                 </p>
               </div>
               <Switch
@@ -151,9 +132,9 @@ export default function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Notificaciones del navegador</Label>
-                <p className="text-sm text-gray-500">
-                  Mostrar notificaciones en el navegador
+                <Label>{t.settings.notifications.browser}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t.settings.notifications.browserDesc}
                 </p>
               </div>
               <Switch
@@ -166,9 +147,9 @@ export default function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Nuevas elecciones</Label>
-                <p className="text-sm text-gray-500">
-                  Avisar cuando se creen nuevas elecciones
+                <Label>{t.settings.notifications.elections}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t.settings.notifications.electionsDesc}
                 </p>
               </div>
               <Switch
@@ -181,9 +162,9 @@ export default function Settings() {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label>Resultados de votación</Label>
-                <p className="text-sm text-gray-500">
-                  Notificar cuando estén disponibles los resultados
+                <Label>{t.settings.notifications.results}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t.settings.notifications.resultsDesc}
                 </p>
               </div>
               <Switch
@@ -201,23 +182,22 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Idioma y región
+              {t.settings.language.title}
             </CardTitle>
             <CardDescription>
-              Configurar idioma y formato regional
+              {t.settings.language.description}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Idioma</Label>
+              <Label>{t.settings.language.title}</Label>
               <Select value={language} onValueChange={handleLanguageChange}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar idioma" />
+                  <SelectValue placeholder={t.settings.language.title} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="pt">Português</SelectItem>
+                  <SelectItem value="es">{t.settings.language.spanish}</SelectItem>
+                  <SelectItem value="en">{t.settings.language.english}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -229,10 +209,10 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              Privacidad y seguridad
+              {t.settings.security.title}
             </CardTitle>
             <CardDescription>
-              Configuración de privacidad y datos personales
+              {t.settings.security.description}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

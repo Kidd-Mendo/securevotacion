@@ -79,18 +79,19 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations (required for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
+    console.log(`DatabaseStorage.getUser called with ID: ${id}`);
     const [user] = await db.select().from(users).where(eq(users.id, id));
     
     // CRITICAL FIX: Force administrator role for specific users
     if (user && (user.email === 'alexandermendoza1011@gmail.com' || user.email === 'mxndo1011@gmail.com')) {
-      console.log(`🔧 ADMIN FIX: Forcing administrator role for ${user.email}`);
+      console.log(`🔧 ADMIN FIX: Forcing administrator role for ${user.email} (DB role was: ${user.role})`);
       const correctedUser = { ...user, role: 'administrator' as const };
-      console.log(`DatabaseStorage.getUser: ADMIN role enforced for ${correctedUser.email}`);
+      console.log(`DatabaseStorage.getUser: ADMIN role enforced - returning user with role: ${correctedUser.role}`);
       return correctedUser;
     }
     
     console.log(`DatabaseStorage.getUser: Found user ${user?.email} with role: ${user?.role}`);
-    return user;
+    return user || undefined;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {

@@ -1,8 +1,12 @@
-# SecureVotacion - Electronic Voting System
+# Sistema de Votación - Electronic Voting System
 
 ## Overview
 
-SecureVotacion is a comprehensive electronic voting system designed specifically for educational communities. It provides secure, transparent, and user-friendly voting capabilities with role-based access control for students, teachers, administrators, and authorities.
+Sistema de Votación (formerly SecureVotacion) is a comprehensive electronic voting system designed specifically for educational communities. It provides secure, transparent, and user-friendly voting capabilities with role-based access control for students, teachers, administrators, and authorities.
+
+**Current Branding**: 
+- Title: Sistema de Votación
+- Subtitle: Unidad Educativa Simulada
 
 ## User Preferences
 

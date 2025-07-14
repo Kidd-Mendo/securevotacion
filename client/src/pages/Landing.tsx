@@ -17,8 +17,8 @@ export default function Landing() {
               <Vote className="text-white text-2xl" />
             </div>
             <div className="text-left">
-              <h1 className="text-3xl font-bold text-gray-900">Sistema de Votación Electrónica</h1>
-              <p className="text-gray-600">Comunidades Educativas</p>
+              <h1 className="text-3xl font-bold text-gray-900">Sistema de Votación</h1>
+              <p className="text-gray-600">Unidad Educativa Simulada</p>
             </div>
           </div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">

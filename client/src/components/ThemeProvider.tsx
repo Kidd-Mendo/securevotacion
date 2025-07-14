@@ -60,29 +60,31 @@ export function ThemeProvider({
     return "light";
   });
 
-  // Load theme from localStorage only if user explicitly selected it
+  // ALWAYS enforce light mode by default - no automatic dark mode
   useEffect(() => {
     const root = window.document.documentElement;
     
+    // Remove any existing theme classes
+    root.classList.remove("light", "dark");
+    
+    // FORCE light mode as default
+    root.classList.add("light");
+    console.log('ThemeProvider - FORCED light mode as default');
+    
+    // Only apply dark mode if user explicitly selected it
     try {
       const savedTheme = localStorage.getItem(storageKey);
       if (savedTheme === "dark") {
         setThemeState("dark");
-        root.classList.remove("light", "dark");
+        root.classList.remove("light");
         root.classList.add("dark");
-        console.log('ThemeProvider - Loaded user-selected dark theme');
-      } else {
-        // Always default to light mode
-        root.classList.remove("light", "dark");
-        root.classList.add("light");
-        console.log('ThemeProvider - Applied default light theme');
+        console.log('ThemeProvider - Applied user-selected dark theme');
       }
     } catch (error) {
       console.warn('ThemeProvider - Error loading theme:', error);
-      root.classList.remove("light", "dark");
-      root.classList.add("light");
+      // Stay in light mode on error
     }
-  }, []);
+  }, [storageKey]);
 
   const value = {
     theme,

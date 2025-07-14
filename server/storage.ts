@@ -79,15 +79,17 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations (required for Replit Auth)
   async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    
     // CRITICAL FIX: Force administrator role for alexandermendoza1011@gmail.com
-    if (id === '43856992') {
+    if (user && user.email === 'alexandermendoza1011@gmail.com') {
       console.log('🔧 CRITICAL FIX: Forcing administrator role for alexandermendoza1011@gmail.com');
-      await db.update(users).set({ role: 'administrator' }).where(eq(users.id, id));
+      const correctedUser = { ...user, role: 'administrator' as const };
+      console.log(`DatabaseStorage.getUser: CORRECTED user ${correctedUser.email} with role: ${correctedUser.role}`);
+      return correctedUser;
     }
     
-    const [user] = await db.select().from(users).where(eq(users.id, id));
     console.log(`DatabaseStorage.getUser: Found user ${user?.email} with role: ${user?.role}`);
-    
     return user;
   }
 
@@ -379,10 +381,20 @@ export class DatabaseStorage implements IStorage {
 
   // Support ticket operations
   async createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket> {
+    console.log('DatabaseStorage.createSupportTicket: Creating ticket with data:', ticket);
+    const ticketData = {
+      ...ticket,
+      id: nanoid(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    console.log('DatabaseStorage.createSupportTicket: Final ticket data:', ticketData);
+    
     const [newTicket] = await db
       .insert(supportTickets)
-      .values(ticket)
+      .values(ticketData)
       .returning();
+    console.log('DatabaseStorage.createSupportTicket: Created ticket:', newTicket);
     return newTicket;
   }
 

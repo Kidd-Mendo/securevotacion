@@ -55,22 +55,34 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    // Always start with light mode to prevent forced dark mode
-    console.log('ThemeProvider - Starting with light mode to prevent forced dark theme');
+    // Always start with light mode - no automatic dark mode
+    console.log('ThemeProvider - Starting with light mode by default');
     return "light";
   });
 
-  // Only apply theme if DOM doesn't have it (no auto-forcing)
+  // Load theme from localStorage only if user explicitly selected it
   useEffect(() => {
     const root = window.document.documentElement;
     
-    // Only apply if the DOM doesn't have the correct theme
-    if (!root.classList.contains(theme)) {
+    try {
+      const savedTheme = localStorage.getItem(storageKey);
+      if (savedTheme === "dark") {
+        setThemeState("dark");
+        root.classList.remove("light", "dark");
+        root.classList.add("dark");
+        console.log('ThemeProvider - Loaded user-selected dark theme');
+      } else {
+        // Always default to light mode
+        root.classList.remove("light", "dark");
+        root.classList.add("light");
+        console.log('ThemeProvider - Applied default light theme');
+      }
+    } catch (error) {
+      console.warn('ThemeProvider - Error loading theme:', error);
       root.classList.remove("light", "dark");
-      root.classList.add(theme);
-      console.log('ThemeProvider - Applied theme to DOM:', theme);
+      root.classList.add("light");
     }
-  }, [theme]);
+  }, []);
 
   const value = {
     theme,

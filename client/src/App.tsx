@@ -61,7 +61,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="voting-system-theme">
+      <ThemeProvider defaultTheme="light" storageKey="sistema-votacion-theme">
         <TooltipProvider>
           <Toaster />
           <Router />

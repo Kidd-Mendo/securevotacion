@@ -80,14 +80,20 @@ export function ThemeProvider({
     setTheme: (newTheme: Theme) => {
       console.log('ThemeProvider - Setting theme to:', newTheme);
       
-      // Use HTML script as single source of truth
-      if (typeof window !== "undefined" && window.__setTheme) {
-        window.__setTheme(newTheme);
+      // Save to localStorage first
+      try {
+        localStorage.setItem(storageKey, newTheme);
+      } catch (e) {
+        console.warn('Failed to save theme:', e);
       }
+      
+      // Update DOM
+      const root = window.document.documentElement;
+      root.classList.remove("light", "dark");
+      root.classList.add(newTheme);
       
       // Update React state
       setThemeState(newTheme);
-      console.log('ThemeProvider - Theme change completed:', newTheme);
     },
   }
 

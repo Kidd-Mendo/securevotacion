@@ -1,69 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema de Votación - Unidad Educativa Simulada</title>
     <script>
-      // Sistema de tema unificado - aplicar inmediatamente para prevenir flash
       (function() {
         const THEME_KEY = 'sistema-votacion-theme';
         
-        function getStoredTheme() {
-          try {
-            return localStorage.getItem(THEME_KEY);
-          } catch (e) {
-            return null;
-          }
-        }
-        
-        function setStoredTheme(theme) {
-          try {
-            localStorage.setItem(THEME_KEY, theme);
-            return true;
-          } catch (e) {
-            return false;
-          }
-        }
-        
+        // Simple theme management - just apply what's stored
         function applyTheme(theme) {
           document.documentElement.classList.remove('light', 'dark');
           document.documentElement.classList.add(theme);
-          console.log('HTML Script - Applied theme:', theme);
+          console.log('HTML Script - Applied initial theme:', theme);
         }
         
-        // Obtener tema almacenado
-        let theme = getStoredTheme();
-        console.log('HTML Script - Theme from storage:', theme);
-        
-        // Si no hay tema o es inválido, usar light por defecto
-        if (theme !== 'dark' && theme !== 'light') {
-          theme = 'light';
-          setStoredTheme(theme);
-          console.log('HTML Script - Set default theme:', theme);
+        // Get stored theme or use default
+        let theme = 'light'; // Default to light
+        try {
+          const stored = localStorage.getItem(THEME_KEY);
+          if (stored === 'dark' || stored === 'light') {
+            theme = stored;
+          }
+        } catch (error) {
+          console.warn('HTML Script - Storage read error:', error);
         }
         
-        // Force synchronization - prevent conflicts
-        setStoredTheme(theme);
-        
-        // Aplicar tema
+        console.log('HTML Script - Initial theme:', theme);
         applyTheme(theme);
         
-        // Exponer función global para sincronización
+        // Global function for React to use
         window.__setTheme = function(newTheme) {
           if (newTheme === 'dark' || newTheme === 'light') {
-            setStoredTheme(newTheme);
-            applyTheme(newTheme);
-            console.log('HTML Script - Global theme change to:', newTheme);
+            try {
+              localStorage.setItem(THEME_KEY, newTheme);
+              applyTheme(newTheme);
+              console.log('HTML Script - Theme updated to:', newTheme);
+            } catch (error) {
+              console.warn('HTML Script - Theme update error:', error);
+            }
           }
         };
-      })();
+      })()
     </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>

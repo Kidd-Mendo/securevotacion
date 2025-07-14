@@ -4,8 +4,8 @@ export function useAuth() {
   const { data: user, isLoading } = useQuery({
     queryKey: ["/api/auth/user"],
     retry: false,
-    staleTime: 1000 * 30, // 30 seconds - frequent updates for role changes
-    refetchInterval: 1000 * 60, // Check every minute
+    staleTime: 0, // No cache - always fresh data
+    refetchInterval: 1000 * 10, // Check every 10 seconds
   });
 
   return {

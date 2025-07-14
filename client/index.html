@@ -52,6 +52,8 @@
             setStoredTheme(newTheme);
             applyTheme(newTheme);
             console.log('HTML Script - Global theme change:', newTheme);
+            // Forzar actualización del storage para próxima carga
+            window.localStorage.setItem(THEME_KEY, newTheme);
           }
         };
       })();

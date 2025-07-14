@@ -97,7 +97,7 @@ export default function ActivityTimeline() {
       case "security":
         return "bg-green-600";
       default:
-        return "bg-gray-500";
+        return "bg-muted-foreground";
     }
   };
 
@@ -120,8 +120,8 @@ export default function ActivityTimeline() {
   return (
     <div className="space-y-4">
       {activities.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          <Users className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+        <div className="text-center py-8 text-muted-foreground">
+          <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground" />
           <p className="text-sm">No hay actividad reciente</p>
         </div>
       ) : (
@@ -131,18 +131,18 @@ export default function ActivityTimeline() {
               {getActivityIcon(activity.type)}
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-900">
+              <p className="text-sm text-foreground">
                 <span className="font-medium">{activity.user}</span>{" "}
                 <span>{activity.action}</span>
               </p>
               <div className="flex items-center space-x-2 mt-1">
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {getRelativeTime(activity.timestamp)}
                 </p>
                 {activity.details && (
                   <>
-                    <span className="text-xs text-gray-400">•</span>
-                    <p className="text-xs text-gray-500">{activity.details}</p>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <p className="text-xs text-muted-foreground">{activity.details}</p>
                   </>
                 )}
               </div>
@@ -152,7 +152,7 @@ export default function ActivityTimeline() {
       )}
       
       {activities.length > 0 && (
-        <div className="pt-3 border-t border-gray-200">
+        <div className="pt-3 border-t border-border">
           <button className="text-xs text-primary hover:text-primary-dark font-medium">
             Ver toda la actividad →
           </button>

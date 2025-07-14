@@ -104,7 +104,7 @@ export default function Results() {
 
   const getWinnerBadge = (index: number) => {
     if (index === 0) return (
-      <Badge className="bg-yellow-500 text-white ml-2" aria-label="Ganador de la elección">
+      <Badge className="bg-yellow-500 text-primary-foreground ml-2" aria-label="Ganador de la elección">
         <Trophy className="w-3 h-3 mr-1" aria-hidden="true" />
         {t.results.winner}
       </Badge>
@@ -293,7 +293,7 @@ export default function Results() {
                     </div>
                   </CardDescription>
                 </div>
-                <Badge className="bg-secondary text-white">
+                <Badge className="bg-secondary text-primary-foreground">
                   {currentResults.election.status === "completed" ? "Completada" : "En Progreso"}
                 </Badge>
               </div>
@@ -395,11 +395,11 @@ export default function Results() {
                         {currentResults.results.map((result, index) => (
                           <tr 
                             key={result.candidateId} 
-                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted transition-colors"
                           >
                             <td className="flex items-center space-x-4">
                               <div 
-                                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold"
+                                className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold"
                                 aria-label={`Posición ${index + 1}`}
                               >
                                 {index + 1}
@@ -423,7 +423,7 @@ export default function Results() {
                             <td className="text-right">
                               <div className="flex items-center space-x-2">
                                 <div 
-                                  className="w-24 bg-gray-200 rounded-full h-2"
+                                  className="w-24 bg-muted rounded-full h-2"
                                   role="progressbar"
                                   aria-valuenow={result.percentage}
                                   aria-valuemin={0}

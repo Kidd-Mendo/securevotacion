@@ -266,7 +266,7 @@ Unidad Educativa Simulada
                         onChange={() => setSelectedCandidate(candidate.id)}
                         className="sr-only"
                       />
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:border-primary peer-checked:bg-primary peer-checked:ring-2 peer-checked:ring-primary/20 flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-border rounded-full peer-checked:border-primary peer-checked:bg-primary peer-checked:ring-2 peer-checked:ring-primary/20 flex items-center justify-center">
                         {selectedCandidate === candidate.id && (
                           <div className="w-2 h-2 bg-card rounded-full"></div>
                         )}
@@ -285,7 +285,7 @@ Unidad Educativa Simulada
                               <p className="text-sm text-muted-foreground">{candidate.party}</p>
                             )}
                             {candidate.proposal && (
-                              <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                              <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
                                 Propuesta: {candidate.proposal}
                               </p>
                             )}
@@ -309,7 +309,7 @@ Unidad Educativa Simulada
                   onCheckedChange={(checked) => setIsConfirmed(checked as boolean)}
                   className="mt-1"
                 />
-                <label htmlFor="vote-confirmation" className="text-sm text-gray-700 cursor-pointer">
+                <label htmlFor="vote-confirmation" className="text-sm text-foreground cursor-pointer">
                   Confirmo que he revisado mi selección y deseo emitir mi voto. 
                   Entiendo que esta acción es <strong>irreversible</strong>.
                 </label>

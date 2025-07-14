@@ -218,21 +218,21 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Autenticación</Label>
+              <Label className="text-sm text-muted-foreground">Autenticación</Label>
               <p className="text-sm">
                 Tu cuenta está protegida con autenticación segura de Replit
               </p>
             </div>
             <Separator />
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Datos de votación</Label>
+              <Label className="text-sm text-muted-foreground">Datos de votación</Label>
               <p className="text-sm">
                 Todos los votos son encriptados y anónimos
               </p>
             </div>
             <Separator />
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Historial</Label>
+              <Label className="text-sm text-muted-foreground">Historial</Label>
               <p className="text-sm">
                 Tu actividad se registra para auditoría y transparencia
               </p>

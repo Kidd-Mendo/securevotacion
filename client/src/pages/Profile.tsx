@@ -143,7 +143,7 @@ export default function Profile() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Mi Perfil</h1>
-        <p className="text-gray-600">Gestiona tu información personal y preferencias</p>
+        <p className="text-muted-foreground">Gestiona tu información personal y preferencias</p>
       </div>
       
       {/* Quick Actions */}
@@ -155,7 +155,7 @@ export default function Profile() {
             </div>
             <div>
               <p className="font-medium text-sm">Seguridad</p>
-              <p className="text-xs text-gray-600">100% Configurado</p>
+              <p className="text-xs text-muted-foreground">100% Configurado</p>
             </div>
           </CardContent>
         </Card>
@@ -167,7 +167,7 @@ export default function Profile() {
             </div>
             <div>
               <p className="font-medium text-sm">Actividad</p>
-              <p className="text-xs text-gray-600">Activo hoy</p>
+              <p className="text-xs text-muted-foreground">Activo hoy</p>
             </div>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ export default function Profile() {
             </div>
             <div>
               <p className="font-medium text-sm">Notificaciones</p>
-              <p className="text-xs text-gray-600">Activadas</p>
+              <p className="text-xs text-muted-foreground">Activadas</p>
             </div>
           </CardContent>
         </Card>
@@ -191,7 +191,7 @@ export default function Profile() {
             </div>
             <div>
               <p className="font-medium text-sm">Preferencias</p>
-              <p className="text-xs text-gray-600">Personalizar</p>
+              <p className="text-xs text-muted-foreground">Personalizar</p>
             </div>
           </CardContent>
         </Card>
@@ -298,7 +298,7 @@ export default function Profile() {
                     className="focus-ring"
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Este correo se utilizará para todas las comunicaciones del sistema
                   </p>
                 </div>
@@ -335,20 +335,20 @@ export default function Profile() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm text-gray-500">Nombre</Label>
+                    <Label className="text-sm text-muted-foreground">Nombre</Label>
                     <p className="font-medium">{user.firstName || "No especificado"}</p>
                   </div>
                   <div>
-                    <Label className="text-sm text-gray-500">Apellido</Label>
+                    <Label className="text-sm text-muted-foreground">Apellido</Label>
                     <p className="font-medium">{user.lastName || "No especificado"}</p>
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm text-gray-500">Correo electrónico</Label>
+                  <Label className="text-sm text-muted-foreground">Correo electrónico</Label>
                   <p className="font-medium">{user.email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm text-gray-500">Fecha de registro</Label>
+                  <Label className="text-sm text-muted-foreground">Fecha de registro</Label>
                   <p className="font-medium flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     {user.createdAt ? new Date(user.createdAt).toLocaleDateString("es-ES") : "No disponible"}
@@ -372,19 +372,19 @@ export default function Profile() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Estado de la cuenta</Label>
+              <Label className="text-sm text-muted-foreground">Estado de la cuenta</Label>
               <Badge variant="default" className="bg-green-100 text-green-800">
                 Activa
               </Badge>
             </div>
             <Separator />
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Autenticación</Label>
+              <Label className="text-sm text-muted-foreground">Autenticación</Label>
               <p className="text-sm">Autenticación vía Replit</p>
             </div>
             <Separator />
             <div className="space-y-2">
-              <Label className="text-sm text-gray-500">Permisos</Label>
+              <Label className="text-sm text-muted-foreground">Permisos</Label>
               <div className="space-y-1">
                 <Badge variant="outline" className="mr-2">Votar</Badge>
                 {(user.role === "teacher" || user.role === "administrator") && (
@@ -413,23 +413,23 @@ export default function Profile() {
           </DialogHeader>
           <div className="py-4">
             <div className="space-y-4">
-              <h4 className="text-sm font-medium text-gray-900">Cambios a realizar:</h4>
+              <h4 className="text-sm font-medium text-foreground">Cambios a realizar:</h4>
               <div className="space-y-3">
                 {getChangedFields().map((change, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                    <div className="text-sm font-medium text-gray-700 mb-1">
+                  <div key={index} className="bg-muted p-3 rounded-lg">
+                    <div className="text-sm font-medium text-foreground mb-1">
                       {change.field}
                     </div>
                     <div className="grid grid-cols-1 gap-2 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Actual:</span>
-                        <span className="text-gray-600 bg-red-50 px-2 py-1 rounded">
+                        <span className="text-muted-foreground">Actual:</span>
+                        <span className="text-muted-foreground bg-red-50 px-2 py-1 rounded">
                           {change.oldValue}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500">Nuevo:</span>
-                        <span className="text-gray-600 bg-green-50 px-2 py-1 rounded">
+                        <span className="text-muted-foreground">Nuevo:</span>
+                        <span className="text-muted-foreground bg-green-50 px-2 py-1 rounded">
                           {change.newValue}
                         </span>
                       </div>
@@ -438,7 +438,7 @@ export default function Profile() {
                 ))}
               </div>
               {getChangedFields().length === 0 && (
-                <p className="text-sm text-gray-500 italic">No hay cambios para guardar.</p>
+                <p className="text-sm text-muted-foreground italic">No hay cambios para guardar.</p>
               )}
             </div>
           </div>

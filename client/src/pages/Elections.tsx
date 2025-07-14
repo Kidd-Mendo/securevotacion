@@ -154,7 +154,7 @@ export default function Elections() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <Badge className="bg-secondary text-white">{t.elections.active}</Badge>;
+        return <Badge className="bg-secondary text-primary-foreground">{t.elections.active}</Badge>;
       case "completed":
         return <Badge variant="outline">{t.elections.completed}</Badge>;
       case "draft":
@@ -178,12 +178,12 @@ export default function Elections() {
         aria-label="Cargando elecciones"
       >
         <div className="animate-pulse space-y-6">
-          <div className="h-24 bg-gray-200 rounded-xl loading-pulse"></div>
+          <div className="h-24 bg-muted rounded-xl loading-pulse"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
               <div 
                 key={i} 
-                className="h-48 bg-gray-200 rounded-xl loading-pulse"
+                className="h-48 bg-muted rounded-xl loading-pulse"
                 aria-hidden="true"
               ></div>
             ))}
@@ -533,7 +533,7 @@ export default function Elections() {
                       role="img"
                       aria-label="Icono de elección"
                     >
-                      <Vote className="text-white" aria-hidden="true" />
+                      <Vote className="text-primary-foreground" aria-hidden="true" />
                     </div>
                     <div>
                       <CardTitle 

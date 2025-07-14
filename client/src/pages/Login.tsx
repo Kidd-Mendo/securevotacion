@@ -136,7 +136,7 @@ export default function Login() {
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
@@ -157,7 +157,7 @@ export default function Login() {
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -180,9 +180,9 @@ export default function Login() {
                   disabled={isLoading || isBlocked}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4 text-muted-foreground" />
                   )}
                 </Button>
               </div>
@@ -256,7 +256,7 @@ export default function Login() {
               >
                 ¿Olvidó su contraseña?
               </a>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 ¿No tiene cuenta?{" "}
                 <a href="/register" className="text-primary hover:underline">
                   Regístrese aquí

@@ -15,7 +15,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
-      console.log(`User fetched: ${user?.email} with role: ${user?.role}`);
+      console.log(`Routes.getUser: User ${user?.email} fetched with role: ${user?.role}`);
+      
+      // Set cache headers to prevent caching issues
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+      
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -339,6 +345,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userAgent: req.get('User-Agent'),
       });
 
+      // Set cache headers to prevent caching issues
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+      
       res.json({
         message: "Profile updated successfully",
         user: updatedUser

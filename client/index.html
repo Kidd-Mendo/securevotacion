@@ -11,28 +11,24 @@
           const storageKey = 'sistema-votacion-theme';
           const savedTheme = localStorage.getItem(storageKey);
           
-          console.log('Theme from localStorage:', savedTheme); // Debug
+          console.log('HTML Script - Theme from localStorage:', savedTheme); // Debug
           
-          // Aplicar el tema guardado si existe
+          // Solo aplicar dark si está explícitamente guardado como "dark"
           if (savedTheme === 'dark') {
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light');
-            console.log('Applied dark theme');
+            console.log('HTML Script - Applied dark theme');
           } else {
-            // Para cualquier otro caso (light, null, undefined), aplicar light
+            // Para cualquier otro caso, aplicar light sin sobrescribir localStorage
             document.documentElement.classList.add('light');
             document.documentElement.classList.remove('dark');
-            // Solo guardar si no existía antes
-            if (!savedTheme) {
-              localStorage.setItem(storageKey, 'light');
-            }
-            console.log('Applied light theme');
+            console.log('HTML Script - Applied light theme (default)');
           }
         } catch (error) {
           // En caso de error, usar tema claro por defecto
           document.documentElement.classList.add('light');
           document.documentElement.classList.remove('dark');
-          console.warn('Error loading theme:', error);
+          console.warn('HTML Script - Error loading theme:', error);
         }
       })();
     </script>

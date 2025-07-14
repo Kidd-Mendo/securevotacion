@@ -14,6 +14,8 @@ import Profile from "@/pages/Profile";
 import Settings from "@/pages/Settings";
 import Landing from "@/pages/Landing";
 import AdminLogin from "@/pages/AdminLogin";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 import Layout from "@/components/Layout";
@@ -27,7 +29,15 @@ function Router() {
     );
   }
   if (!isAuthenticated) {
-    return <Route path="*" component={Landing} />;
+    return (
+      <Switch>
+        <Route path="/" component={Landing} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+        <Route path="/admin/login" component={AdminLogin} />
+        <Route path="*" component={Landing} />
+      </Switch>
+    );
   }
   return (
     <Layout>

@@ -33,14 +33,19 @@ import {
   Book,
   Settings,
   User,
-  Vote
+  Vote,
+  Loader2
 } from "lucide-react";
 
 const supportSchema = z.object({
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  email: z.string().email("Ingrese un correo electrónico válido"),
   subject: z.string().min(5, "El asunto debe tener al menos 5 caracteres"),
   category: z.string().min(1, "Debe seleccionar una categoría"),
   priority: z.string().min(1, "Debe seleccionar una prioridad"),
-  description: z.string().min(20, "La descripción debe tener al menos 20 caracteres"),
+  description: z.string()
+    .min(20, "La descripción debe tener al menos 20 caracteres")
+    .max(1000, "La descripción no puede exceder 1000 caracteres"),
 });
 
 type SupportFormData = z.infer<typeof supportSchema>;
@@ -49,10 +54,13 @@ export default function Support() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("help");
+  const [ticketSubmitted, setTicketSubmitted] = useState(false);
 
   const form = useForm<SupportFormData>({
     resolver: zodResolver(supportSchema),
     defaultValues: {
+      name: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
+      email: user?.email || "",
       subject: "",
       category: "",
       priority: "",
@@ -66,11 +74,16 @@ export default function Support() {
       return new Promise(resolve => setTimeout(resolve, 1000));
     },
     onSuccess: () => {
+      setTicketSubmitted(true);
       toast({
-        title: "Ticket enviado",
-        description: "Su solicitud de soporte ha sido enviada exitosamente. Recibirá una respuesta pronto.",
+        title: "✓ Ticket enviado exitosamente",
+        description: "Su solicitud ha sido recibida. Número de ticket: #" + Math.random().toString(36).substr(2, 9).toUpperCase(),
       });
       form.reset();
+      // Volver a la pestaña normal después de 5 segundos
+      setTimeout(() => {
+        setTicketSubmitted(false);
+      }, 5000);
     },
     onError: (error) => {
       if (isUnauthorizedError(error)) {
@@ -355,6 +368,26 @@ export default function Support() {
         </TabsContent>
 
         <TabsContent value="tickets" className="space-y-6">
+          {/* Success message */}
+          {ticketSubmitted && (
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <CheckCircle className="w-6 h-6 text-green-600 mt-1 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-green-900 mb-2">¡Ticket enviado con éxito!</h3>
+                    <p className="text-green-800 mb-2">
+                      Su solicitud ha sido recibida y será procesada por nuestro equipo de soporte.
+                    </p>
+                    <p className="text-sm text-green-700">
+                      <strong>Tiempo estimado de respuesta:</strong> 24-48 horas para prioridad normal.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Create Ticket Form */}
           <Card>
             <CardHeader>
@@ -366,6 +399,63 @@ export default function Support() {
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  {/* Instrucciones iniciales */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>Instrucciones:</strong> Complete todos los campos obligatorios (*). 
+                      Proporcione información detallada para que podamos ayudarle mejor. 
+                      Tiempo estimado de respuesta: 24-48 horas para prioridad normal.
+                    </p>
+                  </div>
+
+                  {/* Datos de contacto */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nombre completo *</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                              <Input 
+                                {...field} 
+                                placeholder="Juan Pérez"
+                                className="pl-10"
+                                autoComplete="name"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Correo electrónico *</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                              <Input 
+                                {...field} 
+                                type="email"
+                                placeholder="usuario@votacion.edu"
+                                className="pl-10"
+                                autoComplete="email"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -441,24 +531,36 @@ export default function Support() {
                         <FormControl>
                           <Textarea 
                             placeholder="Proporciona una descripción detallada del problema, incluyendo pasos para reproducirlo si es aplicable..."
-                            className="min-h-32"
+                            className="min-h-32 resize-y"
                             {...field}
+                            maxLength={1000}
                           />
                         </FormControl>
+                        <FormDescription className="text-right">
+                          {field.value?.length || 0}/1000 caracteres
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => form.reset()}
+                      disabled={submitTicketMutation.isPending}
+                    >
+                      Limpiar formulario
+                    </Button>
                     <Button 
                       type="submit" 
                       disabled={submitTicketMutation.isPending}
-                      className="min-w-32"
+                      className="min-w-[150px] focus-ring"
                     >
                       {submitTicketMutation.isPending ? (
                         <>
-                          <Clock className="w-4 h-4 mr-2 animate-spin" />
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                           Enviando...
                         </>
                       ) : (

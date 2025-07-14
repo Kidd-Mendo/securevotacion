@@ -17,6 +17,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const user = await storage.getUser(userId);
       console.log(`Routes.getUser: User ${user?.email} fetched with role: ${user?.role}`);
       
+      // Force administrator role for specific users
+      if (user && (user.email === 'alexandermendoza1011@gmail.com' || user.email === 'mxndo1011@gmail.com')) {
+        console.log(`Routes: Enforcing administrator role for ${user.email}`);
+        user.role = 'administrator';
+      }
+      
       // Set cache headers to prevent caching issues
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.set('Pragma', 'no-cache');

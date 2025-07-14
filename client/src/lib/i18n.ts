@@ -127,6 +127,8 @@ export const translations = {
       protectedSystems: "Sistema Protegido",
       newElection: "Nueva Elección",
       createElectoralProcess: "Crear proceso electoral",
+      viewResults: "Ver Resultados",
+      analyzeStatistics: "Analizar datos de votación",
     },
     // Settings
     settings: {
@@ -268,6 +270,9 @@ export const translations = {
       percentage: "Porcentaje",
       noResults: "No hay resultados disponibles",
       exportResults: "Exportar Resultados",
+      availableElections: "elecciones disponibles",
+      secondPlace: "2º Lugar",
+      thirdPlace: "3º Lugar",
     },
     // Audit
     audit: {
@@ -421,6 +426,16 @@ export const translations = {
       onlineUsers: "Online Users",
       votesToday: "Votes Today",
       participation: "Participation",
+      processesInProgress: "processes in progress",
+      activeParticipation: "active participation",
+      realTime: "real time",
+      systemSecure: "Secure System",
+      security: "Security",
+      protectedSystems: "Protected System",
+      newElection: "New Election",
+      createElectoralProcess: "Create electoral process",
+      viewResults: "View Results",
+      analyzeStatistics: "Analyze voting data",
     },
     // Settings
     settings: {
@@ -558,6 +573,9 @@ export const translations = {
       percentage: "Percentage",
       noResults: "No results available",
       exportResults: "Export Results",
+      availableElections: "available elections",
+      secondPlace: "2nd Place",
+      thirdPlace: "3rd Place",
     },
     // Audit
     audit: {
@@ -711,6 +729,16 @@ export const translations = {
       onlineUsers: "Usuários Online",
       votesToday: "Votos Hoje",
       participation: "Participação",
+      processesInProgress: "processos em andamento",
+      activeParticipation: "participação ativa",
+      realTime: "tempo real",
+      systemSecure: "Sistema Seguro",
+      security: "Segurança",
+      protectedSystems: "Sistema Protegido",
+      newElection: "Nova Eleição",
+      createElectoralProcess: "Criar processo eleitoral",
+      viewResults: "Ver Resultados",
+      analyzeStatistics: "Analisar dados de votação",
     },
     // Settings
     settings: {
@@ -848,6 +876,9 @@ export const translations = {
       percentage: "Porcentagem",
       noResults: "Nenhum resultado disponível",
       exportResults: "Exportar Resultados",
+      availableElections: "eleições disponíveis",
+      secondPlace: "2º Lugar",
+      thirdPlace: "3º Lugar",
     },
     // Audit
     audit: {

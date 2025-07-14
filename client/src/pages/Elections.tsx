@@ -27,7 +27,8 @@ import {
   Clock,
   CheckCircle,
   Play,
-  Pause
+  Pause,
+  Loader2
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -462,7 +463,7 @@ export default function Elections() {
                     >
                       {createElectionMutation.isPending ? (
                         <>
-                          <div className="loading-spinner w-4 h-4 mr-2" aria-hidden="true"></div>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
                           Creando...
                         </>
                       ) : (

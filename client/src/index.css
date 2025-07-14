@@ -305,7 +305,7 @@
 
   /* MEJORA: Tarjetas de elección con mejor feedback visual */
   .election-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg smooth-transition focus-within:ring-2 focus-within:ring-primary;
+    @apply bg-card rounded-xl shadow-sm border border-border hover:shadow-lg smooth-transition focus-within:ring-2 focus-within:ring-primary;
   }
 
   .election-card:hover {
@@ -314,22 +314,22 @@
 
   /* MEJORA: Filas de auditoría con mejor accesibilidad */
   .audit-row {
-    @apply hover:bg-gray-50 smooth-transition focus:bg-gray-100 focus:outline-none;
+    @apply hover:bg-muted smooth-transition focus:bg-muted focus:outline-none;
   }
 
   /* MEJORA: Botones con mejor contraste y retroalimentación */
   .btn-primary {
-    @apply bg-primary text-white hover:bg-primary/90 focus:bg-primary/95 smooth-transition;
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 focus:bg-primary/95 smooth-transition;
     min-height: 44px; /* WCAG AA compliance */
   }
 
   .btn-secondary {
-    @apply bg-secondary text-white hover:bg-secondary/90 focus:bg-secondary/95 smooth-transition;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:bg-secondary/95 smooth-transition;
     min-height: 44px;
   }
 
   .btn-destructive {
-    @apply bg-destructive text-white hover:bg-destructive/90 focus:bg-destructive/95 smooth-transition;
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:bg-destructive/95 smooth-transition;
     min-height: 44px;
   }
 
@@ -348,16 +348,16 @@
 
   /* MEJORA: Indicadores de carga mejorados */
   .loading-spinner {
-    @apply animate-spin rounded-full border-2 border-gray-200 border-t-primary;
+    @apply animate-spin rounded-full border-2 border-muted border-t-primary;
   }
 
   .loading-pulse {
-    @apply animate-pulse bg-gray-200 rounded;
+    @apply animate-pulse bg-muted rounded;
   }
 
   /* MEJORA: Notificaciones con mejor visibilidad */
   .notification-badge {
-    @apply absolute -top-1 -right-1 bg-destructive text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium;
+    @apply absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium;
     animation: notification-pulse 2s infinite;
   }
 
@@ -368,21 +368,21 @@
 
   /* MEJORA: Breadcrumbs mejorados */
   .breadcrumb-separator {
-    @apply mx-2 text-gray-400;
+    @apply mx-2 text-muted-foreground;
   }
 
   /* MEJORA: Sidebar móvil mejorado */
   .mobile-sidebar {
-    @apply fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform smooth-transition lg:hidden;
+    @apply fixed inset-y-0 left-0 z-50 w-64 bg-background shadow-xl transform smooth-transition lg:hidden;
   }
 
   /* MEJORA: Filtros de búsqueda */
   .filter-container {
-    @apply space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200;
+    @apply space-y-4 p-4 bg-muted rounded-lg border border-border;
   }
 
   .filter-applied {
-    @apply bg-primary text-white px-2 py-1 rounded-full text-xs flex items-center gap-1;
+    @apply bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs flex items-center gap-1;
   }
 
   /* MEJORA: Estados de validación en tiempo real */
@@ -400,7 +400,7 @@
 
   /* MEJORA: Indicadores de progreso */
   .progress-bar {
-    @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+    @apply w-full bg-muted rounded-full h-2 overflow-hidden;
   }
 
   .progress-fill {
@@ -452,7 +452,7 @@
   }
 
   .activity-timeline-item {
-    @apply flex items-start space-x-3 mb-4 last:mb-0 smooth-transition hover:bg-gray-50 p-2 rounded;
+    @apply flex items-start space-x-3 mb-4 last:mb-0 smooth-transition hover:bg-muted p-2 rounded;
   }
 
   .security-status-good {
@@ -460,12 +460,12 @@
   }
 
   .quick-action-button {
-    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary hover:bg-opacity-5 smooth-transition focus-ring;
+    @apply w-full flex items-center space-x-3 p-3 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-primary hover:bg-opacity-5 smooth-transition focus-ring;
     min-height: 44px; /* WCAG AA compliance */
   }
 
   .mobile-menu-overlay {
-    @apply fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden;
+    @apply fixed inset-0 bg-black/50 z-40 lg:hidden;
   }
 }
 

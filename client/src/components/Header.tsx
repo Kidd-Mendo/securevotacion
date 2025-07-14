@@ -180,7 +180,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                         key={notification.id}
                         className={`p-3 rounded-lg border transition-colors hover:bg-muted ${
                           !notification.isRead
-                            ? "bg-blue-50 border-blue-200"
+                            ? "bg-accent border-accent"
                             : ""
                         }`}
                       >
@@ -202,7 +202,7 @@ export default function Header({ onToggleMobileMenu }: HeaderProps) {
                             </p>
                           </div>
                           {!notification.isRead && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                            <div className="w-2 h-2 bg-primary rounded-full"></div>
                           )}
                         </div>
                       </div>

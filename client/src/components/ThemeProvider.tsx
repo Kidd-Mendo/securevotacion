@@ -54,9 +54,11 @@ export function ThemeProvider({
   storageKey = "sistema-votacion-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => 
-    getInitialTheme(storageKey, defaultTheme)
-  );
+  const [theme, setThemeState] = useState<Theme>(() => {
+    // Always start with light mode to prevent forced dark mode
+    console.log('ThemeProvider - Starting with light mode to prevent forced dark theme');
+    return "light";
+  });
 
   // Only apply theme if DOM doesn't have it (no auto-forcing)
   useEffect(() => {

@@ -8,20 +8,20 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-secondary/10">
+    <div className="min-h-screen bg-background dark:bg-background transition-colors duration-200">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-12">
           <div className="flex items-center justify-center space-x-3 mb-6">
             <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
-              <Vote className="text-white text-2xl" />
+              <Vote className="text-primary-foreground text-2xl" />
             </div>
             <div className="text-left">
-              <h1 className="text-3xl font-bold text-gray-900">Sistema de Votación</h1>
-              <p className="text-gray-600">Unidad Educativa Simulada</p>
+              <h1 className="text-3xl font-bold text-foreground dark:text-foreground">Sistema de Votación</h1>
+              <p className="text-muted-foreground dark:text-muted-foreground">Unidad Educativa Simulada</p>
             </div>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
             Gestiona elecciones de forma segura y transparente con nuestro sistema de votación electrónica 
             diseñado especialmente para instituciones educativas.
           </p>
@@ -80,10 +80,10 @@ export default function Landing() {
 
         {/* CTA Section */}
         <div className="max-w-2xl mx-auto text-center">
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-card dark:bg-card shadow-lg border border-border dark:border-border">
             <CardHeader>
-              <CardTitle className="text-2xl">¿Listo para comenzar?</CardTitle>
-              <CardDescription className="text-lg">
+              <CardTitle className="text-2xl text-card-foreground dark:text-card-foreground">¿Listo para comenzar?</CardTitle>
+              <CardDescription className="text-lg text-muted-foreground dark:text-muted-foreground">
                 Accede al sistema con tu cuenta institucional para participar en las elecciones activas 
                 o gestionar procesos electorales.
               </CardDescription>
@@ -97,7 +97,7 @@ export default function Landing() {
                 <Shield className="w-5 h-5 mr-2" />
                 Acceder al Sistema
               </Button>
-              <p className="text-sm text-gray-500 mt-4">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-4">
                 Sistema seguro con autenticación institucional
               </p>
             </CardContent>
@@ -105,8 +105,8 @@ export default function Landing() {
         </div>
 
         {/* Footer */}
-        <footer className="text-center mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-600">
+        <footer className="text-center mt-12 pt-8 border-t border-border dark:border-border">
+          <p className="text-muted-foreground dark:text-muted-foreground">
             Sistema desarrollado siguiendo estándares ISO 9241 y ISO/IEC 25010 para 
             garantizar usabilidad, seguridad y accesibilidad.
           </p>

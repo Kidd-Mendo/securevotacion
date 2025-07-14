@@ -92,10 +92,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      const validatedData = insertElectionSchema.parse({
+      // Convert date strings to Date objects
+      const dataWithDates = {
         ...req.body,
+        startDate: new Date(req.body.startDate),
+        endDate: new Date(req.body.endDate),
         createdBy: userId,
-      });
+      };
+      
+      const validatedData = insertElectionSchema.parse(dataWithDates);
       console.log("Validated election data:", validatedData);
 
       const election = await storage.createElection(validatedData);
@@ -131,7 +136,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Insufficient permissions" });
       }
 
-      const validatedData = insertElectionSchema.partial().parse(req.body);
+      // Convert date strings to Date objects if present
+      const dataWithDates = {
+        ...req.body,
+        ...(req.body.startDate && { startDate: new Date(req.body.startDate) }),
+        ...(req.body.endDate && { endDate: new Date(req.body.endDate) }),
+      };
+      
+      const validatedData = insertElectionSchema.partial().parse(dataWithDates);
       const election = await storage.updateElection(req.params.id, validatedData);
       
       if (!election) {

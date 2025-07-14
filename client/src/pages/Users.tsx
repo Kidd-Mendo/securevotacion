@@ -15,6 +15,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "@/lib/useTranslation";
 import { 
   Users, 
   Search, 
@@ -27,14 +28,18 @@ import {
   Crown
 } from "lucide-react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS, ptBR } from "date-fns/locale";
 
 export default function UsersPage() {
   const { user } = useAuth();
+  const { t, language } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
 
   const canManageUsers = user?.role === "administrator" || user?.role === "authority";
+  
+  // Select the correct locale based on language
+  const dateLocale = language === 'es' ? es : language === 'pt' ? ptBR : enUS;
 
   // Mock data - in real app this would come from API
   const mockUsers = [
@@ -150,8 +155,8 @@ export default function UsersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestión de Usuarios</h1>
-          <p className="text-muted-foreground">Administra roles y permisos de la comunidad educativa</p>
+          <h1 className="text-3xl font-bold text-foreground">{t.users.title}</h1>
+          <p className="text-muted-foreground">{t.users.description}</p>
         </div>
         <Button>
           <UserPlus className="w-4 h-4 mr-2" />

@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Vote, Users, BarChart } from "lucide-react";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function Landing() {
+  const { t } = useTranslation();
+  
   const handleLogin = () => {
     window.location.href = "/api/login";
   };
@@ -17,8 +20,8 @@ export default function Landing() {
               <Vote className="text-primary-foreground text-2xl" />
             </div>
             <div className="text-left">
-              <h1 className="text-3xl font-bold text-foreground dark:text-foreground">Sistema de Votación</h1>
-              <p className="text-muted-foreground dark:text-muted-foreground">Unidad Educativa Simulada</p>
+              <h1 className="text-3xl font-bold text-foreground dark:text-foreground">{t.common.appName}</h1>
+              <p className="text-muted-foreground dark:text-muted-foreground">{t.common.appSubtitle}</p>
             </div>
           </div>
           <p className="text-xl text-muted-foreground dark:text-muted-foreground max-w-2xl mx-auto">
@@ -32,11 +35,11 @@ export default function Landing() {
           <Card className="text-center">
             <CardHeader>
               <Shield className="w-12 h-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-lg">Seguridad Avanzada</CardTitle>
+              <CardTitle className="text-lg">{t.landing.security.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Cifrado de extremo a extremo y autenticación segura para proteger cada voto.
+                {t.landing.security.description}
               </CardDescription>
             </CardContent>
           </Card>
@@ -44,11 +47,11 @@ export default function Landing() {
           <Card className="text-center">
             <CardHeader>
               <Vote className="w-12 h-12 text-secondary mx-auto mb-4" />
-              <CardTitle className="text-lg">Votación Intuitiva</CardTitle>
+              <CardTitle className="text-lg">{t.landing.voting.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Interfaz simple y accesible desde cualquier dispositivo con confirmación cifrada.
+                {t.landing.voting.description}
               </CardDescription>
             </CardContent>
           </Card>
@@ -56,11 +59,11 @@ export default function Landing() {
           <Card className="text-center">
             <CardHeader>
               <BarChart className="w-12 h-12 text-accent mx-auto mb-4" />
-              <CardTitle className="text-lg">Resultados en Tiempo Real</CardTitle>
+              <CardTitle className="text-lg">{t.landing.results.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Visualización de resultados con gráficos interactivos y exportación de datos.
+                {t.landing.results.description}
               </CardDescription>
             </CardContent>
           </Card>
@@ -68,11 +71,11 @@ export default function Landing() {
           <Card className="text-center">
             <CardHeader>
               <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-lg">Gestión Multi-Rol</CardTitle>
+              <CardTitle className="text-lg">{t.landing.multiRole.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <CardDescription>
-                Soporte para estudiantes, docentes, administradores y autoridades educativas.
+                {t.landing.multiRole.description}
               </CardDescription>
             </CardContent>
           </Card>
@@ -82,10 +85,9 @@ export default function Landing() {
         <div className="max-w-2xl mx-auto text-center">
           <Card className="bg-card dark:bg-card shadow-lg border border-border dark:border-border">
             <CardHeader>
-              <CardTitle className="text-2xl text-card-foreground dark:text-card-foreground">¿Listo para comenzar?</CardTitle>
+              <CardTitle className="text-2xl text-card-foreground dark:text-card-foreground">{t.landing.cta.title}</CardTitle>
               <CardDescription className="text-lg text-muted-foreground dark:text-muted-foreground">
-                Accede al sistema con tu cuenta institucional para participar en las elecciones activas 
-                o gestionar procesos electorales.
+                {t.landing.cta.description}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -95,10 +97,10 @@ export default function Landing() {
                 className="w-full sm:w-auto px-8 py-3 text-lg"
               >
                 <Shield className="w-5 h-5 mr-2" />
-                Acceder al Sistema
+                {t.landing.cta.button}
               </Button>
               <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-4">
-                Sistema seguro con autenticación institucional
+                {t.landing.cta.secureSystem}
               </p>
             </CardContent>
           </Card>
@@ -107,8 +109,7 @@ export default function Landing() {
         {/* Footer */}
         <footer className="text-center mt-12 pt-8 border-t border-border dark:border-border">
           <p className="text-muted-foreground dark:text-muted-foreground">
-            Sistema desarrollado siguiendo estándares ISO 9241 y ISO/IEC 25010 para 
-            garantizar usabilidad, seguridad y accesibilidad.
+            {t.landing.footer}
           </p>
         </footer>
       </div>

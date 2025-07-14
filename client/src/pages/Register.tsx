@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
+import { useTranslation } from "@/lib/useTranslation";
 
 // Schema de validación
 const registerSchema = z.object({

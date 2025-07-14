@@ -60,10 +60,12 @@ import {
   Crown,
 } from "lucide-react";
 import type { User } from "@shared/schema";
+import { useTranslation } from "@/lib/useTranslation";
 
 export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [editingUser, setEditingUser] = useState<User | null>(null);
@@ -213,10 +215,10 @@ export default function Admin() {
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <Crown className="h-8 w-8 text-yellow-500" />
-          Panel de Administración
+          {t.admin.title}
         </h1>
         <p className="text-muted-foreground">
-          Gestiona usuarios, configuraciones y monitorea el sistema
+          {t.admin.description}
         </p>
       </div>
 

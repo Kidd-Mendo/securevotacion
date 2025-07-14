@@ -161,6 +161,10 @@ Preferred communication style: Simple, everyday language.
 - Fixed StatsCard, Admin, Support, Results, Elections, Users, and Audit pages to properly apply dark mode
 - All components now use text-foreground, text-muted-foreground, bg-background, bg-card, border-border for consistent theming
 - Dark mode now applies uniformly across the entire application without any interface elements stuck in light mode
+- **MOBILE FIXES:** Corrected mobile sidebar and dropdown menu dark mode implementation
+- Fixed theme toggle to work with single click instead of requiring double clicks
+- **CRITICAL FIX:** Resolved theme persistence issue on page reload - added comprehensive debugging to identify localStorage conflicts
+- Enhanced HTML script and ThemeProvider synchronization for proper theme state management
 
 ### Accessibility & Usability Enhancements (ISO 9241-11 & ISO 25010:2011)
 

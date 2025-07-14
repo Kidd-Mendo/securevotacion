@@ -186,22 +186,22 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Monitor className="h-5 w-5" />
-              Tema de la aplicación
+              {t.settings.theme.title}
             </CardTitle>
             <CardDescription>
-              Personaliza la apariencia de la interfaz
+              {t.settings.theme.description}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label className="text-sm font-medium">
-                  {theme === "dark" ? "Modo oscuro" : "Modo claro"}
+                  {theme === "dark" ? t.settings.theme.dark : t.settings.theme.light}
                 </Label>
                 <p className="text-sm text-muted-foreground">
                   {theme === "dark" 
-                    ? "Interfaz oscura para reducir la fatiga visual" 
-                    : "Interfaz clara y brillante"}
+                    ? t.settings.theme.darkDesc || "Dark interface to reduce eye strain" 
+                    : t.settings.theme.lightDesc || "Bright and clear interface"}
                 </p>
               </div>
               <div className="flex items-center gap-2">

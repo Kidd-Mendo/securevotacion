@@ -4,14 +4,15 @@ export function useAuth() {
   const { data: user, isLoading, refetch } = useQuery({
     queryKey: ["/api/auth/user"],
     retry: false,
-    staleTime: 0, // No cache - always fresh data
-    refetchInterval: 1000 * 5, // Check every 5 seconds for role changes
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchInterval: false, // Disable automatic refetch to prevent reloads
+    refetchOnWindowFocus: false, // Don't refetch on window focus
   });
 
   return {
     user,
     isLoading,
     isAuthenticated: !!user,
-    refetch, // Expose refetch function
+    refetch, // Expose refetch function for manual refresh
   };
 }

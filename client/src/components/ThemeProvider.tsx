@@ -1,5 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react"
 
+// Tipo para la función global de tema
+declare global {
+  interface Window {
+    __setTheme?: (theme: string) => void;
+  }
+}
+
 type Theme = "dark" | "light"
 
 type ThemeProviderProps = {
@@ -20,26 +27,23 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
-// Función para obtener el tema inicial sin modificar localStorage
+// Función para obtener el tema inicial de forma sincronizada
 function getInitialTheme(storageKey: string, defaultTheme: Theme): Theme {
-  // Verificar si estamos en el navegador
   if (typeof window === "undefined") return defaultTheme;
   
   try {
     const savedTheme = localStorage.getItem(storageKey);
-    console.log('ThemeProvider getInitialTheme - savedTheme:', savedTheme); // Debug
+    console.log('ThemeProvider - Theme from localStorage:', savedTheme);
     
-    // Si hay un tema guardado válido, usarlo
+    // Solo retornar temas válidos
     if (savedTheme === "dark" || savedTheme === "light") {
-      console.log('ThemeProvider returning saved theme:', savedTheme); // Debug
       return savedTheme as Theme;
     }
     
-    // Si no hay tema guardado, NO escribir al localStorage aquí
-    console.log('ThemeProvider using default theme (no write):', defaultTheme); // Debug
+    // Si no hay tema válido, retornar el default sin escribir
     return defaultTheme;
   } catch (error) {
-    console.warn("Error accessing localStorage:", error);
+    console.warn("ThemeProvider - localStorage error:", error);
     return defaultTheme;
   }
 }
@@ -54,35 +58,40 @@ export function ThemeProvider({
     getInitialTheme(storageKey, defaultTheme)
   );
 
-  // Aplicar el tema inicialmente
+  // Sincronizar con el DOM al montar (no sobrescribir el script HTML)
   useEffect(() => {
+    // Solo sincronizar si el DOM no tiene la clase correcta
     const root = window.document.documentElement;
-    console.log('ThemeProvider useEffect - applying theme:', theme); // Debug
-    root.classList.remove("light", "dark");
-    root.classList.add(theme);
-    console.log('ThemeProvider useEffect - classList after:', root.classList.toString()); // Debug
+    const hasCorrectTheme = root.classList.contains(theme);
+    
+    if (!hasCorrectTheme) {
+      console.log('ThemeProvider - Synchronizing theme:', theme);
+      root.classList.remove("light", "dark");
+      root.classList.add(theme);
+    }
   }, [theme]);
 
   const value = {
     theme,
     setTheme: (newTheme: Theme) => {
-      console.log('ThemeProvider setTheme called with:', newTheme); // Debug
+      console.log('ThemeProvider - Setting theme to:', newTheme);
       
-      // Guardar PRIMERO en localStorage
-      try {
-        localStorage.setItem(storageKey, newTheme);
-        console.log('ThemeProvider saved to localStorage:', newTheme); // Debug
-      } catch (error) {
-        console.warn("Error saving theme:", error);
+      // Usar la función global si está disponible (sincronización con HTML script)
+      if (typeof window !== "undefined" && window.__setTheme) {
+        window.__setTheme(newTheme);
+      } else {
+        // Fallback: aplicar manualmente
+        try {
+          localStorage.setItem(storageKey, newTheme);
+          const root = window.document.documentElement;
+          root.classList.remove("light", "dark");
+          root.classList.add(newTheme);
+        } catch (error) {
+          console.warn("ThemeProvider - Error setting theme:", error);
+        }
       }
       
-      // Aplicar el tema inmediatamente al DOM
-      const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(newTheme);
-      console.log('ThemeProvider applied to DOM:', newTheme); // Debug
-      
-      // Actualizar el estado React
+      // Actualizar estado React
       setThemeState(newTheme);
     },
   }

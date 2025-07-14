@@ -25,6 +25,7 @@ interface SidebarProps {
 export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: SidebarProps) {
   const { user } = useAuth();
   const [location] = useLocation();
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleLogout = () => {
     window.location.href = "/api/logout";
@@ -100,6 +101,47 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
 
   const visibleItems = navigationItems.filter(item => item.visible !== false);
 
+  // Manejo de navegación con teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Navegación con teclas del cursor
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev + 1) % visibleItems.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev - 1 + visibleItems.length) % visibleItems.length);
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        const item = visibleItems[selectedIndex];
+        if (item) {
+          window.location.href = item.href;
+        }
+      }
+      
+      // Atajos de teclado para navegación directa
+      if (e.altKey) {
+        const num = parseInt(e.key);
+        if (num >= 1 && num <= visibleItems.length) {
+          const item = visibleItems[num - 1];
+          if (item) {
+            window.location.href = item.href;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [visibleItems, selectedIndex]);
+
+  // Actualizar índice cuando cambie la ubicación
+  useEffect(() => {
+    const currentIndex = visibleItems.findIndex(item => item.isActive);
+    if (currentIndex >= 0) {
+      setSelectedIndex(currentIndex);
+    }
+  }, [location, visibleItems]);
+
   return (
     <>
       {/* MEJORA: Desktop Sidebar con mejor accesibilidad */}
@@ -163,7 +205,8 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 <a
                   className={cn(
                     "sidebar-nav-item focus-ring",
-                    item.isActive && "active"
+                    item.isActive && "active",
+                    selectedIndex === index && "ring-2 ring-primary ring-offset-2"
                   )}
                   onClick={onCloseMobileMenu}
                   aria-current={item.isActive ? "page" : undefined}
@@ -171,6 +214,7 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                   title={`${item.description} (${item.keyboardShortcut})`}
                   tabIndex={0}
                   role="menuitem"
+                  onFocus={() => setSelectedIndex(index)}
                 >
                   <item.icon 
                     className="text-lg flex-shrink-0" 
@@ -284,13 +328,15 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
                 <a
                   className={cn(
                     "sidebar-nav-item focus-ring",
-                    item.isActive && "active"
+                    item.isActive && "active",
+                    selectedIndex === index && "ring-2 ring-primary ring-offset-2"
                   )}
                   onClick={onCloseMobileMenu}
                   aria-current={item.isActive ? "page" : undefined}
                   aria-label={`${item.label} - ${item.description}`}
                   tabIndex={0}
                   role="menuitem"
+                  onFocus={() => setSelectedIndex(index)}
                 >
                   <item.icon 
                     className="text-lg flex-shrink-0" 

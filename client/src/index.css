@@ -123,6 +123,60 @@
   }
 
   /* MEJORA: Navegación mejorada con indicadores visuales claros */
+  .keyboard-navigation {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-opacity-75;
+  }
+
+  /* MEJORA: Retroalimentación visual mejorada para hover */
+  .hover-lift {
+    @apply hover:shadow-lg hover:-translate-y-0.5 smooth-transition;
+  }
+
+  .hover-glow {
+    @apply hover:shadow-md hover:shadow-primary/20 smooth-transition;
+  }
+
+  .hover-brightness {
+    @apply hover:brightness-110 smooth-transition;
+  }
+
+  /* Mejora de accesibilidad para navegación con teclado */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-opacity-75;
+  }
+
+  /* Estados hover mejorados para botones */
+  button:hover, .btn:hover {
+    @apply transform scale-105 shadow-md;
+  }
+
+  /* Estados hover para tarjetas */
+  .card-hover {
+    @apply hover:shadow-xl hover:-translate-y-1 smooth-transition cursor-pointer;
+    border-color: hsl(207, 90%, 54%, 0.2);
+  }
+  
+  /* Mejorar hover en todas las tarjetas */
+  .card:hover {
+    @apply shadow-lg smooth-transition;
+    border-color: hsl(207, 90%, 54%, 0.3);
+  }
+
+  /* Enlaces con mejor retroalimentación */
+  a:hover {
+    @apply underline decoration-2 underline-offset-2;
+    text-decoration-color: hsl(207, 90%, 54%, 0.5);
+  }
+
+  /* Inputs con mejor retroalimentación */
+  input:hover, textarea:hover, select:hover {
+    border-color: hsl(207, 90%, 54%, 0.5);
+  }
+
+  input:focus, textarea:focus, select:focus {
+    @apply border-primary outline-none;
+    box-shadow: 0 0 0 3px hsl(207, 90%, 54%, 0.2);
+  }
   .sidebar-nav-item {
     @apply flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 smooth-transition font-medium relative;
     min-height: 44px; /* Cumple con WCAG AA para objetivos táctiles */

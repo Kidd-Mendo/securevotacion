@@ -193,6 +193,12 @@ Preferred communication style: Simple, everyday language.
 - Implemented proper theme management with light mode as default
 - Eliminated automatic dark mode forcing and bad practices in theme switching
 - Restored complete internationalization system with all missing translations
+- **ELECTIONS ENHANCEMENT:** Added candidate management functionality to election creation (July 14, 2025)
+- Implemented dynamic candidate addition/removal in election creation form
+- Added fields for candidate name, party/group, and description/proposals
+- Integrated candidate creation with election API to save candidates in database
+- Minimum 2 candidates required per election for democratic process
+- Real-time validation ensures at least 2 candidates with names before submission
 
 ### Accessibility & Usability Enhancements (ISO 9241-11 & ISO 25010:2011)
 

@@ -106,6 +106,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const election = await storage.createElection(validatedData);
       console.log("Election created:", election);
       
+      // Create candidates if provided
+      if (req.body.candidates && Array.isArray(req.body.candidates)) {
+        console.log("Creating candidates:", req.body.candidates);
+        for (const candidateData of req.body.candidates) {
+          if (candidateData.name && candidateData.name.trim()) {
+            await storage.createCandidate({
+              electionId: election.id,
+              name: candidateData.name,
+              description: candidateData.description || "",
+              party: candidateData.party || "",
+              imageUrl: candidateData.imageUrl || "",
+            });
+          }
+        }
+      }
+      
       // Create audit log
       await storage.createAuditLog({
         userId,

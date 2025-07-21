@@ -29,12 +29,21 @@ import {
   CheckCircle,
   Play,
   Pause,
-  Loader2
+  Loader2,
+  X,
+  UserPlus
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import VotingModal from "@/components/VotingModal";
+
+const candidateSchema = z.object({
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  description: z.string().optional(),
+  party: z.string().optional(),
+  imageUrl: z.string().optional(),
+});
 
 const electionSchema = z.object({
   name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
@@ -49,6 +58,7 @@ const electionSchema = z.object({
   eligibleRoles: z.array(z.string()).min(1, "Debe seleccionar al menos un rol"),
   allowMultipleVotes: z.boolean().default(false),
   isPublic: z.boolean().default(true),
+  candidates: z.array(candidateSchema).min(2, "Debe agregar al menos 2 candidatos"),
 }).refine((data) => data.endDate > data.startDate, {
   message: "La fecha de fin debe ser posterior a la fecha de inicio",
   path: ["endDate"],
@@ -63,6 +73,7 @@ export default function Elections() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedElection, setSelectedElection] = useState<any>(null);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+  const [candidateFields, setCandidateFields] = useState([{ id: 1, name: "", description: "", party: "" }]);
 
   const { data: elections, isLoading } = useQuery({
     queryKey: ["/api/elections"],
@@ -77,6 +88,7 @@ export default function Elections() {
       eligibleRoles: [],
       allowMultipleVotes: false,
       isPublic: true,
+      candidates: [],
     },
   });
 
@@ -154,7 +166,33 @@ export default function Elections() {
       startDateISO: data.startDate.toISOString(),
       endDateISO: data.endDate.toISOString()
     });
-    createElectionMutation.mutate(data);
+    // Map candidateFields to the expected format
+    const formattedData = {
+      ...data,
+      candidates: candidateFields.filter(c => c.name.trim() !== "")
+    };
+    createElectionMutation.mutate(formattedData);
+  };
+
+  const addCandidate = () => {
+    setCandidateFields([...candidateFields, { 
+      id: Math.max(...candidateFields.map(c => c.id)) + 1, 
+      name: "", 
+      description: "", 
+      party: "" 
+    }]);
+  };
+
+  const removeCandidate = (id: number) => {
+    if (candidateFields.length > 1) {
+      setCandidateFields(candidateFields.filter(c => c.id !== id));
+    }
+  };
+
+  const updateCandidate = (id: number, field: string, value: string) => {
+    setCandidateFields(candidateFields.map(c => 
+      c.id === id ? { ...c, [field]: value } : c
+    ));
   };
 
   const handleVote = (election: any) => {
@@ -273,6 +311,69 @@ export default function Elections() {
                       </FormItem>
                     )}
                   />
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <FormLabel className="text-base">Candidatos *</FormLabel>
+                      <Button
+                        type="button"
+                        onClick={addCandidate}
+                        size="sm"
+                        variant="outline"
+                      >
+                        <UserPlus className="h-4 w-4 mr-2" />
+                        Agregar Candidato
+                      </Button>
+                    </div>
+                    <FormDescription>
+                      Agregue los candidatos que participarán en la elección (mínimo 2)
+                    </FormDescription>
+                    
+                    <div className="space-y-3">
+                      {candidateFields.map((candidate, index) => (
+                        <Card key={candidate.id} className="p-4">
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 space-y-3">
+                                <Input
+                                  placeholder="Nombre del candidato *"
+                                  value={candidate.name}
+                                  onChange={(e) => updateCandidate(candidate.id, 'name', e.target.value)}
+                                />
+                                <Input
+                                  placeholder="Partido o agrupación (opcional)"
+                                  value={candidate.party}
+                                  onChange={(e) => updateCandidate(candidate.id, 'party', e.target.value)}
+                                />
+                                <Textarea
+                                  placeholder="Descripción o propuesta del candidato (opcional)"
+                                  value={candidate.description}
+                                  onChange={(e) => updateCandidate(candidate.id, 'description', e.target.value)}
+                                  className="min-h-[80px]"
+                                />
+                              </div>
+                              {candidateFields.length > 1 && (
+                                <Button
+                                  type="button"
+                                  onClick={() => removeCandidate(candidate.id)}
+                                  size="icon"
+                                  variant="ghost"
+                                  className="ml-2"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                    {candidateFields.filter(c => c.name.trim() !== "").length < 2 && (
+                      <p className="text-sm text-destructive">
+                        Debe agregar al menos 2 candidatos con nombre
+                      </p>
+                    )}
+                  </div>
 
                   <FormField
                     control={form.control}

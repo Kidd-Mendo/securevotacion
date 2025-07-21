@@ -107,21 +107,29 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
   // Manejo de navegación con teclado
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Navegación con teclas del cursor
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev + 1) % visibleItems.length);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev - 1 + visibleItems.length) % visibleItems.length);
-      } else if (e.key === 'Enter' && selectedIndex >= 0) {
-        const item = visibleItems[selectedIndex];
-        if (item) {
-          window.location.href = item.href;
+      // Solo manejar eventos cuando el foco está en elementos del sidebar
+      const activeElement = document.activeElement;
+      const isInSidebar = activeElement?.closest('aside[role="complementary"]') || 
+                          activeElement?.closest('.mobile-sidebar');
+      
+      // Navegación con teclas del cursor solo cuando el foco está en el sidebar
+      if (isInSidebar) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev + 1) % visibleItems.length);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev - 1 + visibleItems.length) % visibleItems.length);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          const item = visibleItems[selectedIndex];
+          if (item) {
+            window.location.href = item.href;
+          }
         }
       }
       
-      // Atajos de teclado para navegación directa
+      // Atajos de teclado para navegación directa (Alt + número) funcionan globalmente
       if (e.altKey) {
         const num = parseInt(e.key);
         if (num >= 1 && num <= visibleItems.length) {

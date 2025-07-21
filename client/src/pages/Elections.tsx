@@ -280,7 +280,15 @@ export default function Elections() {
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form 
+                  onSubmit={form.handleSubmit(onSubmit)} 
+                  className="space-y-6"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+                      e.preventDefault();
+                    }
+                  }}
+                >
                   <FormField
                     control={form.control}
                     name="name"
@@ -288,7 +296,15 @@ export default function Elections() {
                       <FormItem>
                         <FormLabel>Nombre de la Elección *</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ej: Elección Representante Estudiantil 2025" {...field} />
+                          <Input 
+                            placeholder="Ej: Elección Representante Estudiantil 2025" 
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -339,11 +355,21 @@ export default function Elections() {
                                   placeholder="Nombre del candidato *"
                                   value={candidate.name}
                                   onChange={(e) => updateCandidate(candidate.id, 'name', e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                    }
+                                  }}
                                 />
                                 <Input
                                   placeholder="Partido o agrupación (opcional)"
                                   value={candidate.party}
                                   onChange={(e) => updateCandidate(candidate.id, 'party', e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                      e.preventDefault();
+                                    }
+                                  }}
                                 />
                                 <Textarea
                                   placeholder="Descripción o propuesta del candidato (opcional)"

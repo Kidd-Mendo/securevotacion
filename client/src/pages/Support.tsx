@@ -500,7 +500,18 @@ export default function Support() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    form.handleSubmit(onSubmit)(e);
+                  }} 
+                  className="space-y-6"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+                      e.preventDefault();
+                    }
+                  }}
+                >
                   {/* Instrucciones iniciales */}
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <p className="text-sm text-blue-800">

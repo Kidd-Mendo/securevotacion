@@ -298,7 +298,8 @@ export default function Elections() {
                   }}
                   className="space-y-6"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    // Permitir Enter en textareas para agregar párrafos
+                    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
                       e.preventDefault();
                       e.stopPropagation();
                     }
@@ -373,21 +374,11 @@ export default function Elections() {
                                   placeholder="Nombre del candidato *"
                                   value={candidate.name}
                                   onChange={(e) => updateCandidate(candidate.id, 'name', e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                    }
-                                  }}
                                 />
                                 <Input
                                   placeholder="Partido o agrupación (opcional)"
                                   value={candidate.party}
                                   onChange={(e) => updateCandidate(candidate.id, 'party', e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                      e.preventDefault();
-                                    }
-                                  }}
                                 />
                                 <Textarea
                                   placeholder="Descripción o propuesta del candidato (opcional)"

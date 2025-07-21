@@ -121,10 +121,13 @@ export default function Sidebar({ isMobileMenuOpen, onCloseMobileMenu }: Sidebar
           e.preventDefault();
           setSelectedIndex((prev) => (prev - 1 + visibleItems.length) % visibleItems.length);
         } else if (e.key === 'Enter' && selectedIndex >= 0) {
-          e.preventDefault();
-          const item = visibleItems[selectedIndex];
-          if (item) {
-            window.location.href = item.href;
+          // Solo procesar Enter si el foco está en el sidebar
+          if (isInSidebar) {
+            e.preventDefault();
+            const item = visibleItems[selectedIndex];
+            if (item) {
+              window.location.href = item.href;
+            }
           }
         }
       }

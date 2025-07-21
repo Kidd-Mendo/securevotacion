@@ -171,6 +171,17 @@ export default function Elections() {
       ...data,
       candidates: candidateFields.filter(c => c.name.trim() !== "")
     };
+    
+    // Validate at least 2 candidates
+    if (formattedData.candidates.length < 2) {
+      toast({
+        title: "Error",
+        description: "Debe agregar al menos 2 candidatos con nombre",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     createElectionMutation.mutate(formattedData);
   };
 
@@ -281,11 +292,15 @@ export default function Elections() {
               </DialogHeader>
               <Form {...form}>
                 <form 
-                  onSubmit={form.handleSubmit(onSubmit)} 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    form.handleSubmit(onSubmit)(e);
+                  }}
                   className="space-y-6"
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' && (e.target as HTMLElement).tagName !== 'TEXTAREA') {
+                    if (e.key === 'Enter') {
                       e.preventDefault();
+                      e.stopPropagation();
                     }
                   }}
                 >
@@ -333,7 +348,10 @@ export default function Elections() {
                       <FormLabel className="text-base">Candidatos *</FormLabel>
                       <Button
                         type="button"
-                        onClick={addCandidate}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          addCandidate();
+                        }}
                         size="sm"
                         variant="outline"
                       >
@@ -381,7 +399,11 @@ export default function Elections() {
                               {candidateFields.length > 1 && (
                                 <Button
                                   type="button"
-                                  onClick={() => removeCandidate(candidate.id)}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    removeCandidate(candidate.id);
+                                  }}
                                   size="icon"
                                   variant="ghost"
                                   className="ml-2"

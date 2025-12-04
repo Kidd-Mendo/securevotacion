@@ -1,34 +1,295 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import rateLimit from "express-rate-limit";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { authenticateToken, hashPassword, comparePassword, generateToken, validatePassword, generateResetToken, type AuthRequest } from "./auth";
 import { insertElectionSchema, insertCandidateSchema, insertVoteSchema, insertSupportTicketSchema } from "@shared/schema";
 import crypto from "crypto";
 import { z } from "zod";
+import { logger, logAuth, logError } from "./logger";
+
+// Rate limiters para prevenir ataques de fuerza bruta
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // límite de 5 requests por ventana
+  message: "Demasiados intentos desde esta IP, por favor intenta de nuevo en 15 minutos",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // límite de 100 requests por ventana
+  message: "Demasiadas peticiones desde esta IP, por favor intenta más tarde",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
-
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Aplicar rate limiter general a todas las rutas API
+  app.use('/api', generalLimiter);
+  
+  // Auth routes - Registro de usuarios
+  app.post('/api/auth/register', authLimiter, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      console.log(`Routes.getUser: User ${user?.email} fetched with role: ${user?.role}`);
-      
-      // Force administrator role for specific users
-      if (user && (user.email === 'alexandermendoza1011@gmail.com' || user.email === 'mxndo1011@gmail.com')) {
-        console.log(`Routes: Enforcing administrator role for ${user.email}`);
-        user.role = 'administrator';
+      const { email, password, firstName, lastName, role } = req.body;
+
+      // Validar datos requeridos
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email y contraseña son requeridos" });
       }
+
+      // Validar formato de email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: "Formato de email inválido" });
+      }
+
+      // Validar fortaleza de contraseña
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.valid) {
+        return res.status(400).json({ message: passwordValidation.message });
+      }
+
+      // Verificar si el usuario ya existe
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        logAuth("REGISTER", email, false, req.ip);
+        return res.status(409).json({ message: "El usuario ya existe" });
+      }
+
+      // Hashear contraseña
+      const hashedPassword = await hashPassword(password);
+
+      // Crear usuario
+      const newUser = await storage.createUser({
+        id: crypto.randomUUID(),
+        email,
+        password: hashedPassword,
+        firstName: firstName || "",
+        lastName: lastName || "",
+        role: role || "student",
+        isActive: true,
+      });
+
+      // Generar token JWT
+      const token = generateToken(newUser.id, newUser.email!, newUser.role);
+
+      // Logging
+      logAuth("REGISTER", email, true, req.ip);
+
+      // Crear log de auditoría
+      await storage.createAuditLog({
+        userId: newUser.id,
+        action: "USER_REGISTERED",
+        resource: "user",
+        resourceId: newUser.id,
+        details: { email: newUser.email },
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.status(201).json({
+        message: "Usuario registrado exitosamente",
+        token,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+          role: newUser.role,
+        },
+      });
+    } catch (error) {
+      logError(error as Error, "Register");
+      console.error("Error en registro:", error);
+      res.status(500).json({ message: "Error al registrar usuario" });
+    }
+  });
+
+  // Auth routes - Login
+  app.post('/api/auth/login', authLimiter, async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email y contraseña son requeridos" });
+      }
+
+      // Buscar usuario por email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        logAuth("LOGIN", email, false, req.ip);
+        return res.status(401).json({ message: "Credenciales inválidas" });
+      }
+
+      // Verificar si el usuario está activo
+      if (!user.isActive) {
+        logAuth("LOGIN", email, false, req.ip);
+        return res.status(403).json({ message: "Usuario inactivo. Contacte al administrador." });
+      }
+
+      // Verificar contraseña
+      const isValidPassword = await comparePassword(password, user.password!);
+      if (!isValidPassword) {
+        logAuth("LOGIN", email, false, req.ip);
+        return res.status(401).json({ message: "Credenciales inválidas" });
+      }
+
+      // Generar token JWT
+      const token = generateToken(user.id, user.email!, user.role);
+
+      // Logging
+      logAuth("LOGIN", email, true, req.ip);
+
+      // Crear log de auditoría
+      await storage.createAuditLog({
+        userId: user.id,
+        action: "USER_LOGIN",
+        resource: "user",
+        resourceId: user.id,
+        details: { email: user.email },
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({
+        message: "Login exitoso",
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          profileImageUrl: user.profileImageUrl,
+        },
+      });
+    } catch (error) {
+      logError(error as Error, "Login");
+      console.error("Error en login:", error);
+      res.status(500).json({ message: "Error al iniciar sesión" });
+    }
+  });
+
+  // Auth routes - Solicitar reset de contraseña
+  app.post('/api/auth/forgot-password', authLimiter, async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ message: "Email es requerido" });
+      }
+
+      const user = await storage.getUserByEmail(email);
       
+      // Por seguridad, siempre retornar el mismo mensaje
+      const message = "Si el email existe, recibirás instrucciones para restablecer tu contraseña";
+      
+      if (!user) {
+        logger.info(`Password reset requested for non-existent email: ${email}`);
+        return res.json({ message });
+      }
+
+      // Generar token de reset
+      const resetToken = generateResetToken();
+      const resetExpires = new Date(Date.now() + 3600000); // 1 hora
+
+      // Guardar token en la base de datos
+      await storage.updateUser(user.id, {
+        passwordResetToken: resetToken,
+        passwordResetExpires: resetExpires,
+      });
+
+      // TODO: Enviar email con el token
+      // En producción, usar servicio de email como SendGrid, AWS SES, etc.
+      logger.info(`Password reset token generated for: ${email}`);
+      logger.debug(`Reset token: ${resetToken}`); // Solo en desarrollo
+
+      res.json({ message });
+    } catch (error) {
+      logError(error as Error, "Forgot Password");
+      res.status(500).json({ message: "Error al procesar la solicitud" });
+    }
+  });
+
+  // Auth routes - Resetear contraseña con token
+  app.post('/api/auth/reset-password', authLimiter, async (req, res) => {
+    try {
+      const { token, newPassword } = req.body;
+
+      if (!token || !newPassword) {
+        return res.status(400).json({ message: "Token y nueva contraseña son requeridos" });
+      }
+
+      // Validar fortaleza de contraseña
+      const passwordValidation = validatePassword(newPassword);
+      if (!passwordValidation.valid) {
+        return res.status(400).json({ message: passwordValidation.message });
+      }
+
+      // Buscar usuario con el token válido
+      const user = await storage.getUserByResetToken(token);
+      
+      if (!user) {
+        return res.status(400).json({ message: "Token inválido o expirado" });
+      }
+
+      // Hashear nueva contraseña
+      const hashedPassword = await hashPassword(newPassword);
+
+      // Actualizar contraseña y limpiar token
+      await storage.updateUser(user.id, {
+        password: hashedPassword,
+        passwordResetToken: null,
+        passwordResetExpires: null,
+      });
+
+      logger.info(`Password successfully reset for user: ${user.email}`);
+
+      // Crear log de auditoría
+      await storage.createAuditLog({
+        userId: user.id,
+        action: "PASSWORD_RESET",
+        resource: "user",
+        resourceId: user.id,
+        details: { email: user.email },
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json({ message: "Contraseña restablecida exitosamente" });
+    } catch (error) {
+      logError(error as Error, "Reset Password");
+      res.status(500).json({ message: "Error al restablecer la contraseña" });
+    }
+  });
+
+  // Auth routes - Verificar token y obtener usuario actual
+  app.get('/api/auth/user', authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.userId;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
       // Set cache headers to prevent caching issues
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.set('Pragma', 'no-cache');
       res.set('Expires', '0');
       
-      res.json(user);
+      res.json({
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        profileImageUrl: user.profileImageUrl,
+        institutionId: user.institutionId,
+        isActive: user.isActive,
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -36,7 +297,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dashboard stats
-  app.get('/api/dashboard/stats', isAuthenticated, async (req, res) => {
+  app.get('/api/dashboard/stats', authenticateToken, async (req, res) => {
     try {
       const stats = await storage.getDashboardStats();
       res.json(stats);
@@ -47,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Elections endpoints
-  app.get('/api/elections', isAuthenticated, async (req, res) => {
+  app.get('/api/elections', authenticateToken, async (req, res) => {
     try {
       const elections = await storage.getElections();
       res.json(elections);
@@ -57,7 +318,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/elections/active', isAuthenticated, async (req, res) => {
+  app.get('/api/elections/active', authenticateToken, async (req, res) => {
     try {
       const elections = await storage.getActiveElections();
       res.json(elections);
@@ -67,7 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/elections/:id', isAuthenticated, async (req, res) => {
+  app.get('/api/elections/:id', authenticateToken, async (req, res) => {
     try {
       const election = await storage.getElectionById(req.params.id);
       if (!election) {
@@ -80,10 +341,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/elections', isAuthenticated, async (req: any, res) => {
+  app.post('/api/elections', authenticateToken, async (req: AuthRequest, res) => {
     try {
       console.log("POST /api/elections - Request body:", req.body);
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       console.log("User creating election:", user?.email, "Role:", user?.role);
       
@@ -143,9 +404,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/elections/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/elections/:id', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || !["administrator", "authority"].includes(user.role)) {
@@ -188,7 +449,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Candidates endpoints
-  app.get('/api/elections/:electionId/candidates', isAuthenticated, async (req, res) => {
+  app.get('/api/elections/:electionId/candidates', authenticateToken, async (req, res) => {
     try {
       const candidates = await storage.getCandidatesByElection(req.params.electionId);
       res.json(candidates);
@@ -198,9 +459,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/elections/:electionId/candidates', isAuthenticated, async (req: any, res) => {
+  app.post('/api/elections/:electionId/candidates', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || !["administrator", "authority"].includes(user.role)) {
@@ -236,9 +497,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Voting endpoints
-  app.post('/api/elections/:electionId/vote', isAuthenticated, async (req: any, res) => {
+  app.post('/api/elections/:electionId/vote', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       const electionId = req.params.electionId;
       
@@ -318,7 +579,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Results endpoints
-  app.get('/api/elections/:electionId/results', isAuthenticated, async (req, res) => {
+  app.get('/api/elections/:electionId/results', authenticateToken, async (req, res) => {
     try {
       const results = await storage.getElectionResults(req.params.electionId);
       res.json(results);
@@ -329,9 +590,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Notifications endpoints
-  app.get('/api/notifications', isAuthenticated, async (req: any, res) => {
+  app.get('/api/notifications', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const notifications = await storage.getUserNotifications(userId);
       res.json(notifications);
     } catch (error) {
@@ -340,7 +601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/notifications/:id/read', isAuthenticated, async (req, res) => {
+  app.put('/api/notifications/:id/read', authenticateToken, async (req, res) => {
     try {
       await storage.markNotificationAsRead(req.params.id);
       res.json({ message: "Notification marked as read" });
@@ -351,9 +612,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Profile update endpoint
-  app.patch('/api/profile/update', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/profile/update', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const { firstName, lastName, email } = req.body;
 
       // Validation
@@ -400,9 +661,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Audit logs endpoint
-  app.get('/api/audit-logs', isAuthenticated, async (req: any, res) => {
+  app.get('/api/audit-logs', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || !["administrator", "authority"].includes(user.role)) {
@@ -419,9 +680,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin routes
-  app.get('/api/admin/users', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/users', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== "administrator") {
@@ -436,9 +697,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/admin/stats', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/stats', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== "administrator") {
@@ -453,9 +714,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/admin/users/:userId', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/admin/users/:userId', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = req.user.claims.sub;
+      const currentUserId = req.user!.userId;
       const currentUser = await storage.getUser(currentUserId);
       
       if (!currentUser || currentUser.role !== "administrator") {
@@ -485,9 +746,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/admin/users/:userId', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/admin/users/:userId', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = req.user.claims.sub;
+      const currentUserId = req.user!.userId;
       const currentUser = await storage.getUser(currentUserId);
       
       if (!currentUser || currentUser.role !== "administrator") {
@@ -521,9 +782,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/admin/users/:userId/make-admin', isAuthenticated, async (req: any, res) => {
+  app.post('/api/admin/users/:userId/make-admin', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = req.user.claims.sub;
+      const currentUserId = req.user!.userId;
       const currentUser = await storage.getUser(currentUserId);
       
       if (!currentUser || currentUser.role !== "administrator") {
@@ -552,9 +813,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/admin/audit', isAuthenticated, async (req: any, res) => {
+  app.get('/api/admin/audit', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       if (!user || user.role !== "administrator") {
@@ -570,9 +831,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Support tickets endpoints
-  app.get('/api/support-tickets', isAuthenticated, async (req: any, res) => {
+  app.get('/api/support-tickets', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       let tickets;
@@ -591,9 +852,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/support-tickets', isAuthenticated, async (req: any, res) => {
+  app.post('/api/support-tickets', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const validatedData = insertSupportTicketSchema.parse({
         ...req.body,
         userId,
@@ -610,9 +871,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/support-tickets/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/support-tickets/:id', authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user!.userId;
       const user = await storage.getUser(userId);
       
       // Only administrators and authorities can update tickets

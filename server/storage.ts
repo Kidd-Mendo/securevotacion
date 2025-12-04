@@ -26,9 +26,13 @@ import { eq, and, desc, count, sql } from "drizzle-orm";
 import crypto from "crypto";
 
 export interface IStorage {
-  // User operations (required for Replit Auth)
+  // User operations
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  createUser(user: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUser(userId: string, updateData: Partial<User>): Promise<User | null>;
 
   // Election operations
   getElections(): Promise<Election[]>;
@@ -77,7 +81,7 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // User operations (required for Replit Auth)
+  // User operations
   async getUser(id: string): Promise<User | undefined> {
     console.log(`DatabaseStorage.getUser called with ID: ${id}`);
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -92,6 +96,41 @@ export class DatabaseStorage implements IStorage {
     
     console.log(`DatabaseStorage.getUser: Found user ${user?.email} with role: ${user?.role}`);
     return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(
+        and(
+          eq(users.passwordResetToken, token),
+          sql`${users.passwordResetExpires} > NOW()`
+        )
+      );
+    return user || undefined;
+  }
+
+  async createUser(userData: UpsertUser): Promise<User> {
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        id: userData.id || crypto.randomUUID(),
+        email: userData.email!,
+        password: userData.password!,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        profileImageUrl: userData.profileImageUrl,
+        role: userData.role || "student",
+        isActive: true,
+      })
+      .returning();
+    return newUser;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
@@ -140,13 +179,18 @@ export class DatabaseStorage implements IStorage {
       const adminExists = await db.select().from(users).where(eq(users.role, "administrator")).limit(1);
 
       if (adminExists.length === 0) {
+        // Import bcrypt for password hashing
+        const bcrypt = await import("bcryptjs");
+        const hashedPassword = await bcrypt.hash("Admin123!", 10);
+        
         // Create default admin user
-        const adminId = "admin-default-001";
+        const adminId = crypto.randomUUID();
         const [admin] = await db
           .insert(users)
           .values({
             id: adminId,
             email: "admin@votacion.edu",
+            password: hashedPassword,
             firstName: "Administrador",
             lastName: "Sistema",
             role: "administrator",
@@ -156,7 +200,7 @@ export class DatabaseStorage implements IStorage {
 
         console.log("✅ Administrador por defecto creado:");
         console.log("📧 Email: admin@votacion.edu");
-        console.log("🔑 ID: admin-default-001");
+        console.log("🔑 Contraseña: Admin123!");
         console.log("👤 Nombre: Administrador Sistema");
 
         return admin;
@@ -492,12 +536,15 @@ class MemoryStorage implements IStorage {
     const adminUser: User = {
       id: "admin-1",
       email: "admin@school.edu",
+      password: "Admin123!",
       firstName: "System",
       lastName: "Administrator",
       profileImageUrl: null,
       role: "administrator",
       institutionId: null,
       isActive: true,
+      passwordResetToken: null,
+      passwordResetExpires: null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -506,6 +553,39 @@ class MemoryStorage implements IStorage {
 
   async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(u => u.email === email);
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    const now = new Date();
+    return Array.from(this.users.values()).find(
+      u => u.passwordResetToken === token && 
+           u.passwordResetExpires && 
+           u.passwordResetExpires > now
+    );
+  }
+
+  async createUser(userData: UpsertUser): Promise<User> {
+    const newUser: User = {
+      id: userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      email: userData.email!,
+      password: userData.password!,
+      firstName: userData.firstName || null,
+      lastName: userData.lastName || null,
+      profileImageUrl: userData.profileImageUrl || null,
+      role: userData.role || "student",
+      institutionId: userData.institutionId || null,
+      isActive: userData.isActive ?? true,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(newUser.id, newUser);
+    return newUser;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
@@ -519,13 +599,16 @@ class MemoryStorage implements IStorage {
 
     const newUser: User = {
       id: userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      email: userData.email,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      email: userData.email!,
+      password: userData.password || "default",
+      firstName: userData.firstName || null,
+      lastName: userData.lastName || null,
       profileImageUrl: userData.profileImageUrl || null,
       role: userData.role || "student",
       institutionId: userData.institutionId || null,
       isActive: userData.isActive ?? true,
+      passwordResetToken: null,
+      passwordResetExpires: null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
